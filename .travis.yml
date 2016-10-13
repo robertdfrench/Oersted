@@ -1,0 +1,49 @@
+language: cpp
+sudo: false
+
+matrix:
+  include:
+    - os: linux
+      env: ARCH="x86_64"
+      compiler: "g++-6 -m64"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - george-edison55-precise-backports 
+          packages:
+            - cmake
+            - cmake-data
+            - g++-6
+            #- lcov
+
+before_install:
+  - mkdir -p $HOME/bin
+  - ln -s /usr/bin/gcc-6 $HOME/bin/gcc
+  - ln -s /usr/bin/g++-6 $HOME/bin/g++
+  - ln -s /usr/bin/gcov-6 $HOME/bin/gcov
+  - ln -s /usr/bin/gcov-tool-6 $HOME/bin/gcov-tool
+  - gem install coveralls-lcov
+  
+install:
+  - wget 'https://sourceforge.net/projects/ltp/files/Coverage Analysis/LCOV-1.12/lcov-1.12.tar.gz'
+  - tar -xzvf lcov-1.12.tar.gz
+  - cd lcov-1.12
+  - make PREFIX=$HOME BIN_DIR=$HOME/bin install
+  #- ln -s $HOME/usr/bin/lcov $HOME/bin/lcov
+  #- ln -s $HOME/usr/bin/geninfo $HOME/bin/geninfo
+  - lcov --version
+  - geninfo --version
+  - cd ..
+  
+script:
+  - mkdir build && cd build
+  - cmake .. && make
+
+after_success:
+  - ./test/run_tests
+  - mkdir coverage
+  - lcov --help
+  - lcov -c -d ./src/ -o ./coverage/coverage.info
+  - lcov -r ./coverage/coverage.info "/usr/include*" "/usr/lib/*" "*Oersted/lib/*" "*Oersted/test/*" -o ./coverage/coverage.info
+  - coveralls-lcov ./coverage/coverage.info
