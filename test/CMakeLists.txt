@@ -5,7 +5,8 @@ set(SOURCE_FILES
 
         Sketch/test_Sketch.h
         Sketch/test_Vertex.cpp
-        Sketch/test_LineSegment.cpp)
+        Sketch/test_LineSegment.cpp
+        Sketch/test_CircularArc.cpp)
 
 add_executable(run_tests ${SOURCE_FILES})
 

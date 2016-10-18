@@ -1,11 +1,13 @@
 #include "test_Sketch.h"
 
 TEST(VERTEX, CONSTRUCTOR) {
-    EXPECT_NO_THROW(Vertex v);
-}
+    { // ARGS::()
+        EXPECT_NO_THROW(Vertex v);
+    }
 
-TEST(VERTEX, CONSTRUCTOR_ARGS_double_double) {
-    EXPECT_NO_THROW(Vertex v(3.14159, 2.71828));
+    { // ARGS::(double,double)
+        EXPECT_NO_THROW(Vertex v(3.14159, 2.71828));
+    }
 }
 
 TEST(VERTEX, METHOD_rotate) {

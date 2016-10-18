@@ -1,12 +1,14 @@
 #include "test_Sketch.h"
 
 TEST(LINESEGMENT, CONSTRUCTOR) {
-    EXPECT_NO_THROW(LineSegment l);
-}
+    {   // ARGS::()
+        EXPECT_NO_THROW(LineSegment l);
+    }
 
-TEST(LINESEGMENT, CONSTRUCTOR_ARGS_Vertex_Vertex) {
-    Vertex v0, v1;
-    EXPECT_NO_THROW(LineSegment l(v0, v1));
+    {   // ARGS::(Vertex,Vertex)
+        Vertex v0, v1;
+        EXPECT_NO_THROW(LineSegment l(v0, v1));
+    }
 }
 
 TEST(LINESEGMENT, METHOD_length) {
@@ -84,66 +86,69 @@ TEST(LINESEGMENT, METHOD_da) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_on_manifold_ARGS_Vertex) {
-    Sketch s;
+TEST(LINESEGMENT, METHOD_on_manifold) {
+    {   //ARGS::(Vertex)
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(1.1, 1.1);
-    Vertex &v3 = s.new_element<Vertex>(M_SQRT2, 0.0);
-    Vertex &v4 = s.new_element<Vertex>(0.0, M_SQRT2);
-    Vertex &v5 = s.new_element<Vertex>(0.5, 0.5);
-    Vertex &v6 = s.new_element<Vertex>(0.5, sqrt(2.0 - 0.25));
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &v2 = s.new_element<Vertex>(1.1, 1.1);
+        Vertex &v3 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        Vertex &v4 = s.new_element<Vertex>(0.0, M_SQRT2);
+        Vertex &v5 = s.new_element<Vertex>(0.5, 0.5);
+        Vertex &v6 = s.new_element<Vertex>(0.5, sqrt(2.0 - 0.25));
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
 
-    EXPECT_TRUE(l0.on_manifold(&v0));
-    EXPECT_TRUE(l0.on_manifold(&v1));
-    EXPECT_TRUE(l0.on_manifold(&v2));
-    EXPECT_FALSE(l0.on_manifold(&v3));
-    EXPECT_FALSE(l0.on_manifold(&v4));
-    EXPECT_TRUE(l0.on_manifold(&v5));
-    EXPECT_FALSE(l0.on_manifold(&v6));
+        EXPECT_TRUE(l0.on_manifold(&v0));
+        EXPECT_TRUE(l0.on_manifold(&v1));
+        EXPECT_TRUE(l0.on_manifold(&v2));
+        EXPECT_FALSE(l0.on_manifold(&v3));
+        EXPECT_FALSE(l0.on_manifold(&v4));
+        EXPECT_TRUE(l0.on_manifold(&v5));
+        EXPECT_FALSE(l0.on_manifold(&v6));
+    }
+
+    {   //ARGS::(Vertex,Vertex,double)
+        Sketch s;
+
+        Vertex &vl0 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &vl1 = s.new_element<Vertex>(2.0, 2.0);
+
+        LineSegment &l = s.new_element<LineSegment>(vl0, vl1);
+
+        Vertex &origin = s.new_element<Vertex>(0.5, 0.5);
+        Vertex &v0 = s.new_element<Vertex>(0.5 + M_SQRT1_2, 0.5);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 0.5);
+        Vertex &v2 = s.new_element<Vertex>(2.0, 0.5);
+        Vertex &v3 = s.new_element<Vertex>(0.5 + 3.0 * M_SQRT1_2, 0.5);
+        Vertex &v4 = s.new_element<Vertex>(0.5 + 3.0, 0.5);
+
+        double a = 44.0;
+        EXPECT_FALSE(l.on_manifold(&v0, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v1, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v2, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v3, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v4, &origin, a));
+
+        a += 1.0;
+        EXPECT_TRUE(l.on_manifold(&v0, &origin, a));
+        EXPECT_TRUE(l.on_manifold(&v1, &origin, a));
+        EXPECT_TRUE(l.on_manifold(&v2, &origin, a));
+        EXPECT_TRUE(l.on_manifold(&v3, &origin, a));
+        EXPECT_TRUE(l.on_manifold(&v4, &origin, a));
+
+        a += 1.0;
+        EXPECT_FALSE(l.on_manifold(&v0, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v1, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v2, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v3, &origin, a));
+        EXPECT_FALSE(l.on_manifold(&v4, &origin, a));
+    }
 }
 
-TEST(LINESEGMENT, METHOD_on_manifold_ARGS_Vertex_Vertex_double) {
-    Sketch s;
-
-    Vertex &vl0 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &vl1 = s.new_element<Vertex>(2.0, 2.0);
-
-    LineSegment &l = s.new_element<LineSegment>(vl0, vl1);
-
-    Vertex &origin = s.new_element<Vertex>(0.5, 0.5);
-    Vertex &v0 = s.new_element<Vertex>(0.5 + M_SQRT1_2, 0.5);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.5);
-    Vertex &v2 = s.new_element<Vertex>(2.0, 0.5);
-    Vertex &v3 = s.new_element<Vertex>(0.5 + 3.0 * M_SQRT1_2, 0.5);
-    Vertex &v4 = s.new_element<Vertex>(0.5 + 3.0, 0.5);
-
-    double a = 44.0;
-    EXPECT_FALSE(l.on_manifold(&v0, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v1, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v2, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v3, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v4, &origin, a));
-
-    a += 1.0;
-    EXPECT_TRUE(l.on_manifold(&v0, &origin, a));
-    EXPECT_TRUE(l.on_manifold(&v1, &origin, a));
-    EXPECT_TRUE(l.on_manifold(&v2, &origin, a));
-    EXPECT_TRUE(l.on_manifold(&v3, &origin, a));
-    EXPECT_TRUE(l.on_manifold(&v4, &origin, a));
-
-    a += 1.0;
-    EXPECT_FALSE(l.on_manifold(&v0, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v1, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v2, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v3, &origin, a));
-    EXPECT_FALSE(l.on_manifold(&v4, &origin, a));
-}
-
-TEST(LINESEGMENT, METHOD_on_segment_ARGS_Vertex) {
+TEST(LINESEGMENT, METHOD_on_segment) {
+    {   // ARGS::(Vertex)
         Sketch s;
 
         Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -165,9 +170,9 @@ TEST(LINESEGMENT, METHOD_on_segment_ARGS_Vertex) {
         EXPECT_FALSE(l.on_segment(&voff1));
         EXPECT_FALSE(l.on_segment(&voff2));
         EXPECT_FALSE(l.on_segment(&voff3));
-}
+    }
 
-TEST(LINESEGMENT, METHOD_on_segment_ARGS_Vertex_Vertex_double) {
+    { // ARGS::(Vertex,Vertex,double)
         Sketch s;
 
         double angle = 45.0;
@@ -192,9 +197,11 @@ TEST(LINESEGMENT, METHOD_on_segment_ARGS_Vertex_Vertex_double) {
 
         EXPECT_FALSE(l0.on_segment(&vf0, &origin, angle));
         EXPECT_FALSE(l0.on_segment(&vf1, &origin, angle));
+    }
 }
 
-TEST(LINESEGMENT, METHOD_is_identical_ARGS_LineSegment) {
+TEST(LINESEGMENT, METHOD_is_identical) {
+    {   // ARGS::(LineSegment)
         Sketch s;
 
         Vertex &v00 = s.new_element<Vertex>(0.0, 0.0);
@@ -229,9 +236,9 @@ TEST(LINESEGMENT, METHOD_is_identical_ARGS_LineSegment) {
         EXPECT_FALSE(l.is_identical(&l5));
         EXPECT_FALSE(l.is_identical(&l6));
         EXPECT_FALSE(l.is_identical(&l7));
-}
+    }
 
-TEST(LINESEGMENT, METHOD_is_identical_ARGS_LineSegment_Vertex_double) {
+    {   // ARGS::(LineSegment,Vertex,double)
         Sketch s;
 
         Vertex &origin = s.new_element<Vertex>(1.0, 1.0);
@@ -281,9 +288,11 @@ TEST(LINESEGMENT, METHOD_is_identical_ARGS_LineSegment_Vertex_double) {
         EXPECT_FALSE(l.is_identical(&l9, &origin, -45.0));
         EXPECT_FALSE(l.is_identical(&l10, &origin, -45.0));
         EXPECT_FALSE(l.is_identical(&l11, &origin, -45.0));
+    }
 }
 
-TEST(LINESEGMENT, METHOD_is_coincident_ARGS_LineSegment) {
+TEST(LINESEGMENT, METHOD_is_coincident) {
+    {   // ARGS::(LineSegment)
         Sketch s;
 
         Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -310,11 +319,12 @@ TEST(LINESEGMENT, METHOD_is_coincident_ARGS_LineSegment) {
         EXPECT_FALSE(l0.is_coincident(&l3));
         EXPECT_FALSE(l0.is_coincident(&l4));
         EXPECT_FALSE(l0.is_coincident(&l5));
-}
+    }
 
-TEST(LINESEGMENT, METHOD_is_coincident_ARGS_CircularArc) {
-    LineSegment l = LineSegment();
-    CircularArc c = CircularArc();
+    {   // ARGS::(CircularArc)
+        LineSegment l = LineSegment();
+        CircularArc c = CircularArc();
 
-    EXPECT_FALSE(l.is_coincident(&c));
+        EXPECT_FALSE(l.is_coincident(&c));
+    }
 }
