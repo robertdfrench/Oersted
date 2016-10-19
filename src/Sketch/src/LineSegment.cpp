@@ -114,7 +114,8 @@ bool LineSegment::is_identical(const double x0, const double y0, const double x1
     double xe = end()->x();
     double ye = end()->y();
 
-    double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
+    double tol =
+            FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
 
     return (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol)
            || (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol);

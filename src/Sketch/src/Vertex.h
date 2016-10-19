@@ -1,5 +1,5 @@
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef OERSTED_VERTEX_H
+#define OERSTED_VERTEX_H
 
 #include "Sketch.h"
 
@@ -50,4 +50,4 @@ public:
     std::pair<double, double> rotate(const Vertex *origin, const double angle) const;
 };
 
-#endif
+#endif //OERSTED_VERTEX_H

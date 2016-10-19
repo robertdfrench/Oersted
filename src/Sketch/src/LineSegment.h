@@ -1,5 +1,5 @@
-#ifndef LINESEGMENT_H
-#define LINESEGMENT_H
+#ifndef OERSTED_LINESEGMENT_H
+#define OERSTED_LINESEGMENT_H
 
 #include "Curve.h"
 
@@ -81,4 +81,4 @@ protected:
     bool is_identical(const double x0, const double y0, const double x1, const double y1) const;
 };
 
-#endif
+#endif //OERSTED_LINESEGMENT_H

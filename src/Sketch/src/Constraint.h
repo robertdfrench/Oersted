@@ -1,5 +1,5 @@
-#ifndef CONSTRAINT_H
-#define CONSTRAINT_H
+#ifndef OERSTED_CONSTRAINT_H
+#define OERSTED_CONSTRAINT_H
 
 #include "Sketch.h"
 
@@ -15,7 +15,7 @@ public:
     double Dim;
 
     // Constructors
-    Angle(LineSegment &l0, LineSegment &l1, double_t angle) : Line0(&l0), Line1(&l1), Dim(angle) {};
+    Angle(LineSegment &l0, LineSegment &l1, double angle) : Line0(&l0), Line1(&l1), Dim(angle) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {
@@ -50,10 +50,10 @@ public:
     T *Element0;
     T *Element1;
 
-    double_t Dim;
+    double Dim;
 
     // Constructors
-    Distance(T &e0, T &e1, double_t d) : Element0(&e0), Element1(&e1), Dim(d) {};
+    Distance(T &e0, T &e1, double d) : Element0(&e0), Element1(&e1), Dim(d) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override;
@@ -98,10 +98,10 @@ class Length : public Constraint {
 public:
     LineSegment *Line;
 
-    double_t Dim;
+    double Dim;
 
     // Constructors
-    Length(LineSegment &c, double_t length) : Line(&c), Dim(length) {};
+    Length(LineSegment &c, double length) : Line(&c), Dim(length) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {
@@ -116,10 +116,10 @@ class Radius : public Constraint {
 public:
     CircularArc *Arc;
 
-    double_t Dim;
+    double Dim;
 
     // Constructors
-    Radius(CircularArc &c, double_t r) : Arc(&c), Dim(r) {};
+    Radius(CircularArc &c, double r) : Arc(&c), Dim(r) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {
@@ -135,9 +135,9 @@ public:
     Vertex *V0;
     Vertex *V1;
     Vertex *Origin;
-    double_t Angle;
+    double Angle;
 
-    Rotation(Vertex &v0, Vertex &v1, Vertex &origin, double_t a) : V0(&v0), V1(&v1), Origin(&origin), Angle(a) {};
+    Rotation(Vertex &v0, Vertex &v1, Vertex &origin, double a) : V0(&v0), V1(&v1), Origin(&origin), Angle(a) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
@@ -196,4 +196,4 @@ public:
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
 };
 
-#endif
+#endif //OERSTED_CONSTRAINT_H

@@ -1,5 +1,5 @@
-#ifndef CIRCULARARC_H
-#define CIRCULARARC_H
+#ifndef OERSTED_CIRCULARARC_H
+#define OERSTED_CIRCULARARC_H
 
 #include "Curve.h"
 
@@ -85,7 +85,9 @@ protected:
 
     bool on_segment(const double x, const double y) const override;
 
-    bool is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
+    bool
+    is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe,
+                 const double ye) const;
 
 private:
     double s_to_a(double s) const;
@@ -95,4 +97,4 @@ private:
     double arc_angle() const;
 };
 
-#endif //CIRCULARARC_H
+#endif //OERSTED_CIRCULARARC_H

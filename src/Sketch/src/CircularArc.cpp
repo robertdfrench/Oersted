@@ -206,7 +206,8 @@ bool CircularArc::is_identical(const Curve *c, const Vertex *origin, const doubl
     }
 }
 
-bool CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const {
+bool CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys,
+                               const double xe, const double ye) const {
     double tol = FLT_EPSILON * radius();
 
     return abs(radius() - r) < tol

@@ -1,5 +1,5 @@
-#ifndef SKETCH_H
-#define SKETCH_H
+#ifndef OERSTED_SKETCH_H
+#define OERSTED_SKETCH_H
 
 #define SIGN(x) (double)((x > 0.0) - (x < 0.0))
 
@@ -110,6 +110,13 @@ class RotateCopy;
 
 // Contour
 class Contour;
+
+// Utility
+struct Branch;
+
+class Star;
+
+class Consellation;
 
 // Sketch
 enum class SaveMethod {
@@ -237,4 +244,4 @@ T *Sketch::new_parameter(Args &&... args) {
     return p;
 }
 
-#endif
+#endif //OERSTED_SKETCH_H

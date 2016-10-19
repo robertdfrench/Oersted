@@ -11,7 +11,11 @@ set(SOURCE_FILES
 
         ./src/Constraint.h ./src/Constraint.cpp
         ./src/Pattern.h ./src/Pattern.cpp
+
+        ./src/Branch.h ./src/Branch.cpp
+        ./src/Star.h ./src/Star.cpp
         ./src/Constellation.h ./src/Constellation.cpp
+
         ./src/Contour.h ./src/Contour.cpp)
 
 add_library(sketch STATIC ${SOURCE_FILES})

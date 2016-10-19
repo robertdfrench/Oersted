@@ -10,24 +10,28 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/GoogleTest/googletest/cmake/internal_utils.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/CMakeLists.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Branch.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Branch.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/include/Sketch.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/main.cpp" isTestSource="false" />
