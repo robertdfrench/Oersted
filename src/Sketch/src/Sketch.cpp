@@ -76,12 +76,18 @@ void Sketch::add_element(Pattern &p) {
 }
 
 template<>
-void Sketch::save_as<SaveMethod::Rasterize>(std::string file_name) const {
+void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_name) const {
     /*
         This is a stub for visualization
     */
+
+    boost::filesystem::path dir(path);
+    if(!boost::filesystem::exists(path)) {
+        boost::filesystem::create_directories(path);
+    }
+
     std::fstream fs;
-    fs.open(file_name, std::fstream::out);
+    fs.open(path + file_name, std::fstream::out);
     for (size_t i = 0; i < Curves.size(); ++i) {
         if (!Curves[i]->ForConstruction) {
             for (size_t j = 0; j <= 10; ++j) {

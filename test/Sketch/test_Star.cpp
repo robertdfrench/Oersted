@@ -399,7 +399,7 @@ TEST(STAR, CONSTRUCTION_LINES) {
     s.solve();
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>("./output/Star/construction_lines_0.csv");
+    s.save_as<SaveMethod::Rasterize>("./test/output/Star/", "construction_lines_0.csv");
 
     EXPECT_TRUE(s.size_contours() == 1);
     EXPECT_TRUE(s.contour(0)->size() == 4);

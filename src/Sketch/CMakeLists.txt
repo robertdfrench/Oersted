@@ -19,3 +19,5 @@ set(SOURCE_FILES
         ./src/Contour.h ./src/Contour.cpp)
 
 add_library(sketch STATIC ${SOURCE_FILES})
+
+target_link_libraries(sketch ${Boost_LIBRARIES})

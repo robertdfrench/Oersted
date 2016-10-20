@@ -10,8 +10,9 @@
 #include <algorithm>
 #include <numeric>
 #include <cfloat>
-
 #include "Eigen"
+
+#include <boost/filesystem.hpp>
 
 class Sketch;
 
@@ -174,7 +175,7 @@ public:
 
     // Save Functions
     template<SaveMethod S>
-    void save_as(std::string file_name) const;
+    void save_as(std::string path, std::string file_name) const;
 
 private:
     // SketchParameter

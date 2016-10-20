@@ -5,6 +5,9 @@ project(Oersted)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
 
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+include_directories(${Boost_INCLUDE_DIR})
+
 include_directories(./lib/ ./lib/Eigen/ ./lib/GoogleTest/googletest/include/gtest)
 add_subdirectory(./lib/)
 
