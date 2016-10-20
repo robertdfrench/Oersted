@@ -1,4 +1,4 @@
-#include "test_Sketch.h"
+#include "test_Sketch.hpp"
 
 TEST(LINESEGMENT, CONSTRUCTOR) {
     {   // ARGS::()

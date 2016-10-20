@@ -7,6 +7,7 @@
 #include <cmath>
 
 #define TOL 4e-8 //#TODO: Tolerance is limited by accuracy of tangency constraint
+#define SAVE_DIR "./test/output/"
 
 using namespace std;
 

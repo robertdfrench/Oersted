@@ -1,6 +1,6 @@
 #include <math.h>
 #include <tgmath.h>
-#include "test_Sketch.h"
+#include "test_Sketch.hpp"
 
 TEST(CIRCULARARC, CONSTRUCTOR) {
     { //ARGS::()

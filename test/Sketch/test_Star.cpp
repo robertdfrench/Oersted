@@ -1,4 +1,4 @@
-#include "test_Sketch.h"
+#include "test_Sketch.hpp"
 
 bool star_angle_sum_equals_2pi(std::vector<Star> &stars) {
     for (auto s = stars.begin(); s != stars.end(); ++s) {
@@ -399,7 +399,7 @@ TEST(STAR, CONSTRUCTION_LINES) {
     s.solve();
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>("./test/output/Star/", "construction_lines_0.csv");
+    s.save_as<SaveMethod::Rasterize>("./test/output/", "STAR__CONSTRUCTION_LINES.csv");
 
     EXPECT_TRUE(s.size_contours() == 1);
     EXPECT_TRUE(s.contour(0)->size() == 4);

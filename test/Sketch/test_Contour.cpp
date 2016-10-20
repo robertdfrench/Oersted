@@ -1,4 +1,4 @@
-#include "test_Sketch.h"
+#include "test_Sketch.hpp"
 
 TEST(CONTOUR, CCW_TRIANGLE) {
     Vertex v0{1.0, 0.0};
