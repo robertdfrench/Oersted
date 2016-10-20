@@ -10,13 +10,17 @@ set(SOURCE_FILES
             ./src/CircularArc.h ./src/CircularArc.cpp
 
         ./src/Constraint.h ./src/Constraint.cpp
+            ./src/Angle.h           ./src/Angle.cpp
+            ./src/Coincident.cpp    ./src/Coincident.h
+            ./src/Distance.cpp      ./src/Distance.h
+            ./src/Fixation.cpp      ./src/Fixation.h
         ./src/Pattern.h ./src/Pattern.cpp
 
         ./src/Branch.h ./src/Branch.cpp
         ./src/Star.h ./src/Star.cpp
         ./src/Constellation.h ./src/Constellation.cpp
 
-        ./src/Contour.h ./src/Contour.cpp)
+        ./src/Contour.h ./src/Contour.cpp src/Horizontal.cpp src/Horizontal.h src/Length.cpp src/Length.h src/Radius.cpp src/Radius.h src/Rotation.cpp src/Rotation.h src/Symmetry.cpp src/Symmetry.h src/Tangency.cpp src/Tangency.h src/Vertical.cpp src/Vertical.h)
 
 add_library(sketch STATIC ${SOURCE_FILES})
 

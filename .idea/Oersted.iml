@@ -10,28 +10,50 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/GoogleTest/googletest/cmake/internal_utils.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/CMakeLists.txt" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Branch.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Angle.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Coincident.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertical.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Angle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Radius.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Coincident.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Radius.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Horizontal.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertex.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Curve.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Tangency.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Rotation.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Branch.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Branch.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Length.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Symmetry.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constraint.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Length.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Constellation.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Fixation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Vertical.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Distance.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Symmetry.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Distance.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Star.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/LineSegment.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Fixation.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Sketch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Tangency.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Contour.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Pattern.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Rotation.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/Horizontal.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Sketch/src/CircularArc.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/include/Sketch.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Sketch/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/main.cpp" isTestSource="false" />

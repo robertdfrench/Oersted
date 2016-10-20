@@ -45,7 +45,7 @@ public:
     virtual bool on_segment(const Vertex *v) const final; // true if vertex is on curve segment
     virtual bool on_segment(const Vertex *v, const Vertex *origin, const double angle) const final;
 
-    // Curve-Curve Comparions
+    // Curve-Curve Comparison
     virtual bool is_identical(const Curve *c) const = 0; // true if (input curve) XOR (object curve) is a set with measure < tol
     virtual bool is_identical(const Curve *c, const Vertex *origin, const double angle) const = 0;
 
@@ -71,5 +71,8 @@ protected:
 
     virtual bool on_segment(const double x, const double y) const = 0;
 };
+
+#include "LineSegment.h"
+#include "CircularArc.h"
 
 #endif //OERSTED_CURVE_H

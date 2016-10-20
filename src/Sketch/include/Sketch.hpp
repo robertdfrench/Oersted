@@ -6,10 +6,9 @@
 #include "../src/Vertex.h"
 
 #include "../src/Curve.h"
-    #include "../src/LineSegment.h"
-    #include "../src/CircularArc.h"
 
 #include "../src/Constraint.h"
+
 #include "../src/Pattern.h"
 
 #include "../src/Branch.h"
