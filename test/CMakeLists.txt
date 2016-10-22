@@ -11,7 +11,8 @@ set(SOURCE_FILES
         Sketch/test_Star.cpp
         Sketch/test_Contour.cpp
         Sketch/test_Sketch.cpp
-        Sketch/test_Constraint.cpp)
+        Sketch/test_Constraint.cpp
+        Sketch/test_Pattern.cpp)
 
 add_executable(run_tests ${SOURCE_FILES})
 

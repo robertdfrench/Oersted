@@ -481,3 +481,24 @@ TEST(CIRCULARARC, METHOD_is_coincident) {
         EXPECT_FALSE(c0.is_coincident(&l0));
     }
 }
+
+TEST(CIRCULARARC, METHOD_split) {
+    Vertex v0{1.0, 0.0};
+    Vertex v1{0.0, 1.0};
+    Vertex vc{0.0, 0.0};
+
+    CircularArc c0{v0, v1, vc, 1.0};
+
+    Vertex *vs = new Vertex;
+
+    Curve *c1 = c0.split(vs, 0.5);
+
+    EXPECT_NEAR(M_SQRT1_2, vs->x(), TOL);
+    EXPECT_NEAR(M_SQRT1_2, vs->y(), TOL);
+
+    EXPECT_TRUE(c0.start() == &v0);
+    EXPECT_TRUE(c0.end() == vs);
+
+    EXPECT_TRUE(c1->start() == vs);
+    EXPECT_TRUE(c1->end() == &v1);
+}

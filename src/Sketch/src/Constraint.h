@@ -21,5 +21,4 @@ public:
 #include "Tangency.h"
 #include "Vertical.h"
 
-
 #endif //OERSTED_CONSTRAINT_H

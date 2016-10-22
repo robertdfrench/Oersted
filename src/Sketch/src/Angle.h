@@ -19,5 +19,4 @@ public:
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
 };
 
-
 #endif //OERSTED_ANGLE_H

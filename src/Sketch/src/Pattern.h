@@ -24,22 +24,7 @@ protected:
     std::vector<Constraint *> Constraints;
 };
 
-class MirrorCopy : public Pattern {
-public:
-    MirrorCopy(std::vector<const Curve *> &input, LineSegment *l);
-
-private:
-    LineSegment *SymmetryLine;
-};
-
-class RotateCopy : public Pattern {
-public:
-    RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies);
-
-private:
-    Vertex *Center;
-    double Angle;
-    size_t Copies;
-};
+#include "MirrorCopy.h"
+#include "RotateCopy.h"
 
 #endif //OERSTED_PATTERN_H

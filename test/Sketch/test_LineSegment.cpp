@@ -328,3 +328,22 @@ TEST(LINESEGMENT, METHOD_is_coincident) {
         EXPECT_FALSE(l.is_coincident(&c));
     }
 }
+
+TEST(LINESEGMENT, METHOD_split) {
+    Vertex v0{0.0, 0.0};
+    Vertex v1{1.0, 1.0};
+    LineSegment l0{v0, v1};
+
+    Vertex *vs = new Vertex;
+
+    Curve *l1 = l0.split(vs, 0.5);
+
+    EXPECT_NEAR(0.5, vs->x(), TOL);
+    EXPECT_NEAR(0.5, vs->y(), TOL);
+
+    EXPECT_TRUE(l0.start() == &v0);
+    EXPECT_TRUE(l0.end() == vs);
+
+    EXPECT_TRUE(l1->start() == vs);
+    EXPECT_TRUE(l1->end() == &v1);
+}
