@@ -12,8 +12,11 @@ set(SOURCE_FILES
         Sketch/test_Contour.cpp
         Sketch/test_Sketch.cpp
         Sketch/test_Constraint.cpp
-        Sketch/test_Pattern.cpp)
+        Sketch/test_Pattern.cpp
+
+        Mesh/test_Mesh.hpp
+        Mesh/test_Mesh.cpp)
 
 add_executable(run_tests ${SOURCE_FILES})
 
-target_link_libraries(run_tests gtest gtest_main sketch)
+target_link_libraries(run_tests gtest gtest_main sketch mesh)

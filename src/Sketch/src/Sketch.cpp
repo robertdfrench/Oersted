@@ -81,13 +81,13 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
         This is a stub for visualization
     */
 
-    boost::filesystem::path dir(path);
     if(!boost::filesystem::exists(path)) {
         boost::filesystem::create_directories(path);
     }
 
     std::fstream fs;
     fs.open(path + file_name, std::fstream::out);
+
     for (size_t i = 0; i < Curves.size(); ++i) {
         if (!Curves[i]->ForConstruction) {
             for (size_t j = 0; j <= 10; ++j) {
@@ -97,5 +97,6 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
             fs << "NaN" << "," << "NaN" << "\n";
         }
     }
+
     fs.close();
 }

@@ -1,5 +1,5 @@
-#ifndef SKETCH_HPP
-#define SKETCH_HPP
+#ifndef OERSTED_SKETCH_HPP
+#define OERSTED_SKETCH_HPP
 
 #include "../src/Sketch.h"
 
