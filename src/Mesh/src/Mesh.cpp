@@ -735,7 +735,7 @@ void Mesh::save_as(std::string path, std::string file_name) const {
         This is a stub for visualization
     */
 
-    if(!boost::filesystem::exists(path)) {
+    if (!boost::filesystem::exists(path)) {
         boost::filesystem::create_directories(path);
     }
 
@@ -788,8 +788,7 @@ void Mesh::refine_once() {
 void Mesh::refine_once(std::vector<size_t> index, std::vector<double> radii, std::vector<double> quality) {
     for (size_t i = 0; i < Triangles.size(); ++i) {
         size_t j = index[i];
-        if ((Triangles[j]->Mark) && ((radii[j] > MaximumElementSize) ||
-                                     (radii[j] > MinimumElementSize && quality[j] < MinimumElementQuality))) {
+        if ((Triangles[j]->Mark) && ((radii[j] > MaximumElementSize) || (radii[j] > MinimumElementSize && quality[j] < MinimumElementQuality))) {
             //Triangles[j]->insert_circumcenter(Points, Edges);
             insert_circumcenter(Triangles[j]);
         }
