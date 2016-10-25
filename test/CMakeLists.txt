@@ -15,7 +15,11 @@ set(SOURCE_FILES
         Sketch/test_Pattern.cpp
 
         Mesh/test_Mesh.hpp
-        Mesh/test_Mesh.cpp)
+        Mesh/test_Mesh.cpp
+
+        UseCases/test_UseCases.hpp
+        UseCases/test_Stator.cpp
+        UseCases/test_Rotor.cpp)
 
 add_executable(run_tests ${SOURCE_FILES})
 

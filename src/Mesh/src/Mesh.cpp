@@ -100,7 +100,7 @@ InsertPointResult Mesh::insert_point(const Point *vc, Edge *tri) {
     }
 
     // Test edges in current and adjacent triangles for encroachment
-    // These are the only possible edges that are encroached due to empy circumcircle property
+    // These are the only possible edges that are encroached due to empty circumcircle property
     std::vector<Edge *> test_edges;
     test_edges.reserve(9);
 
@@ -511,8 +511,7 @@ void Mesh::create_boundary_polygon() {
     Edges.reserve(Boundary->size());
     Points.reserve(Boundary->size());
     for (size_t i = 0; i != Boundary->size(); ++i) {
-        Edges.push_back(new Edge(Boundary->curve(i)->clone(), Boundary->orientation(
-                i))); //clone() to prevent alteration of input Contour when Edge is split
+        Edges.push_back(new Edge(Boundary->curve(i)->clone(), Boundary->orientation(i))); //clone() to prevent alteration of input Contour when Edge is split
         Points.push_back(Edges[i]->Node);
     }
 
