@@ -97,7 +97,7 @@ double CircularArc::arc_angle() const {
 Vertex CircularArc::point(double s) const {
     double a = s_to_a(s);
 
-    return Vertex{Center->x() + radius() * cos(a), Center->y() + radius() * sin(a)};
+    return Vertex{center()->x() + radius() * cos(a), center()->y() + radius() * sin(a)};
 }
 
 Vertex CircularArc::tangent(double s, bool orientation) const {
@@ -149,15 +149,41 @@ double CircularArc::da(double s, bool orientation) const {
     }
 }
 
-double CircularArc::supremum() const {
-    double sup = std::fmax(Start->hypot(), End->hypot());
-    double s = a_to_s(Center->atan());
+std::pair<double, double> CircularArc::supremum() const {
+    double x = start()->x();
+    double y = start()->y();
+    double sup = sqrt(x * x + y * y);
+    double par = 0.0;
 
-    if (s > 0 && s < 1) {
-        sup = std::fmax(sup, point(s).hypot());
+    double xx = end()->x();
+    double yy = end()->y();
+    double val = sqrt(xx * xx + yy * yy);
+    if (val > sup) {
+        x = xx;
+        y = yy;
+        sup = val;
+        par = 1.0;
     }
 
-    return std::move(sup);
+    double s = a_to_s(center()->atan());
+    if (s > 0.0 && s < 1.0) {
+        Vertex v = point(s);
+        xx = v.x();
+        yy = v.y();
+        val = sqrt(xx * xx + yy * yy);
+
+        if(val > sup) {
+            x = xx;
+            y = yy;
+            sup = val;
+            par = s;
+        }
+    }
+
+    double ang = s_to_a(par);
+    double cross = abs(x * cos(ang) + y * sin(ang)) / sup; // cross product of vector from origin to point and tangent vector
+
+    return std::pair<double,double>(sup, cross);
 }
 
 bool CircularArc::on_manifold(const double x, const double y) const {

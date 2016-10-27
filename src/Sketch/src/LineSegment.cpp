@@ -32,8 +32,31 @@ double LineSegment::a(double s, bool orientation) const {
     }
 };
 
-double LineSegment::supremum() const {
-    return std::fmax(start()->hypot(), end()->hypot());
+std::pair<double, double> LineSegment::supremum() const {
+    double xs = start()->x();
+    double ys = start()->y();
+    double ls = sqrt(xs * xs + ys * ys);
+
+    double xe = end()->x();
+    double ye = end()->y();
+    double le = sqrt(xe * xe + ye * ye);
+
+    double dx = xe - xs;
+    double dy = ye - ys;
+    double dl = sqrt(dx * dx + dy * dy);
+    dx /= dl;
+    dy /= dl;
+
+    double sup, cross;
+    if (ls >= le) {
+        sup = ls;
+        cross = abs(xs * dy - ys * dx) / ls;
+    } else {
+        sup = le;
+        cross = abs(xe * dy - ye * dx) / le;
+    }
+
+    return std::pair<double,double>(sup,cross);
 };
 
 bool LineSegment::on_manifold(const double x, const double y) const {

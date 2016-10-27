@@ -432,7 +432,7 @@ TEST(Constraint, Distance_LineSegment_midpoint_intersection) {
 
     double dot = abs(dx0 * dx1 + dy0 * dy1);
 
-    EXPECT_NEAR(1.0, dot, TOL); // #TODO: Fails because lines intersect at midpoint
+    EXPECT_NEAR(1.0, dot, TOL); // TODO: Fails because lines intersect at midpoint
 }
 
 TEST(Constraint, Distance_CircularArc_exterior) {

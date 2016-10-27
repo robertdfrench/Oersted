@@ -136,8 +136,8 @@ TEST(CONTOUR, IMPLICIT_SELF_INTERSECTION_FAILURE) {
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since contour is self intersecting
 
     /*
-        #TODO: Use nurbs representation to approximate potential intersection point.
-        #TODO: Use newton's method to solve intersection problem with the generated initial guesses.
+        TODO: Use nurbs representation to approximate potential intersection point.
+        TODO: Use newton's method to solve intersection problem with the generated initial guesses.
     */
 }
 

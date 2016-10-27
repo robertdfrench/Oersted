@@ -50,6 +50,7 @@ void Sketch::solve() {
 bool Sketch::build() {
     Constellation c = Constellation(this);
 
+
     bool success = c.boundary(Boundary);
 
     Contours.resize(0);

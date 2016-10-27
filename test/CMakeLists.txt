@@ -8,9 +8,12 @@ set(SOURCE_FILES
         Sketch/test_Vertex.cpp
         Sketch/test_LineSegment.cpp
         Sketch/test_CircularArc.cpp
+        Sketch/test_Curve.cpp
+
         Sketch/test_Star.cpp
         Sketch/test_Contour.cpp
         Sketch/test_Sketch.cpp
+
         Sketch/test_Constraint.cpp
         Sketch/test_Pattern.cpp
 

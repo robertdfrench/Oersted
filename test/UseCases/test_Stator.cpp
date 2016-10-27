@@ -35,13 +35,13 @@ TEST(STATOR, 0) {
 
     //std::vector<const Curve*> mv{ &l0,&l1,&l2,&l3,&c0,&c1,&c2,&c3 };
     std::vector<const Curve*> mv{&l0, &l3, &c0, &c1, &c2, &c3};
-    // l1.ForConstruction = true; //TODO: Fixes segfault (#1) failure but should not be necessary, problem is related to MirrorCopy mirror line l1
     MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mv, &l1);
 
     sketch.solve();
 
     sketch.save_as<SaveMethod::Rasterize>(SAVE_DIR, "stator0d0.csv");
 
+    EXPECT_TRUE(sketch.build());
     EXPECT_EQ(sketch.boundary()->size(), 8);
 
     Fixation &f = sketch.new_element<Fixation>(origin);
@@ -66,9 +66,8 @@ TEST(STATOR, 0) {
 
     sketch.save_as<SaveMethod::Rasterize>(SAVE_DIR, "stator0d1.csv");
 
+    EXPECT_TRUE(sketch.build());
     EXPECT_EQ(sketch.boundary()->size(), 8);
-
-    sketch.build();
 
     Mesh mesh{sketch};
 
@@ -76,7 +75,6 @@ TEST(STATOR, 0) {
     mesh.MaximumElementSize = 2.5;
     mesh.MinimumElementSize = 0.25;
 
-    /* TODO: Segfault (#1)
     mesh.create();
 
     mesh.save_as(SAVE_DIR, "stator_0.csv");
@@ -84,5 +82,4 @@ TEST(STATOR, 0) {
     mesh.refine();
 
     mesh.save_as(SAVE_DIR, "stator_0_refine.csv");
-    */
 }

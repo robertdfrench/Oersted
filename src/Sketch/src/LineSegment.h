@@ -54,7 +54,7 @@ public:
 
     double da(double s, bool orientation) const override { return 0.0; };
 
-    double supremum() const override;
+    std::pair<double, double> supremum() const override;
 
     // Curve-Vertex Comparison
     using Curve::on_manifold;

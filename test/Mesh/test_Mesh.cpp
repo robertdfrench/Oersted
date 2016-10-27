@@ -704,7 +704,8 @@ TEST(MESH__LOCATE_TRIANGLE, TRIANGULAR_DOMAIN) {
     LineSegment &l2 = s.new_element<LineSegment>(v2, v0);
 
     s.solve();
-    s.build();
+    EXPECT_TRUE(s.build());
+
     /*
     std::vector<const Curve*> cc{ &l0,&l1,&l2 };
     Contour cont{ cc };

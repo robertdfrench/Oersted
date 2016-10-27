@@ -14,6 +14,8 @@
 
 #include <boost/filesystem.hpp>
 
+using namespace std;
+
 class Sketch;
 
 // Sketch Parameter

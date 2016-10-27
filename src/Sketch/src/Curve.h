@@ -33,10 +33,10 @@ public:
     virtual double length() const = 0; // length of segment between end points
     virtual double area() const = 0;    // area of segment between end points
 
-    virtual double a(double s, bool orientation) const = 0;        // tangent angle
+    virtual double a(double s, bool orientation) const = 0;     // tangent angle
     virtual double da(double s, bool orientation) const = 0;    // derivative of tangent angle per unit length
 
-    virtual double supremum() const = 0;    // maximum length of vector between origin and point on curve
+    virtual std::pair<double, double> supremum() const = 0;     // maximum length of vector between origin and point on curve
 
     // Curve-Vertex Comparison
     virtual bool on_manifold(const Vertex *v) const final; // true if vertex is on manifold defined by curve
