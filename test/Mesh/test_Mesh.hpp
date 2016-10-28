@@ -51,7 +51,7 @@ bool edges_are_valid(Mesh &m) {
     return true;
 }
 
-void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
+void forced_refinement(Mesh &m, string file_name, size_t num_refines) {
     double minq = m.MinimumElementQuality;
     double mine = m.MinimumElementSize;
     double maxe = m.MaximumElementSize;
@@ -64,13 +64,10 @@ void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
         try {
             m.refine_once();
         }
-        catch (const std::exception except) {
+        catch (const exception except) {
             throw;
         }
-
-        std::stringstream name;
-        name << file_name << i << ".csv";
-        m.save_as(SAVE_DIR, name.str());
+        m.save_as(SAVE_DIR, file_name + "_" + to_string(i));
 
         edges_are_valid(m);
         edges_are_optimal(m);
@@ -81,8 +78,8 @@ void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
     m.MaximumElementSize = maxe;
 }
 
-std::vector<size_t> map_verticies_to_points(std::vector<Vertex> verts, Mesh m) {
-    std::vector<size_t> index;
+vector<size_t> map_verticies_to_points(vector<Vertex> verts, Mesh m) {
+    vector<size_t> index;
     index.reserve(verts.size());
 
     for (size_t i = 0;i != verts.size();++i) {
@@ -95,7 +92,7 @@ std::vector<size_t> map_verticies_to_points(std::vector<Vertex> verts, Mesh m) {
         }
     }
 
-    return std::move(index);
+    return move(index);
 }
 
 #endif //OERSTED_TEST_MESH_HPP

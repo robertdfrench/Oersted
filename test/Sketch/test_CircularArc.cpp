@@ -2,7 +2,7 @@
 #include <tgmath.h>
 #include "test_Sketch.hpp"
 
-TEST(CIRCULARARC, CONSTRUCTOR) {
+TEST(CircularArc, constructor) {
     { //ARGS::()
         EXPECT_NO_THROW(CircularArc c);
     }
@@ -13,7 +13,7 @@ TEST(CIRCULARARC, CONSTRUCTOR) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_point) {
+TEST(CircularArc, point) {
     {
         double r = 1.0;
         double a0 = -M_PI_2;
@@ -55,7 +55,7 @@ TEST(CIRCULARARC, METHOD_point) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_tangent) {
+TEST(CircularArc, tangent) {
     {
         double r = 1.0;
         double a0 = -M_PI_2;
@@ -105,7 +105,7 @@ TEST(CIRCULARARC, METHOD_tangent) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_a) {
+TEST(CircularArc, a) {
     {
         double r = 1.0;
         double a0 = -M_PI_2;
@@ -171,7 +171,7 @@ TEST(CIRCULARARC, METHOD_a) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_da) {
+TEST(CircularArc, da) {
     {
         double r = 1.0;
         double a0 = -M_PI_2;
@@ -217,7 +217,7 @@ TEST(CIRCULARARC, METHOD_da) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_on_manifold) {
+TEST(CircularArc, on_manifold) {
     { //ARGS::(Vertex)
         Sketch s;
 
@@ -282,7 +282,7 @@ TEST(CIRCULARARC, METHOD_on_manifold) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_on_segment) {
+TEST(CircularARc, on_segment) {
     { //ARGS::(Vertex)
         Sketch s;
 
@@ -356,7 +356,7 @@ TEST(CIRCULARARC, METHOD_on_segment) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_is_identical) {
+TEST(CircularArc, is_identical) {
     {   //ARGS::(Vertex)
         Sketch s;
 
@@ -443,7 +443,7 @@ TEST(CIRCULARARC, METHOD_is_identical) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_is_coincident) {
+TEST(CircularArc, is_coincident) {
     {   // ARGS::(CircularArc)
         Sketch s;
 
@@ -482,23 +482,25 @@ TEST(CIRCULARARC, METHOD_is_coincident) {
     }
 }
 
-TEST(CIRCULARARC, METHOD_split) {
-    Vertex v0{1.0, 0.0};
-    Vertex v1{0.0, 1.0};
-    Vertex vc{0.0, 0.0};
+TEST(CircularArc, split) {
+    {
+        Vertex v0{1.0, 0.0};
+        Vertex v1{0.0, 1.0};
+        Vertex vc{0.0, 0.0};
 
-    CircularArc c0{v0, v1, vc, 1.0};
+        CircularArc c0{v0, v1, vc, 1.0};
 
-    Vertex *vs = new Vertex;
+        Vertex *vs = new Vertex;
 
-    Curve *c1 = c0.split(vs, 0.5);
+        Curve *c1 = c0.split(vs, 0.5);
 
-    EXPECT_NEAR(M_SQRT1_2, vs->x(), TOL);
-    EXPECT_NEAR(M_SQRT1_2, vs->y(), TOL);
+        EXPECT_NEAR(M_SQRT1_2, vs->x(), TOL);
+        EXPECT_NEAR(M_SQRT1_2, vs->y(), TOL);
 
-    EXPECT_TRUE(c0.start() == &v0);
-    EXPECT_TRUE(c0.end() == vs);
+        EXPECT_TRUE(c0.start() == &v0);
+        EXPECT_TRUE(c0.end() == vs);
 
-    EXPECT_TRUE(c1->start() == vs);
-    EXPECT_TRUE(c1->end() == &v1);
+        EXPECT_TRUE(c1->start() == vs);
+        EXPECT_TRUE(c1->end() == &v1);
+    }
 }

@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-bool star_angle_sum_equals_2pi(std::vector<Star> &stars) {
+bool star_angle_sum_equals_2pi(vector<Star> &stars) {
     for (auto s = stars.begin(); s != stars.end(); ++s) {
         double angle = 0.0;
         for (auto b = s->begin(); b != s->end(); ++b) {
@@ -12,7 +12,7 @@ bool star_angle_sum_equals_2pi(std::vector<Star> &stars) {
     return true;
 }
 
-TEST(STAR, SUITE_0) {
+TEST(Star, Suite_0) {
     Sketch sketch;
     Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
     Vertex &v1 = sketch.new_element<Vertex>(1.0, 1.0);
@@ -66,7 +66,7 @@ TEST(STAR, SUITE_0) {
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
 }
 
-TEST(STAR, SUITE_1) {
+TEST(Star, Suite_1) {
     Sketch sketch;
 
     Vertex &vs = sketch.new_element<Vertex>(0.0, 1.0);
@@ -114,7 +114,7 @@ TEST(STAR, SUITE_1) {
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
 }
 
-TEST(STAR, SUITE_2) {
+TEST(Star, Suite_2) {
     Sketch sketch;
 
     Vertex &vs = sketch.new_element<Vertex>(M_SQRT1_2, M_SQRT1_2);
@@ -172,7 +172,7 @@ TEST(STAR, SUITE_2) {
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
 }
 
-TEST(STAR, FIND_CLOSED_CONTOUR_0) {
+TEST(Star, find_closed_contour_0) {
     Sketch sketch;
     Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
     Vertex &v1 = sketch.new_element<Vertex>(1.0, 0.0);
@@ -198,7 +198,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_0) {
 
     // Manual contour creation
     {
-        std::vector<Star> stars;
+        vector<Star> stars;
 
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
@@ -222,7 +222,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_0) {
     }
 }
 
-TEST(STAR, FIND_CLOSED_CONTOUR_1) {
+TEST(Star, find_closed_contour_1) {
     Sketch sketch;
 
     Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
@@ -240,7 +240,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_1) {
 
     // Manual contour construction
     {
-        std::vector<Star> stars;
+        vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
         stars.push_back(Star{&v2, &sketch});
@@ -263,7 +263,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_1) {
     }
 }
 
-TEST(STAR, FIND_CLOSED_CONTOUR_2) {
+TEST(Star, find_closed_contour_2) {
     Sketch sketch;
 
     Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
@@ -284,7 +284,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_2) {
 
     // Manual contour construction
     {
-        std::vector<Star> stars;
+        vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
         stars.push_back(Star{&v2, &sketch});
@@ -339,7 +339,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_2) {
     }
 }
 
-TEST(STAR, FIND_CLOSED_CONTOUR_3) {
+TEST(Star, find_closed_contour_3) {
     /*
         Test contour with only two boundary curves
     */
@@ -354,7 +354,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_3) {
 
     // Manual contour construction
     {
-        std::vector<Star> stars;
+        vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
 
@@ -377,7 +377,7 @@ TEST(STAR, FIND_CLOSED_CONTOUR_3) {
     }
 }
 
-TEST(STAR, CONSTRUCTION_LINES) {
+TEST(Star, with_construction_lines) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -395,7 +395,7 @@ TEST(STAR, CONSTRUCTION_LINES) {
     s.solve();
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>("./test/output/", "STAR__CONSTRUCTION_LINES.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Star__with_construction_lines");
 
     EXPECT_TRUE(s.size_contours() == 1);
     EXPECT_TRUE(s.contour(0)->size() == 4);

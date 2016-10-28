@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-TEST(Curve, Supremum) {
+TEST(Curve, supremum) {
     Sketch s;
 
     Vertex &origin = s.new_element<Vertex>(0.0, 0.0);
@@ -21,8 +21,8 @@ TEST(Curve, Supremum) {
     Coincident<LineSegment> &coin0 = s.new_element<Coincident<LineSegment>>(origin, l0);
     Coincident<LineSegment> &coin1 = s.new_element<Coincident<LineSegment>>(origin, l1);
 
-    std::pair<double,double> sc0 = c0.supremum();
-    std::pair<double,double> sl0 = l0.supremum();
+    pair<double,double> sc0 = c0.supremum();
+    pair<double,double> sl0 = l0.supremum();
 
     EXPECT_GT(sc0, sl0);
 

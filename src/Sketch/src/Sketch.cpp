@@ -87,7 +87,7 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
     }
 
     std::fstream fs;
-    fs.open(path + file_name, std::fstream::out);
+    fs.open(path + file_name + ".oesk", std::fstream::out);
 
     for (size_t i = 0; i < Curves.size(); ++i) {
         if (!Curves[i]->ForConstruction) {

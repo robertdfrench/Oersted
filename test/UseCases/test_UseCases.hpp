@@ -5,4 +5,7 @@
 #include "Mesh.hpp"
 #include "gtest.h"
 
+#define SDIR "./test/output/UseCases/sketch/"
+#define MDIR "./test/output/UseCases/mesh/"
+
 #endif //OERSTED_TEST_USECASES_HPP

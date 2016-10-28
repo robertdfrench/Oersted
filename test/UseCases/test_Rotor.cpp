@@ -1,8 +1,6 @@
 #include "test_UseCases.hpp"
 
-#define SAVE_DIR "./test/output/UseCases/Rotor/"
-
-TEST(ROTOR, 0) {
+TEST(Rotor, 0) {
     Sketch s;
 
     double ri{25.0};
@@ -42,7 +40,7 @@ TEST(ROTOR, 0) {
 
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "rotor_0d0.csv");
+    s.save_as<SaveMethod::Rasterize>(SDIR, "rotor_0");
 
     Mesh m{s};
     m.MaximumElementSize = 2.5;
@@ -51,14 +49,14 @@ TEST(ROTOR, 0) {
 
     m.create();
 
-    m.save_as(SAVE_DIR, "rotor_0_mesh.csv");
+    m.save_as(MDIR, "rotor0");
 
     m.refine();
 
-    m.save_as(SAVE_DIR, "rotor_0_mesh_refine.csv");
+    m.save_as(MDIR, "rotor0_refined");
 }
 
-TEST(ROTOR, CIRCULAR_BARRIER_SYNCREL) {
+TEST(Rotor, Circular_Barrier_Syncrel) {
     Sketch s;
 
     size_t Np = 8;
@@ -133,7 +131,7 @@ TEST(ROTOR, CIRCULAR_BARRIER_SYNCREL) {
 
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "rotor_1_circular_barrier_syncrel.csv");
+    s.save_as<SaveMethod::Rasterize>(SDIR, "rotor_circular_barrier_syncrel");
 
     // Mesh
     Mesh m{s};
@@ -143,9 +141,9 @@ TEST(ROTOR, CIRCULAR_BARRIER_SYNCREL) {
 
     m.create();
 
-    m.save_as(SAVE_DIR, "rotor_1_circular_barrier_syncrel_mesh.csv");
+    m.save_as(MDIR, "rotor_circular_barrier_syncrel");
 
     m.refine();
 
-    m.save_as(SAVE_DIR, "rotor_1_circular_barrier_syncrel_mesh_refine.csv");
+    m.save_as(MDIR, "rotor_circular_barrier_syncrel_refined");
 }

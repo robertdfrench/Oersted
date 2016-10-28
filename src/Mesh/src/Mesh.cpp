@@ -739,7 +739,7 @@ void Mesh::save_as(std::string path, std::string file_name) const {
     }
 
     std::fstream fs;
-    fs.open(path + file_name, std::fstream::out);
+    fs.open(path + file_name + ".oeme", std::fstream::out);
 
     for (size_t i = 0; i < Edges.size(); i++) {
         const Point *v0 = Edges[i]->Node;

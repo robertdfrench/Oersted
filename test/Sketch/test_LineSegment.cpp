@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-TEST(LINESEGMENT, CONSTRUCTOR) {
+TEST(LineSegment, constructor) {
     {   // ARGS::()
         EXPECT_NO_THROW(LineSegment l);
     }
@@ -11,14 +11,14 @@ TEST(LINESEGMENT, CONSTRUCTOR) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_length) {
+TEST(LineSegment, length) {
     Vertex v0{3.14159, 2.7183};
     Vertex v1{6.14159, 6.7183};
     LineSegment line{v0, v1};
     EXPECT_NEAR(5.0, line.length(), TOL);
 }
 
-TEST(LINESEGMENT, METHOD_point) {
+TEST(LineSegment, point) {
     Vertex v0{-1.0, 1.0};
     Vertex v1{2.0, -3.0};
 
@@ -33,7 +33,7 @@ TEST(LINESEGMENT, METHOD_point) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_tangent) {
+TEST(LineSegment, tangent) {
     Vertex v0{-1.0, 1.0};
     Vertex v1{2.0, -3.0};
 
@@ -52,7 +52,7 @@ TEST(LINESEGMENT, METHOD_tangent) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_a) {
+TEST(LineSegment, a) {
     Vertex v0{-1.0, 1.0};
     Vertex v1{2.0, -3.0};
 
@@ -69,7 +69,7 @@ TEST(LINESEGMENT, METHOD_a) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_da) {
+TEST(LineSegment, da) {
     Vertex v0{-1.0, 1.0};
     Vertex v1{2.0, -3.0};
 
@@ -86,7 +86,7 @@ TEST(LINESEGMENT, METHOD_da) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_on_manifold) {
+TEST(LineSegment, on_manifold) {
     {   //ARGS::(Vertex)
         Sketch s;
 
@@ -147,7 +147,7 @@ TEST(LINESEGMENT, METHOD_on_manifold) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_on_segment) {
+TEST(LineSegment, on_segment) {
     {   // ARGS::(Vertex)
         Sketch s;
 
@@ -200,7 +200,7 @@ TEST(LINESEGMENT, METHOD_on_segment) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_is_identical) {
+TEST(LineSegment, is_identical) {
     {   // ARGS::(LineSegment)
         Sketch s;
 
@@ -291,7 +291,7 @@ TEST(LINESEGMENT, METHOD_is_identical) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_is_coincident) {
+TEST(LineSegment, s_coincident) {
     {   // ARGS::(LineSegment)
         Sketch s;
 
@@ -329,7 +329,7 @@ TEST(LINESEGMENT, METHOD_is_coincident) {
     }
 }
 
-TEST(LINESEGMENT, METHOD_split) {
+TEST(LineSegment, split) {
     Vertex v0{0.0, 0.0};
     Vertex v1{1.0, 1.0};
     LineSegment l0{v0, v1};

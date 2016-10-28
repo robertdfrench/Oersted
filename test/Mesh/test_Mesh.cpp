@@ -1,6 +1,6 @@
 #include "test_Mesh.hpp"
 
-TEST(MESH__CREATE, TRIANGLE_DOMAIN) {
+TEST(Mesh, create__triangle_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
@@ -17,7 +17,7 @@ TEST(MESH__CREATE, TRIANGLE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "triangle_domain.csv");
+    m.save_as(SAVE_DIR, "triangle_domain");
 
     std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2}, m);
 
@@ -84,7 +84,7 @@ TEST(MESH__CREATE, TRIANGLE_DOMAIN) {
     forced_refinement(m, "triangle_domain_refine_loop", 7);
 }
 
-TEST(MESH__CREATE, SQUARE_DOMAIN) {
+TEST(Mesh, create__square_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -103,7 +103,7 @@ TEST(MESH__CREATE, SQUARE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "square_domain.csv");
+    m.save_as(SAVE_DIR, "square_domain");
 
     // Test number of verticies, edges, triangles
     {
@@ -165,7 +165,7 @@ TEST(MESH__CREATE, SQUARE_DOMAIN) {
     forced_refinement(m, "square_domain_refine_loop", 7);
 }
 
-TEST(MESH__CREATE, NARROW_DIAMOND_DOMAIN) {
+TEST(Mesh, create__narrow_diamond_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
@@ -184,7 +184,7 @@ TEST(MESH__CREATE, NARROW_DIAMOND_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "narrow_diamond_domain.csv");
+    m.save_as(SAVE_DIR, "narrow_diamond_domain");
 
     // Test number of verticies, edges, triangles
     {
@@ -240,7 +240,7 @@ TEST(MESH__CREATE, NARROW_DIAMOND_DOMAIN) {
     }
 }
 
-TEST(MESH__CREATE, NARROW_RECTANGLE_DOMAIN) {
+TEST(Mesh, create__narrow_rectangle_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(5.0, 0.0);
@@ -261,7 +261,7 @@ TEST(MESH__CREATE, NARROW_RECTANGLE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "narrow_rectangle_domain.csv");
+    m.save_as(SAVE_DIR, "narrow_rectangle_domain");
 
     // Test number of verticies, edges, triangles
     {
@@ -305,7 +305,7 @@ TEST(MESH__CREATE, NARROW_RECTANGLE_DOMAIN) {
     }
 }
 
-TEST(MESH__CREATE, HALF_CIRCLE_DOMAIN) {
+TEST(Mesh, create__half_circle_domain) {
     Sketch s;
 
     Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
@@ -321,7 +321,7 @@ TEST(MESH__CREATE, HALF_CIRCLE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "half_circle_domain.csv");
+    m.save_as(SAVE_DIR, "half_circle_domain");
 
     // Test number of verticies, edges, triangles
     {
@@ -346,7 +346,7 @@ TEST(MESH__CREATE, HALF_CIRCLE_DOMAIN) {
     }
 }
 
-TEST(MESH__CREATE, HORSESHOE_DOMAIN) {
+TEST(Mesh, create__horseshoe_domain) {
     Sketch s;
 
     Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
@@ -366,10 +366,9 @@ TEST(MESH__CREATE, HORSESHOE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "horseshoe_domain.csv");
+    m.save_as(SAVE_DIR, "horseshoe_domain");
 
-    // Test triangles, possibly redundant
-    {
+    { // Test triangles, possibly redundant
         for (size_t i = 0; i < m.size_edges(); ++i) {
             EXPECT_TRUE(m.edge(i)->next()->prev() == m.edge(i));
             EXPECT_TRUE(m.edge(i)->next()->next()->prev()->prev() == m.edge(i));
@@ -385,19 +384,14 @@ TEST(MESH__CREATE, HORSESHOE_DOMAIN) {
         }
     }
 
-    // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
-    // Forced Refinement
-    {
-        forced_refinement(m, "horseshoe_domain_refine_loop", 7);
-    }
+    forced_refinement(m, "horseshoe_domain_refine_loop", 7);
+
 }
 
-TEST(MESH__CREATE, I_SHAPED_DOMAIN) {
+TEST(Mesh, create__I_shaped_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -428,7 +422,7 @@ TEST(MESH__CREATE, I_SHAPED_DOMAIN) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "i_shaped_domain.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "i_shaped_domain");
 
     s.build();
 
@@ -438,9 +432,9 @@ TEST(MESH__CREATE, I_SHAPED_DOMAIN) {
 
     m.create();
 
-    m.save_as(SAVE_DIR, "i_shaped_domain_mesh.csv");
+    m.save_as(SAVE_DIR, "i_shaped_domain_mesh");
 
-    // Test validitity, optimality
+    // Test validity, optimality
     {
         edges_are_valid(m);
         edges_are_optimal(m);
@@ -452,7 +446,7 @@ TEST(MESH__CREATE, I_SHAPED_DOMAIN) {
     }
 }
 
-TEST(MESH__CREATE, CORNER_SQUARE_DOMAIN) {
+TEST(Mesh, create__corner_square_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -479,7 +473,7 @@ TEST(MESH__CREATE, CORNER_SQUARE_DOMAIN) {
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "corner_square_domain.csv");
+    m.save_as(SAVE_DIR, "corner_square_domain");
 
     // Test number of vertices, edges, triangles
     {
@@ -505,7 +499,7 @@ TEST(MESH__CREATE, CORNER_SQUARE_DOMAIN) {
     }
 }
 
-TEST(MESH__CREATE, SQUARE_IN_SQUARE_DOMAIN) {
+TEST(Mesh, create__square_in_square_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -531,7 +525,7 @@ TEST(MESH__CREATE, SQUARE_IN_SQUARE_DOMAIN) {
     s.solve();
     s.build();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "square_in_square_domain.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "square_in_square_domain");
 
     Mesh m{s};
     m.MaximumElementSize = 0.1;
@@ -540,17 +534,17 @@ TEST(MESH__CREATE, SQUARE_IN_SQUARE_DOMAIN) {
 
     m.create();
 
-    m.save_as(SAVE_DIR, "square_in_square_domain_mesh.csv");
+    m.save_as(SAVE_DIR, "square_in_square_domain_mesh");
 
     edges_are_valid(m);
     edges_are_optimal(m);
 
     m.refine();
 
-    m.save_as(SAVE_DIR, "square_in_square_domain_mesh_refine.csv");
+    m.save_as(SAVE_DIR, "square_in_square_domain_mesh_refine");
 }
 
-TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_TRUE) {
+TEST(Edge, are_intersecting__nonparallel_true) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.0, 1.0};
@@ -566,7 +560,7 @@ TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_TRUE) {
     EXPECT_TRUE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE) {
+TEST(Edge, are_intersecting__nonparallel_false) {
     Point v0{1.1, 1.1};
     Point v1{2.0, 2.0};
     Point v2{0.0, 1.0};
@@ -582,7 +576,7 @@ TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE_SHARED_VERTEX_CORNER_CASE) {
+TEST(Edge, are_intersecting__nonparallel_false_shared_vertex) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.0, 2.0};
@@ -597,7 +591,7 @@ TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE_SHARED_VERTEX_CORNER_CASE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE_COINCIDENT_VERTEX_CORNER_CASE) {
+TEST(Edge, are_intersecting__nonparallel_false_coincident_vertex) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.0, 1.0};
@@ -613,7 +607,7 @@ TEST(EDGE__ARE_INTERSECTING, NONPARALLEL_FALSE_COINCIDENT_VERTEX_CORNER_CASE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, PARALLLEL_SHADED_FALSE) {
+TEST(Edge, are_intersecting__parallel_shaded_false) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.0, 0.5};
@@ -629,7 +623,7 @@ TEST(EDGE__ARE_INTERSECTING, PARALLLEL_SHADED_FALSE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, PARALLEL_NONSHADED_FALSE) {
+TEST(Edge, are_intersecting__parallel_nonshaded_false) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.0, 1.5};
@@ -645,7 +639,7 @@ TEST(EDGE__ARE_INTERSECTING, PARALLEL_NONSHADED_FALSE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, COLINEAR_TRUE) {
+TEST(Edge, are_intersecting__colinear_true) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{0.5, 0.5};
@@ -661,7 +655,7 @@ TEST(EDGE__ARE_INTERSECTING, COLINEAR_TRUE) {
     EXPECT_TRUE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, COLINEAR_FALSE) {
+TEST(Edge, are_intersecting__colinear_false) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{1.5, 1.5};
@@ -677,7 +671,7 @@ TEST(EDGE__ARE_INTERSECTING, COLINEAR_FALSE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(EDGE__ARE_INTERSECTING, COLINEAR_FALSE_SHARED_VERTEX_CORNER_CASE) {
+TEST(Edge, are_intersecting__colinear_false_shared_vertex) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
     Point v2{2.0, 2.0};
@@ -692,7 +686,7 @@ TEST(EDGE__ARE_INTERSECTING, COLINEAR_FALSE_SHARED_VERTEX_CORNER_CASE) {
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
 
-TEST(MESH__LOCATE_TRIANGLE, TRIANGULAR_DOMAIN) {
+TEST(Mesh, locate_triangle__triangular_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -769,7 +763,7 @@ TEST(MESH__LOCATE_TRIANGLE, TRIANGULAR_DOMAIN) {
     }
 }
 
-TEST(MESH__LOCATE_TRIANGLE, SQUARE_DOMAIN) {
+TEST(Mesh, locate_triange__square_domain) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);

@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-TEST(CONTOUR, CCW_TRIANGLE) {
+TEST(Contour, Triangle_CCW) {
     Vertex v0{1.0, 0.0};
     Vertex v1{1.0, 1.0};
     Vertex v2{0.0, 1.0};
@@ -9,7 +9,7 @@ TEST(CONTOUR, CCW_TRIANGLE) {
     LineSegment l1{v1, v2};
     LineSegment l2{v2, v0};
 
-    std::vector<const Curve *> vc(3);
+    vector<const Curve *> vc(3);
     vc[0] = &l0;
     vc[1] = &l1;
     vc[2] = &l2;
@@ -27,7 +27,7 @@ TEST(CONTOUR, CCW_TRIANGLE) {
     EXPECT_TRUE(cont == cont);
 }
 
-TEST(CONTOUR, CW_TRIANGLE) {
+TEST(Contour, Triangle_CW) {
     Vertex v0{1.0, 0.0};
     Vertex v1{1.0, 1.0};
     Vertex v2{0.0, 1.0};
@@ -36,7 +36,7 @@ TEST(CONTOUR, CW_TRIANGLE) {
     LineSegment l1{v2, v1};
     LineSegment l2{v0, v2};
 
-    std::vector<const Curve *> vc(3);
+    vector<const Curve *> vc(3);
     vc[0] = &l0;
     vc[1] = &l1;
     vc[2] = &l2;
@@ -54,7 +54,7 @@ TEST(CONTOUR, CW_TRIANGLE) {
     EXPECT_TRUE(cont == cont);
 }
 
-TEST(CONTOUR, RANDOM_TRIANGLE) {
+TEST(Contour, Triangle) {
     Vertex v0{1.0, 0.0};
     Vertex v1{1.0, 1.0};
     Vertex v2{0.0, 1.0};
@@ -63,7 +63,7 @@ TEST(CONTOUR, RANDOM_TRIANGLE) {
     LineSegment l1{v1, v2};
     LineSegment l2{v2, v0};
 
-    std::vector<const Curve *> vc(3);
+    vector<const Curve *> vc(3);
     vc[0] = &l2;
     vc[1] = &l0;
     vc[2] = &l1;
@@ -81,17 +81,17 @@ TEST(CONTOUR, RANDOM_TRIANGLE) {
     EXPECT_TRUE(cont == cont);
 }
 
-TEST(CONTOUR, NONCLOSED_FAILURE) {
+TEST(Contour, Nonclosed_Failure) {
     Vertex v0{0.0, 0.0};
     Vertex v1{1.0, 1.0};
     LineSegment l0{v0, v1};
-    std::vector<const Curve *> c(1);
+    vector<const Curve *> c(1);
     c[0] = &l0;
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since the contour is not closed
 }
 
-TEST(CONTOUR, DISJOINT_FAILURE) {
+TEST(Contour, Disjoint_Failure) {
     Vertex v0{0.0, 0.0};
     Vertex v1{1.0, 1.0};
     Vertex v2{0.0, 1.0};
@@ -106,7 +106,7 @@ TEST(CONTOUR, DISJOINT_FAILURE) {
     LineSegment l4{v4, v5};
     LineSegment l5{v5, v3};
 
-    std::vector<const Curve *> c(6);
+    vector<const Curve *> c(6);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;
@@ -117,7 +117,7 @@ TEST(CONTOUR, DISJOINT_FAILURE) {
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since contour is not simple
 }
 
-TEST(CONTOUR, IMPLICIT_SELF_INTERSECTION_FAILURE) {
+TEST(Contour, Implicit_Self_Intersection_Failure) {
     Vertex v0{1.0, 1.0};
     Vertex v1{-1.0, -1.0};
     Vertex v2{-1.0, 1.0};
@@ -127,7 +127,7 @@ TEST(CONTOUR, IMPLICIT_SELF_INTERSECTION_FAILURE) {
     LineSegment l2{v2, v3};
     LineSegment l3{v3, v0};
 
-    std::vector<const Curve *> c(4);
+    vector<const Curve *> c(4);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;
@@ -141,7 +141,7 @@ TEST(CONTOUR, IMPLICIT_SELF_INTERSECTION_FAILURE) {
     */
 }
 
-TEST(CONTOUR, EXPLICIT_SELF_INTERSECTION_FAILURE) {
+TEST(Contour, Explicit_Self_Intersection_Failure) {
     Vertex v0{1.0, 1.0};
     Vertex v1{-1.0, -1.0};
     Vertex v2{-1.0, 1.0};
@@ -155,7 +155,7 @@ TEST(CONTOUR, EXPLICIT_SELF_INTERSECTION_FAILURE) {
     LineSegment l4{vc, v3};
     LineSegment l5{v3, v0};
 
-    std::vector<const Curve *> c(6);
+    vector<const Curve *> c(6);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;

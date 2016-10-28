@@ -13,7 +13,7 @@ TEST(Constraint, Vertex) {
     EXPECT_NEAR(M_PI, v.y(), TOL);
 }
 
-TEST(Constraint, Fixation_Vertex_Length_Line) {
+TEST(Constraint, Fixation_Length) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
@@ -26,14 +26,14 @@ TEST(Constraint, Fixation_Vertex_Length_Line) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Fixation_Vertex_Length_Line.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Fixation_Length");
 
     EXPECT_NEAR(M_1_PI, v0.x(), TOL);
     EXPECT_NEAR(M_2_SQRTPI, v0.y(), TOL);
     EXPECT_NEAR(M_LN2, line.length(), TOL);
 }
 
-TEST(Constraint, Line_Horizontal) {
+TEST(Constraint, Horizontal) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
@@ -44,12 +44,12 @@ TEST(Constraint, Line_Horizontal) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Line_Horizontal.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Horizontal");
 
     EXPECT_NEAR(v0.y(), v1.y(), TOL);
 }
 
-TEST(Constraint, Line_Vertical) {
+TEST(Constraint, Vertical) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
@@ -61,12 +61,12 @@ TEST(Constraint, Line_Vertical) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical");
 
     EXPECT_NEAR(v0.x(), v1.x(), TOL);
 }
 
-TEST(Constraint, Line_Length) {
+TEST(Constraint, Length) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(3.14159, 2.7183);
@@ -78,12 +78,13 @@ TEST(Constraint, Line_Length) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Line_Length.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Length");
 
     EXPECT_NEAR(1.0, line.length(), TOL);
 }
 
-TEST(Constraint, internal_CircularArc) {
+TEST(Constraint, CircularArc) {
+    // Internal constraints
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.1, 0.9);
@@ -94,13 +95,13 @@ TEST(Constraint, internal_CircularArc) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__internal_CircularArc.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__CircularArc");
 
     EXPECT_NEAR(c.radius(), hypot(v0.x() - vc.x(), v0.y() - vc.y()), TOL);
     EXPECT_NEAR(c.radius(), hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
 }
 
-TEST(Constraint, Radius_CircularArc) {
+TEST(Constraint, Radius) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.1, 0.9);
@@ -113,7 +114,7 @@ TEST(Constraint, Radius_CircularArc) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Radius_CircularArc.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Radius");
 
     EXPECT_NEAR(c.radius(), hypot(v0.x() - vc.x(), v0.y() - vc.y()), TOL);
     EXPECT_NEAR(c.radius(), hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
@@ -122,98 +123,98 @@ TEST(Constraint, Radius_CircularArc) {
     EXPECT_NEAR(3.14, hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
 }
 
-TEST(Constraint, Tangency_CircularArc_LineSegment_0) {
-    // Test when CircularArc and LineSegment have no shared endpoints
-    Sketch s;
+TEST(Constraint, Tangency_CircularArc_LineSegment) {
+    {// Case 0: Test when CircularArc and LineSegment have no shared endpoints
+        Sketch s;
 
-    Vertex &vc0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &vc1 = s.new_element<Vertex>(0.0, 1.0);
-    Vertex &vcc = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &vc0 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &vc1 = s.new_element<Vertex>(0.0, 1.0);
+        Vertex &vcc = s.new_element<Vertex>(0.0, 0.0);
 
-    CircularArc &c = s.new_element<CircularArc>(vc0, vc1, vcc, 1.0);
+        CircularArc &c = s.new_element<CircularArc>(vc0, vc1, vcc, 1.0);
 
-    Fixation &fix = s.new_element<Fixation>(vcc);
-    Radius &rad = s.new_element<Radius>(c, 1.0);
+        Fixation &fix = s.new_element<Fixation>(vcc);
+        Radius &rad = s.new_element<Radius>(c, 1.0);
 
-    Vertex &vv0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &vv1 = s.new_element<Vertex>(M_E, M_LN10);
+        Vertex &vv0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+        Vertex &vv1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    LineSegment &lv = s.new_element<LineSegment>(vv0, vv1);
+        LineSegment &lv = s.new_element<LineSegment>(vv0, vv1);
 
-    Vertical &vert = s.new_element<Vertical>(lv);
-    Tangency &tanv = s.new_element<Tangency>(c, lv);
+        Vertical &vert = s.new_element<Vertical>(lv);
+        Tangency &tanv = s.new_element<Tangency>(c, lv);
 
-    Vertex &vh0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &vh1 = s.new_element<Vertex>(M_E, M_LN10);
+        Vertex &vh0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+        Vertex &vh1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    LineSegment &lh = s.new_element<LineSegment>(vh0, vh1);
+        LineSegment &lh = s.new_element<LineSegment>(vh0, vh1);
 
-    Horizontal &horz = s.new_element<Horizontal>(lh);
-    Tangency &tanh = s.new_element<Tangency>(c, lh);
+        Horizontal &horz = s.new_element<Horizontal>(lh);
+        Tangency &tanh = s.new_element<Tangency>(c, lh);
 
-    Vertex &v450 = s.new_element<Vertex>(M_SQRT2, 0.0);
-    Vertex &v451 = s.new_element<Vertex>(-M_1_PI, M_SQRT2);
+        Vertex &v450 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        Vertex &v451 = s.new_element<Vertex>(-M_1_PI, M_SQRT2);
 
-    Fixation &fix45 = s.new_element<Fixation>(v450);
+        Fixation &fix45 = s.new_element<Fixation>(v450);
 
-    LineSegment &l45 = s.new_element<LineSegment>(v450, v451);
-    LineSegment &l45v = s.new_element<LineSegment>(vcc, v451);
+        LineSegment &l45 = s.new_element<LineSegment>(v450, v451);
+        LineSegment &l45v = s.new_element<LineSegment>(vcc, v451);
 
-    Tangency &tan45 = s.new_element<Tangency>(c, l45);
-    Vertical &vert45 = s.new_element<Vertical>(l45v);
+        Tangency &tan45 = s.new_element<Tangency>(c, l45);
+        Vertical &vert45 = s.new_element<Vertical>(l45v);
 
-    s.solve();
+        s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_0.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_0");
 
-    EXPECT_NEAR(0.0, vcc.x(), TOL);
-    EXPECT_NEAR(0.0, vcc.y(), TOL);
-    EXPECT_NEAR(1.0, c.radius(), TOL);
+        EXPECT_NEAR(0.0, vcc.x(), TOL);
+        EXPECT_NEAR(0.0, vcc.y(), TOL);
+        EXPECT_NEAR(1.0, c.radius(), TOL);
 
-    EXPECT_NEAR(vv0.x(), vv1.x(), TOL);
-    EXPECT_NEAR(vh0.y(), vh1.y(), TOL);
-    EXPECT_NEAR(M_SQRT2, v450.x(), TOL);
-    EXPECT_NEAR(0.0, v450.y(), TOL);
+        EXPECT_NEAR(vv0.x(), vv1.x(), TOL);
+        EXPECT_NEAR(vh0.y(), vh1.y(), TOL);
+        EXPECT_NEAR(M_SQRT2, v450.x(), TOL);
+        EXPECT_NEAR(0.0, v450.y(), TOL);
 
-    EXPECT_NEAR(1.0, vv0.x(), TOL);
-    EXPECT_NEAR(1.0, vv1.x(), TOL);
+        EXPECT_NEAR(1.0, vv0.x(), TOL);
+        EXPECT_NEAR(1.0, vv1.x(), TOL);
 
-    EXPECT_NEAR(1.0, vh0.y(), TOL);
-    EXPECT_NEAR(1.0, vh1.y(), TOL);
+        EXPECT_NEAR(1.0, vh0.y(), TOL);
+        EXPECT_NEAR(1.0, vh1.y(), TOL);
 
-    EXPECT_NEAR((M_SQRT2 - v451.x()), v451.y(), TOL);
-    EXPECT_NEAR(0.0, v451.x(), TOL);
-    EXPECT_NEAR(M_SQRT2, v451.y(), TOL);
+        EXPECT_NEAR((M_SQRT2 - v451.x()), v451.y(), TOL);
+        EXPECT_NEAR(0.0, v451.x(), TOL);
+        EXPECT_NEAR(M_SQRT2, v451.y(), TOL);
+    }
+
+    { // Case 1: Test when CircularArc and LineSegment have shared endpoints
+        Sketch s;
+
+        Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
+        Vertex &v2 = s.new_element<Vertex>(M_SQRT2, 0.0);
+
+        CircularArc &c = s.new_element<CircularArc>(v0, v1, vc, 1.0);
+        LineSegment &l = s.new_element<LineSegment>(v1, v2);
+
+        Fixation &fc = s.new_element<Fixation>(vc);
+        Fixation &f0 = s.new_element<Fixation>(v2);
+        Tangency &t = s.new_element<Tangency>(c, l);
+        Radius &r = s.new_element<Radius>(c, 1.0);
+
+        s.solve();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_1");
+
+        EXPECT_NEAR(1.0, c.radius(), TOL);
+        EXPECT_NEAR(M_PI_2, (atan2(v1.y() - vc.y(), v1.x() - vc.x()) - atan2(v2.y() - v1.y(), v2.x() - v1.x())), TOL * M_PI_2);
+        EXPECT_NEAR(M_SQRT1_2, v1.x(), TOL * M_SQRT1_2);
+        EXPECT_NEAR(M_SQRT1_2, v1.y(), TOL * M_SQRT1_2);
+    }
 }
 
-TEST(Constraint, Tangency_CircularArc_LineSegment_1) {
-    // Test when CircularArc and LineSegment have shared endpoints
-    Sketch s;
-
-    Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(M_SQRT2, 0.0);
-
-    CircularArc &c = s.new_element<CircularArc>(v0, v1, vc, 1.0);
-    LineSegment &l = s.new_element<LineSegment>(v1, v2);
-
-    Fixation &fc = s.new_element<Fixation>(vc);
-    Fixation &f0 = s.new_element<Fixation>(v2);
-    Tangency &t = s.new_element<Tangency>(c, l);
-    Radius &r = s.new_element<Radius>(c, 1.0);
-
-    s.solve();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__CircularArc_LineSegment_1.csv");
-
-    EXPECT_NEAR(1.0, c.radius(), TOL);
-    EXPECT_NEAR(M_PI_2, (atan2(v1.y() - vc.y(), v1.x() - vc.x()) - atan2(v2.y() - v1.y(), v2.x() - v1.x())), TOL * M_PI_2);
-    EXPECT_NEAR(M_SQRT1_2, v1.x(), TOL * M_SQRT1_2);
-    EXPECT_NEAR(M_SQRT1_2, v1.y(), TOL * M_SQRT1_2);
-}
-
-TEST(Constraint, Angle_LineSegment_LineSegment) {
+TEST(Constraint, Angle) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -228,14 +229,14 @@ TEST(Constraint, Angle_LineSegment_LineSegment) {
     Angle &ang = s.new_element<Angle>(line0, line1, 30.0);
     Length &len = s.new_element<Length>(line1, 1.0);
 
-    for (double i = 0.0; i < 16.0; i++) {
+    for (size_t i = 0; i < 16; i++) {
         double a = 22.5 * i;
 
         ang.Dim = a;
 
         s.solve();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint_Angle_LineSegment_LineSegment.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, string("Constraint__Angle_LineSegment_LineSegment_")+to_string(i));
 
         EXPECT_NEAR(0.0, v0.x(), TOL);
         EXPECT_NEAR(0.0, v0.y(), TOL);
@@ -248,7 +249,7 @@ TEST(Constraint, Angle_LineSegment_LineSegment) {
     }
 }
 
-TEST(Constraint, Angle_Coincident_LineSegment) {
+TEST(Constraint, Angle_Coincident) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -278,7 +279,7 @@ TEST(Constraint, Angle_Coincident_LineSegment) {
 
         s.solve();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Angle_Coincident.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, string("Constraint__Angle_Coincident_")+to_string(i));
 
         EXPECT_NEAR(0.0, v0.x(), TOL);
         EXPECT_NEAR(0.0, v0.y(), TOL);
@@ -301,213 +302,219 @@ TEST(Constraint, Distance_Vertex_Vertex) {
 
     s.solve();
 
+    //s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
+
     EXPECT_NEAR(M_LN2, hypot(v0.x() - v1.x(), v0.y() - v1.y()), TOL * M_LN2);
 }
 
 TEST(Constraint, Distance_LineSegment) {
-    Sketch s;
+    { // Case 0: The standard case
+        Sketch s;
 
-    Vertex &v00 = s.new_element<Vertex>(M_1_PI, M_LOG10E);
-    Vertex &v01 = s.new_element<Vertex>(M_2_SQRTPI, M_LOG10E);
-    Vertex &v10 = s.new_element<Vertex>(M_E, M_LOG2E);
-    Vertex &v11 = s.new_element<Vertex>(M_LN2, M_LOG2E);
+        Vertex &v00 = s.new_element<Vertex>(M_1_PI, M_LOG10E);
+        Vertex &v01 = s.new_element<Vertex>(M_2_SQRTPI, M_LOG10E);
+        Vertex &v10 = s.new_element<Vertex>(M_E, M_LOG2E);
+        Vertex &v11 = s.new_element<Vertex>(M_LN2, M_LOG2E);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
-    LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
-    Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, M_PI);
+        LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
+        LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
+        Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, M_PI);
 
-    s.solve();
+        s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment");
 
-    double v0x = v01.x() - v00.x();
-    double v1x = v11.x() - v10.x();
-    double v0y = v01.y() - v00.y();
-    double v1y = v11.y() - v10.y();
+        double v0x = v01.x() - v00.x();
+        double v1x = v11.x() - v10.x();
+        double v0y = v01.y() - v00.y();
+        double v1y = v11.y() - v10.y();
 
-    double d0 = sqrt(v0x * v0x + v0y * v0y);
-    v0x /= d0;
-    v0y /= d0;
+        double d0 = sqrt(v0x * v0x + v0y * v0y);
+        v0x /= d0;
+        v0y /= d0;
 
-    double d1 = sqrt(v1x * v1x + v1y * v1y);
-    v1x /= d1;
-    v1y /= d1;
+        double d1 = sqrt(v1x * v1x + v1y * v1y);
+        v1x /= d1;
+        v1y /= d1;
 
-    double dot = abs(v0x * v1x + v0y * v1y);
-    double cross = abs(v0x * v1y - v0y * v1x);
+        double dot = abs(v0x * v1x + v0y * v1y);
+        double cross = abs(v0x * v1y - v0y * v1x);
 
-    double len;
-    len = ((v01.x() - v00.x()) * (v11.y() - v00.y()) - (v01.y() - v00.y()) * (v11.x() - v00.x()));
-    len -= ((v11.x() - v00.x()) * (v10.y() - v00.y()) - (v11.y() - v00.y()) * (v10.x() - v00.x()));
-    len = len / (d0 + d1);
+        double len;
+        len = ((v01.x() - v00.x()) * (v11.y() - v00.y()) - (v01.y() - v00.y()) * (v11.x() - v00.x()));
+        len -= ((v11.x() - v00.x()) * (v10.y() - v00.y()) - (v11.y() - v00.y()) * (v10.x() - v00.x()));
+        len = len / (d0 + d1);
 
-    EXPECT_NEAR(1.0, dot, TOL);
-    EXPECT_NEAR(0.0, cross, TOL);
-    EXPECT_NEAR(M_PI, len, TOL * M_PI);
+        EXPECT_NEAR(1.0, dot, TOL);
+        EXPECT_NEAR(0.0, cross, TOL);
+        EXPECT_NEAR(M_PI, len, TOL * M_PI);
+    }
+
+    { // Case 1: Corner case when LineSegments are initially perpendicular
+        Sketch s;
+
+        Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
+        Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v10 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v11 = s.new_element<Vertex>(1.0, 1.0);
+
+        LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
+        LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
+        Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
+
+        s.solve();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_initially_perpendicular");
+
+        double dx0 = v01.x() - v00.x();
+        double dy0 = v01.y() - v00.y();
+        double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
+        dx0 /= dr0;
+        dy0 /= dr0;
+
+        double dx1 = v11.x() - v10.x();
+        double dy1 = v11.y() - v10.y();
+        double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
+        dx1 /= dr1;
+        dy1 /= dr1;
+
+        double dot = abs(dx0 * dx1 + dy0 * dy1);
+
+        EXPECT_NEAR(1.0, dot, TOL);
+
+        double x, y, l;
+        x = (v01.x() + v00.x()) / 2.0;
+        y = (v01.y() + v00.y()) / 2.0;
+
+        dx0 = (v10.x() - x);
+        dx1 = (v11.x() - x);
+        dy0 = (v10.y() - y);
+        dy1 = (v11.y() - y);
+
+        l = abs(dx0 * dy1 - dy0 * dx1) / dr1;
+        EXPECT_NEAR(1.0, l, TOL);
+
+        x = (v11.x() + v10.x()) / 2.0;
+        y = (v11.y() + v10.y()) / 2.0;
+
+        dx0 = (v00.x() - x);
+        dx1 = (v01.x() - x);
+        dy0 = (v00.y() - y);
+        dy1 = (v01.y() - y);
+
+        l = abs(dx0 * dy1 - dy0 * dx1) / dr0;
+        EXPECT_NEAR(1.0, l, TOL);
+    }
+
+    { // Case 2: Corner case when two LineSegments initially intersect at their midpoint
+        Sketch s;
+
+        Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
+        Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v10 = s.new_element<Vertex>(0.0, -1.0);
+        Vertex &v11 = s.new_element<Vertex>(0.0, 1.0);
+
+        LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
+        LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
+        Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
+
+        s.solve();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_midpoint_intersection");
+
+        double dx0 = v01.x() - v00.x();
+        double dy0 = v01.y() - v00.y();
+        double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
+        dx0 /= dr0;
+        dy0 /= dr0;
+
+        double dx1 = v11.x() - v10.x();
+        double dy1 = v11.y() - v10.y();
+        double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
+        dx1 /= dr1;
+        dy1 /= dr1;
+
+        double dot = abs(dx0 * dx1 + dy0 * dy1);
+
+        EXPECT_NEAR(1.0, dot, TOL); // TODO: Fails because lines intersect at midpoint
+    }
 }
 
-TEST(Constraint, Distance_LineSegment_initially_perpendicular) {
-    Sketch s;
+TEST(Constraint, Distance_CircularArc) {
+    { // Case 0: Distance between two circular arcs having defining manifolds which do not intersect and have non-intersecting bounding boxes
+        Sketch s;
 
-    Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v10 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v11 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &v00 = s.new_element<Vertex>(0.2, 0.0);
+        Vertex &v01 = s.new_element<Vertex>(-0.2, 0.0);
+        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
-    LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
-    Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
+        Vertex &vc1 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &v10 = s.new_element<Vertex>(0.8, 1.0);
+        Vertex &v11 = s.new_element<Vertex>(1.2, 1.0);
 
-    s.solve();
+        CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 0.2);
+        CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_initially_perpendicular");
+        s.solve();
 
-    double dx0 = v01.x() - v00.x();
-    double dy0 = v01.y() - v00.y();
-    double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
-    dx0 /= dr0;
-    dy0 /= dr0;
+        Distance<CircularArc> &d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
 
-    double dx1 = v11.x() - v10.x();
-    double dy1 = v11.y() - v10.y();
-    double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
-    dx1 /= dr1;
-    dy1 /= dr1;
+        s.solve();
 
-    double dot = abs(dx0 * dx1 + dy0 * dy1);
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior");
 
-    EXPECT_NEAR(1.0, dot, TOL);
+        EXPECT_NEAR(1.0 / 3.0, hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c0.radius() - c1.radius(), TOL / 3.0);
+    }
 
-    double x, y, l;
-    x = (v01.x() + v00.x()) / 2.0;
-    y = (v01.y() + v00.y()) / 2.0;
+    { // Case 1: Distance between two circular arcs, the second being contained within the defining circular of the first
+        Sketch s;
 
-    dx0 = (v10.x() - x);
-    dx1 = (v11.x() - x);
-    dy0 = (v10.y() - y);
-    dy1 = (v11.y() - y);
+        Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
+        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-    l = abs(dx0 * dy1 - dy0 * dx1) / dr1;
-    EXPECT_NEAR(1.0, l, TOL);
+        Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
+        Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
+        Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
 
-    x = (v11.x() + v10.x()) / 2.0;
-    y = (v11.y() + v10.y()) / 2.0;
+        CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
+        CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-    dx0 = (v00.x() - x);
-    dx1 = (v01.x() - x);
-    dy0 = (v00.y() - y);
-    dy1 = (v01.y() - y);
+        s.solve();
 
-    l = abs(dx0 * dy1 - dy0 * dx1) / dr0;
-    EXPECT_NEAR(1.0, l, TOL);
-}
+        Distance<CircularArc> &d = s.new_element<Distance<CircularArc> >(c0, c1, 1.0 / 3.0);
 
-TEST(Constraint, Distance_LineSegment_midpoint_intersection) {
-    Sketch s;
+        s.solve();
 
-    Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v10 = s.new_element<Vertex>(0.0, -1.0);
-    Vertex &v11 = s.new_element<Vertex>(0.0, 1.0);
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0");
 
-    LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
-    LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
-    Distance<LineSegment> &d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
+        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
+    }
 
-    s.solve();
+    { // Case 2: Distance between two circular arcs, the second being contained within the defining circular of the first
+        Sketch s;
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Distance_LineSegment_midpoint_intersection.csv");
+        Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
+        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-    double dx0 = v01.x() - v00.x();
-    double dy0 = v01.y() - v00.y();
-    double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
-    dx0 /= dr0;
-    dy0 /= dr0;
+        Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
+        Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
+        Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
 
-    double dx1 = v11.x() - v10.x();
-    double dy1 = v11.y() - v10.y();
-    double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
-    dx1 /= dr1;
-    dy1 /= dr1;
+        CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
+        CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-    double dot = abs(dx0 * dx1 + dy0 * dy1);
+        s.solve();
 
-    EXPECT_NEAR(1.0, dot, TOL); // TODO: Fails because lines intersect at midpoint
-}
+        Distance<CircularArc> &d = s.new_element<Distance<CircularArc>>(c1, c0, 1.0 / 3.0);
 
-TEST(Constraint, Distance_CircularArc_exterior) {
-    Sketch s;
+        s.solve();
 
-    Vertex &v00 = s.new_element<Vertex>(0.2, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(-0.2, 0.0);
-    Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1");
 
-    Vertex &vc1 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v10 = s.new_element<Vertex>(0.8, 1.0);
-    Vertex &v11 = s.new_element<Vertex>(1.2, 1.0);
-
-    CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 0.2);
-    CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
-
-    s.solve();
-
-    Distance<CircularArc> &d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
-
-    s.solve();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior.csv");
-
-    EXPECT_NEAR(1.0 / 3.0, hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c0.radius() - c1.radius(), TOL / 3.0);
-}
-
-TEST(Constraint, Distance_CircularArc_interior_0) {
-    Sketch s;
-
-    Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
-    Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
-
-    Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
-    Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
-    Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
-
-    CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
-    CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
-
-    s.solve();
-
-    Distance<CircularArc> &d = s.new_element<Distance<CircularArc> >(c0, c1, 1.0 / 3.0);
-
-    s.solve();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0.csv");
-
-    EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
-}
-
-TEST(Constraint, Distance_CircularArc_interior_1) {
-    Sketch s;
-
-    Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
-    Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
-
-    Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
-    Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
-    Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
-
-    CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
-    CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
-
-    s.solve();
-
-    Distance<CircularArc> &d = s.new_element<Distance<CircularArc>>(c1, c0, 1.0 / 3.0);
-
-    s.solve();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1.csv");
-
-    EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
+        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
+    }
 }
 
 TEST(Constraint, Coincident_CircularArc) {
@@ -525,7 +532,7 @@ TEST(Constraint, Coincident_CircularArc) {
 
     s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_CircularArc.csv");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_CircularArc");
 
     double dx = vc.x() - vp.x();
     double dy = vc.y() - vp.y();
@@ -534,61 +541,63 @@ TEST(Constraint, Coincident_CircularArc) {
 }
 
 TEST(Constraint, Coincident_LineSegment) {
-    Sketch s;
+    { // Case 0: Standard case (no corner cases)
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &vp = s.new_element<Vertex>(1.1, 0.9);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &vp = s.new_element<Vertex>(1.1, 0.9);
 
-    LineSegment &l = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l = s.new_element<LineSegment>(v0, v1);
 
-    Coincident<LineSegment> &c = s.new_element<Coincident<LineSegment>>(vp, l);
+        Coincident<LineSegment> &c = s.new_element<Coincident<LineSegment>>(vp, l);
 
-    s.solve();
+        s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment");
 
-    double dx0 = v0.x() - vp.x();
-    double dy0 = v0.y() - vp.y();
-    double dx1 = v1.x() - vp.x();
-    double dy1 = v1.y() - vp.y();
-    double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
-    double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
-    dx0 /= dr0;
-    dy0 /= dr0;
-    dx1 /= dr1;
-    dy1 /= dr1;
+        double dx0 = v0.x() - vp.x();
+        double dy0 = v0.y() - vp.y();
+        double dx1 = v1.x() - vp.x();
+        double dy1 = v1.y() - vp.y();
+        double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
+        double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
+        dx0 /= dr0;
+        dy0 /= dr0;
+        dx1 /= dr1;
+        dy1 /= dr1;
 
-    EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
-}
+        EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
+    }
 
-TEST(Constraint, Coincident_LineSegment_deg180) {
-    Sketch s;
+    { // Case 1: Corner case where midpoint of LineSegment is
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &vp = s.new_element<Vertex>(0.25, 0.75);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &vp = s.new_element<Vertex>(0.25, 0.75);
 
-    LineSegment &l = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l = s.new_element<LineSegment>(v0, v1);
 
-    Coincident<LineSegment> &c = s.new_element<Coincident<LineSegment>>(vp, l);
+        Coincident<LineSegment> &c = s.new_element<Coincident<LineSegment>>(vp, l);
 
-    s.solve();
+        s.solve();
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment_deg180.csv");
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment_deg180.csv");
 
-    double dx0 = v0.x() - vp.x();
-    double dy0 = v0.y() - vp.y();
-    double dx1 = v1.x() - vp.x();
-    double dy1 = v1.y() - vp.y();
-    double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
-    double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
-    dx0 /= dr0;
-    dy0 /= dr0;
-    dx1 /= dr1;
-    dy1 /= dr1;
+        double dx0 = v0.x() - vp.x();
+        double dy0 = v0.y() - vp.y();
+        double dx1 = v1.x() - vp.x();
+        double dy1 = v1.y() - vp.y();
+        double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
+        double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
+        dx0 /= dr0;
+        dy0 /= dr0;
+        dx1 /= dr1;
+        dy1 /= dr1;
 
-    EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
+        EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
+    }
 }
 
 TEST(Constraint, Parallel) {
@@ -607,89 +616,91 @@ TEST(Constraint, Perpendicular_initially_parallel) {
     FAIL(); // TODO: Implement test for perpendicular lines that are initially parallel
 }
 
-TEST(Constraint, Symmetry_Horizontal) {
-    Sketch s;
+TEST(Constraint, Symmetry) {
+    { // Case 0: Horizontal
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(0.41, -0.62);
-    Vertex &v3 = s.new_element<Vertex>(0.63, 0.44);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v2 = s.new_element<Vertex>(0.41, -0.62);
+        Vertex &v3 = s.new_element<Vertex>(0.63, 0.44);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
 
-    s.new_element<Fixation>(v0);
-    s.new_element<Horizontal>(l0);
-    s.new_element<Length>(l0, 1.0);
+        s.new_element<Fixation>(v0);
+        s.new_element<Horizontal>(l0);
+        s.new_element<Length>(l0, 1.0);
 
-    s.solve();
+        s.solve();
 
-    EXPECT_NEAR(0.0, v0.x(), TOL);
-    EXPECT_NEAR(0.0, v0.y(), TOL);
-    EXPECT_NEAR(0.0, v1.y(), TOL);
-    EXPECT_NEAR(1.0, l0.length(), TOL);
-    EXPECT_NEAR(1.0, v1.x(), TOL);
+        EXPECT_NEAR(0.0, v0.x(), TOL);
+        EXPECT_NEAR(0.0, v0.y(), TOL);
+        EXPECT_NEAR(0.0, v1.y(), TOL);
+        EXPECT_NEAR(1.0, l0.length(), TOL);
+        EXPECT_NEAR(1.0, v1.x(), TOL);
 
-    s.new_element<Symmetry>(v2, v3, l0);
-    s.solve();
+        s.new_element<Symmetry>(v2, v3, l0);
+        s.solve();
 
-    EXPECT_NEAR(v2.x(), v3.x(), TOL);
-    EXPECT_NEAR(v2.y(), -v3.y(), TOL);
-}
+        EXPECT_NEAR(v2.x(), v3.x(), TOL);
+        EXPECT_NEAR(v2.y(), -v3.y(), TOL);
+    }
 
-TEST(Constraint, Symmetry_Vertical) {
-    Sketch s;
+    { // Case 1: Vertical
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(-0.62, 0.41);
-    Vertex &v3 = s.new_element<Vertex>(0.44, 0.63);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
+        Vertex &v2 = s.new_element<Vertex>(-0.62, 0.41);
+        Vertex &v3 = s.new_element<Vertex>(0.44, 0.63);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
 
-    s.new_element<Fixation>(v0);
-    s.new_element<Vertical>(l0);
-    s.new_element<Length>(l0, 1.0);
+        s.new_element<Fixation>(v0);
+        s.new_element<Vertical>(l0);
+        s.new_element<Length>(l0, 1.0);
 
-    s.solve();
+        s.solve();
 
-    EXPECT_NEAR(0.0, v0.x(), TOL);
-    EXPECT_NEAR(0.0, v0.y(), TOL);
-    EXPECT_NEAR(0.0, v1.x(), TOL);
-    EXPECT_NEAR(1.0, l0.length(), TOL);
-    EXPECT_NEAR(1.0, v1.y(), TOL);
+        EXPECT_NEAR(0.0, v0.x(), TOL);
+        EXPECT_NEAR(0.0, v0.y(), TOL);
+        EXPECT_NEAR(0.0, v1.x(), TOL);
+        EXPECT_NEAR(1.0, l0.length(), TOL);
+        EXPECT_NEAR(1.0, v1.y(), TOL);
 
-    s.new_element<Symmetry>(v2, v3, l0);
-    s.solve();
+        s.new_element<Symmetry>(v2, v3, l0);
+        s.solve();
 
-    EXPECT_NEAR(v2.x(), -v3.x(), TOL);
-    EXPECT_NEAR(v2.y(), v3.y(), TOL);
-}
+        EXPECT_NEAR(v2.x(), -v3.x(), TOL);
+        EXPECT_NEAR(v2.y(), v3.y(), TOL);
+    }
 
-TEST(Constraint, Symmetry_deg45) {
-    Sketch s;
+    { // Case 2: 45 degrees
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(0.1, 0.7);
-    Vertex &v3 = s.new_element<Vertex>(0.8, 0.2);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
+        Vertex &v2 = s.new_element<Vertex>(0.1, 0.7);
+        Vertex &v3 = s.new_element<Vertex>(0.8, 0.2);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
-    s.new_element<Fixation>(v0);
-    s.new_element<Fixation>(v1);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        s.new_element<Fixation>(v0);
+        s.new_element<Fixation>(v1);
 
-    s.solve();
+        s.solve();
 
-    EXPECT_NEAR(0.0, v0.x(), TOL);
-    EXPECT_NEAR(0.0, v0.y(), TOL);
-    EXPECT_NEAR(1.0, v1.x(), TOL);
-    EXPECT_NEAR(1.0, v1.y(), TOL);
-    EXPECT_NEAR(M_SQRT2, l0.length(), TOL);
+        EXPECT_NEAR(0.0, v0.x(), TOL);
+        EXPECT_NEAR(0.0, v0.y(), TOL);
+        EXPECT_NEAR(1.0, v1.x(), TOL);
+        EXPECT_NEAR(1.0, v1.y(), TOL);
+        EXPECT_NEAR(M_SQRT2, l0.length(), TOL);
 
-    s.new_element<Symmetry>(v2, v3, l0);
-    s.solve();
+        s.new_element<Symmetry>(v2, v3, l0);
+        s.solve();
 
-    EXPECT_NEAR(v3.y(), v2.x(), TOL);
-    EXPECT_NEAR(v3.x(), v2.y(), TOL);
+        EXPECT_NEAR(v3.y(), v2.x(), TOL);
+        EXPECT_NEAR(v3.x(), v2.y(), TOL);
+    }
 }
 
 TEST(Constraint, Rotation) {

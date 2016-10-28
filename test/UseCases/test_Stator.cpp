@@ -1,8 +1,6 @@
 #include "test_UseCases.hpp"
 
-#define SAVE_DIR "./test/output/UseCases/Stator/"
-
-TEST(STATOR, 0) {
+TEST(Stator, 0) {
     Sketch sketch;
 
     size_t Np{8};
@@ -39,7 +37,7 @@ TEST(STATOR, 0) {
 
     sketch.solve();
 
-    sketch.save_as<SaveMethod::Rasterize>(SAVE_DIR, "stator0d0.csv");
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_0");
 
     EXPECT_TRUE(sketch.build());
     EXPECT_EQ(sketch.boundary()->size(), 8);
@@ -64,7 +62,7 @@ TEST(STATOR, 0) {
 
     sketch.solve();
 
-    sketch.save_as<SaveMethod::Rasterize>(SAVE_DIR, "stator0d1.csv");
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_1");
 
     EXPECT_TRUE(sketch.build());
     EXPECT_EQ(sketch.boundary()->size(), 8);
@@ -77,9 +75,9 @@ TEST(STATOR, 0) {
 
     mesh.create();
 
-    mesh.save_as(SAVE_DIR, "stator_0.csv");
+    mesh.save_as(MDIR, "stator0");
 
     mesh.refine();
 
-    mesh.save_as(SAVE_DIR, "stator_0_refine.csv");
+    mesh.save_as(MDIR, "stator0_refined");
 }

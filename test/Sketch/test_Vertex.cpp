@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-TEST(VERTEX, CONSTRUCTOR) {
+TEST(Vertex, constructor) {
     { // ARGS::()
         EXPECT_NO_THROW(Vertex v);
     }
@@ -10,7 +10,7 @@ TEST(VERTEX, CONSTRUCTOR) {
     }
 }
 
-TEST(VERTEX, METHOD_rotate) {
+TEST(Vertex, rotate) {
     Vertex v{1.0, 1.0};
     Vertex origin{2.0, 2.0};
     double angle{45.0};
@@ -18,7 +18,7 @@ TEST(VERTEX, METHOD_rotate) {
 
     double x, y;
 
-    std::tie(x, y) = v.rotate(&origin, angle);
+    tie(x, y) = v.rotate(&origin, angle);
 
     EXPECT_NEAR(hypot(x - origin.x(), y - origin.y()), r, r * TOL);
     EXPECT_NEAR(origin.x(), x, r * TOL);
