@@ -226,10 +226,10 @@ TEST(Mesh, create__narrow_diamond_domain) {
         Point cc1 = m.triangle(1)->circumcenter();
 
         EXPECT_NEAR(0.0, cc0.X, TOL);
-        EXPECT_NEAR(0.75, abs(cc0.Y), TOL);
+        EXPECT_NEAR(0.75, std::abs(cc0.Y), TOL);
 
         EXPECT_NEAR(0.0, cc1.X, TOL);
-        EXPECT_NEAR(0.75, abs(cc1.Y), TOL);
+        EXPECT_NEAR(0.75, std::abs(cc1.Y), TOL);
 
         EXPECT_NEAR(-cc0.Y, cc1.Y, TOL);
     }

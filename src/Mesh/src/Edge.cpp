@@ -222,7 +222,7 @@ bool Edge::swap() {
 }
 
 bool Edge::recursive_swap() {
-    // #TODO, May need to have two different recursive swap methods, one for midpoint insertion and one for circumcenter insertion
+    // TODO, May need to have two different recursive swap methods, one for midpoint insertion and one for circumcenter insertion
     if (!is_locally_optimal() && swap()) {
         Edge * next = Next;
         Edge * prev = Prev;

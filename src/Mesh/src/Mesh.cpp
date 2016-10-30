@@ -745,7 +745,7 @@ void Mesh::save_as(std::string path, std::string file_name) const {
         const Point *v0 = Edges[i]->Node;
         const Point *v1 = Edges[i]->Next->Node;
         const Point *v2 = Edges[i]->Next->Next->Node;
-        fs << v0->X << "," << v1->X << "," << v2->X << "," << v0->Y << "," << v1->Y << "," << v2->Y << "\n";
+        fs << v0->X << ',' << v1->X << ',' << v2->X << ',' << v0->Y << ',' << v1->Y << ',' << v2->Y << '\n';
     }
 
     fs.close();

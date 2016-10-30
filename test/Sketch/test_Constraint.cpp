@@ -236,7 +236,7 @@ TEST(Constraint, Angle) {
 
         s.solve();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, string("Constraint__Angle_LineSegment_LineSegment_")+to_string(i));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_LineSegment_LineSegment_")+std::to_string(i));
 
         EXPECT_NEAR(0.0, v0.x(), TOL);
         EXPECT_NEAR(0.0, v0.y(), TOL);
@@ -279,7 +279,7 @@ TEST(Constraint, Angle_Coincident) {
 
         s.solve();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, string("Constraint__Angle_Coincident_")+to_string(i));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_Coincident_")+std::to_string(i));
 
         EXPECT_NEAR(0.0, v0.x(), TOL);
         EXPECT_NEAR(0.0, v0.y(), TOL);

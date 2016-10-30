@@ -26,8 +26,8 @@ bool Constellation::twin(std::list<Star>::iterator &s_out, std::list<Branch>::it
     return false;
 }
 
-void Constellation::supremum(list<Star>::iterator &s_out, list<Branch>::iterator &b_out) {
-    pair<double,double> sup{0.0,0.0};
+void Constellation::supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out) {
+    std::pair<double,double> sup{0.0,0.0};
     double ang{0.0};
 
     for (auto s = Stars.begin(); s != Stars.end(); ++s) {
@@ -76,8 +76,8 @@ void Constellation::pop(const Curve *c) {
 }
 
 bool Constellation::boundary(Contour *c) {
-    vector<const Curve *> curves;
-    vector<bool> orientation;
+    std::vector<const Curve *> curves;
+    std::vector<bool> orientation;
 
     // Base of induction
     auto s{Stars.begin()};
@@ -122,8 +122,8 @@ bool Constellation::boundary(Contour *c) {
 }
 
 bool Constellation::contours(std::vector<Contour *> &contours) {
-    vector<const Curve *> contour_curves;
-    vector<bool> orientation;
+    std::vector<const Curve *> contour_curves;
+    std::vector<bool> orientation;
 
     while (size() > 0) {
         bool success = find_closed_contour(contour_curves, orientation);

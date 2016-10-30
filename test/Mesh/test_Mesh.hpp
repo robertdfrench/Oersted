@@ -7,8 +7,6 @@
 #define SAVE_DIR "./test/output/Mesh/"
 #define TOL 4e-8
 
-using namespace std;
-
 bool edges_are_optimal(Mesh &m) {
     for (size_t i = 0;i < m.size_edges();++i) {
         EXPECT_TRUE(m.edge(i)->is_locally_optimal());
@@ -51,7 +49,7 @@ bool edges_are_valid(Mesh &m) {
     return true;
 }
 
-void forced_refinement(Mesh &m, string file_name, size_t num_refines) {
+void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
     double minq = m.MinimumElementQuality;
     double mine = m.MinimumElementSize;
     double maxe = m.MaximumElementSize;
@@ -64,10 +62,10 @@ void forced_refinement(Mesh &m, string file_name, size_t num_refines) {
         try {
             m.refine_once();
         }
-        catch (const exception except) {
+        catch (const std::exception except) {
             throw;
         }
-        m.save_as(SAVE_DIR, file_name + "_" + to_string(i));
+        m.save_as(SAVE_DIR, file_name + "_" + std::to_string(i));
 
         edges_are_valid(m);
         edges_are_optimal(m);
@@ -78,8 +76,8 @@ void forced_refinement(Mesh &m, string file_name, size_t num_refines) {
     m.MaximumElementSize = maxe;
 }
 
-vector<size_t> map_verticies_to_points(vector<Vertex> verts, Mesh m) {
-    vector<size_t> index;
+std::vector<size_t> map_verticies_to_points(std::vector<Vertex> verts, Mesh m) {
+    std::vector<size_t> index;
     index.reserve(verts.size());
 
     for (size_t i = 0;i != verts.size();++i) {
@@ -92,7 +90,7 @@ vector<size_t> map_verticies_to_points(vector<Vertex> verts, Mesh m) {
         }
     }
 
-    return move(index);
+    return std::move(index);
 }
 
 #endif //OERSTED_TEST_MESH_HPP

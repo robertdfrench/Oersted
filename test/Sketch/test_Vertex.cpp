@@ -18,7 +18,7 @@ TEST(Vertex, rotate) {
 
     double x, y;
 
-    tie(x, y) = v.rotate(&origin, angle);
+    std::tie(x, y) = v.rotate(&origin, angle);
 
     EXPECT_NEAR(hypot(x - origin.x(), y - origin.y()), r, r * TOL);
     EXPECT_NEAR(origin.x(), x, r * TOL);

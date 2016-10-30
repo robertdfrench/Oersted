@@ -1,6 +1,6 @@
 #include "test_Sketch.hpp"
 
-bool star_angle_sum_equals_2pi(vector<Star> &stars) {
+bool star_angle_sum_equals_2pi(std::vector<Star> &stars) {
     for (auto s = stars.begin(); s != stars.end(); ++s) {
         double angle = 0.0;
         for (auto b = s->begin(); b != s->end(); ++b) {
@@ -198,7 +198,7 @@ TEST(Star, find_closed_contour_0) {
 
     // Manual contour creation
     {
-        vector<Star> stars;
+        std::vector<Star> stars;
 
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
@@ -240,7 +240,7 @@ TEST(Star, find_closed_contour_1) {
 
     // Manual contour construction
     {
-        vector<Star> stars;
+        std::vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
         stars.push_back(Star{&v2, &sketch});
@@ -284,7 +284,7 @@ TEST(Star, find_closed_contour_2) {
 
     // Manual contour construction
     {
-        vector<Star> stars;
+        std::vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
         stars.push_back(Star{&v2, &sketch});
@@ -354,7 +354,7 @@ TEST(Star, find_closed_contour_3) {
 
     // Manual contour construction
     {
-        vector<Star> stars;
+        std::vector<Star> stars;
         stars.push_back(Star{&v0, &sketch});
         stars.push_back(Star{&v1, &sketch});
 

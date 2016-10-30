@@ -9,7 +9,7 @@ TEST(Contour, Triangle_CCW) {
     LineSegment l1{v1, v2};
     LineSegment l2{v2, v0};
 
-    vector<const Curve *> vc(3);
+    std::vector<const Curve *> vc(3);
     vc[0] = &l0;
     vc[1] = &l1;
     vc[2] = &l2;
@@ -36,7 +36,7 @@ TEST(Contour, Triangle_CW) {
     LineSegment l1{v2, v1};
     LineSegment l2{v0, v2};
 
-    vector<const Curve *> vc(3);
+    std::vector<const Curve *> vc(3);
     vc[0] = &l0;
     vc[1] = &l1;
     vc[2] = &l2;
@@ -63,7 +63,7 @@ TEST(Contour, Triangle) {
     LineSegment l1{v1, v2};
     LineSegment l2{v2, v0};
 
-    vector<const Curve *> vc(3);
+    std::vector<const Curve *> vc(3);
     vc[0] = &l2;
     vc[1] = &l0;
     vc[2] = &l1;
@@ -85,7 +85,7 @@ TEST(Contour, Nonclosed_Failure) {
     Vertex v0{0.0, 0.0};
     Vertex v1{1.0, 1.0};
     LineSegment l0{v0, v1};
-    vector<const Curve *> c(1);
+    std::vector<const Curve *> c(1);
     c[0] = &l0;
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since the contour is not closed
@@ -106,7 +106,7 @@ TEST(Contour, Disjoint_Failure) {
     LineSegment l4{v4, v5};
     LineSegment l5{v5, v3};
 
-    vector<const Curve *> c(6);
+    std::vector<const Curve *> c(6);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;
@@ -127,7 +127,7 @@ TEST(Contour, Implicit_Self_Intersection_Failure) {
     LineSegment l2{v2, v3};
     LineSegment l3{v3, v0};
 
-    vector<const Curve *> c(4);
+    std::vector<const Curve *> c(4);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;
@@ -155,7 +155,7 @@ TEST(Contour, Explicit_Self_Intersection_Failure) {
     LineSegment l4{vc, v3};
     LineSegment l5{v3, v0};
 
-    vector<const Curve *> c(6);
+    std::vector<const Curve *> c(6);
     c[0] = &l0;
     c[1] = &l1;
     c[2] = &l2;

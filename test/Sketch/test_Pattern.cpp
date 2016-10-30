@@ -372,7 +372,7 @@ TEST(Rotate, overlapping) {
     Coincident<LineSegment> &co0 = s.new_element<Coincident<LineSegment>>(v0, l1);
     Angle &a0 = s.new_element<Angle>(l0, l1, a_deg);
 
-    vector<const Curve *> vec({&l0, &l1, &c0, &c1});
+    std::vector<const Curve *> vec({&l0, &l1, &c0, &c1});
     RotateCopy &r0 = s.new_element<RotateCopy>(vec, &v0, 360.0 / N, N - 2);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_0");

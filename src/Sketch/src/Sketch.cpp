@@ -93,9 +93,9 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
         if (!Curves[i]->ForConstruction) {
             for (size_t j = 0; j <= 10; ++j) {
                 Vertex v = Curves[i]->point(j / 10.0);
-                fs << v.x() << "," << v.y() << "\n";
+                fs << v.x() << ',' << v.y() << '\n';
             }
-            fs << "NaN" << "," << "NaN" << "\n";
+            fs << "NaN" << ',' << "NaN" << '\n';
         }
     }
 
