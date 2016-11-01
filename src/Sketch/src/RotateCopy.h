@@ -9,7 +9,7 @@ public:
 
 private:
     Vertex *Center;
-    double Angle;
+    double Angle; // TODO: Write 'update_angle' method which updates all associated rotation constraints
     size_t Copies;
 };
 

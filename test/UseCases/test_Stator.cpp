@@ -31,16 +31,18 @@ TEST(Stator, 0) {
     LineSegment &l3 = sketch.new_element<LineSegment>(v5, v6);
     CircularArc &c3 = sketch.new_element<CircularArc>(v6, v3, origin, rb);
 
-    //std::vector<const Curve*> mv{ &l0,&l1,&l2,&l3,&c0,&c1,&c2,&c3 };
-    std::vector<const Curve*> mv{&l0, &l3, &c0, &c1, &c2, &c3};
-    MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mv, &l1);
+    auto mvec = sketch.curves();
+    MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1);
+
+    auto rvec = sketch.curves();
+    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, &origin, 360.0 / Nt, 1);
 
     sketch.solve();
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_0");
 
     EXPECT_TRUE(sketch.build());
-    EXPECT_EQ(sketch.boundary()->size(), 8);
+    EXPECT_EQ(sketch.boundary()->size(), 14);
 
     Fixation &f = sketch.new_element<Fixation>(origin);
 
@@ -65,7 +67,7 @@ TEST(Stator, 0) {
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_1");
 
     EXPECT_TRUE(sketch.build());
-    EXPECT_EQ(sketch.boundary()->size(), 8);
+    EXPECT_EQ(sketch.boundary()->size(), 14);
 
     Mesh mesh{sketch};
 
@@ -80,4 +82,6 @@ TEST(Stator, 0) {
     mesh.refine();
 
     mesh.save_as(MDIR, "stator0_refined");
+
+
 }

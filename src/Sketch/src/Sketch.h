@@ -136,6 +136,8 @@ public:
 
     const Curve *curve(size_t i) const { return Curves[i]; };
 
+    std::vector<const Curve *> const curves() {return std::vector<const Curve *>(Curves.begin(),Curves.end());};
+
     const Constraint *constraint(size_t i) const { return Constraints[i]; };
 
     const Contour *contour(size_t i) const { return Contours[i]; };

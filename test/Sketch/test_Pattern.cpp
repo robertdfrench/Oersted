@@ -340,9 +340,6 @@ TEST(Rotate, nonoverlapping) {
         test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / (N - 1), N - 2);
         test_rotated_curves(s, {0, 1, 2, 3}, &v0, 360.0 / (N - 1), N - 2);
     }
-
-    FAIL(); // TODO: Rewrite rotate copy based on notes in current implementation
-
 }
 
 TEST(Rotate, overlapping) {
@@ -375,25 +372,38 @@ TEST(Rotate, overlapping) {
     std::vector<const Curve *> vec({&l0, &l1, &c0, &c1});
     RotateCopy &r0 = s.new_element<RotateCopy>(vec, &v0, 360.0 / N, N - 2);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_0");
-
     s.solve();
     s.build();
 
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_0");
+
     // Run Tests
     {
-        test_sketch_size(s, 9, 8, 13, 1);
+        test_sketch_size(s, 9, 10, 10, 3);
         test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
         test_rotated_curves(s, {0, 1, 2, 3}, &v0, 360.0 / N, N - 2);
     }
 
     // Change Sketch
-    // Run Tests
+    rad0.Dim = 0.5;
+    rad1.Dim = 2.5;
 
-    FAIL(); // TODO: Change sketch, run tests
+    s.solve();
+    s.build();
+
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_1");
+
+    // Run Tests
+    {
+        test_sketch_size(s, 9, 10, 10, 3);
+        test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
+        test_rotated_curves(s, {0, 1, 2, 3}, &v0, 360.0 / N, N - 2);
+    }
+
+    FAIL(); // TODO: Change angle of horizontal line w.r.t. x-axis and rerun
 }
 
-TEST(Rotate, open_ovlerapping) {
+TEST(Rotate, open_overlapping) {
     FAIL(); // TODO
 }
 

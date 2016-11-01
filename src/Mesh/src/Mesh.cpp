@@ -34,6 +34,7 @@ LocateTriangleResult Mesh::locate_triangle(const Point *p, Edge *&e) const {
 }
 
 LocateTriangleResult Mesh::locate_triangle(const Point *p, const Edge *&e) const {
+    // TODO: Need to search along boundary triangles in order to ensure the internal/external status
     const Edge *start = e;
     double xp = p->X;
     double yp = p->Y;
@@ -79,7 +80,7 @@ LocateTriangleResult Mesh::locate_triangle(const Point *p, const Edge *&e) const
             } else if (e->next() != start) {
                 e = e->next();
             } else {
-                throw (std::exception()); //TODO: This branch should never be reached. Supply return value"
+                throw std::exception(); //TODO: This branch should never be reached. Supply return value"
             }
         } else if (e->next() != start) {
             e = e->next();
@@ -548,44 +549,39 @@ void Mesh::create_boundary_polygon() {
 void Mesh::triangulate_boundary_polygon() {
     Edges.reserve(3 * num_points());
 
-    // Create initial polygon
-    size_t Ne = 0;
-    for (size_t i = 0; i < Contours.size(); ++i) {
-        Edge * ep = Edges[Ne];
-        while (ep != ep->Next->Next->Next) {
-            if (ep->is_protruding()) {
-                Edge * e0 = new Edge;
-                Edge * e1 = new Edge;
+    Edge * ep = Edges[0];
+    while (ep != ep->Next->Next->Next) {
+        if (ep->is_protruding()) {
+            Edge * e0 = new Edge;
+            Edge * e1 = new Edge;
 
-                // Edge of new triangle
-                e0->Node = ep->Next->Node;
-                e0->Prev = ep;
-                e0->Next = ep->Prev;
-                e0->Twin = e1;
+            // Edge of new triangle
+            e0->Node = ep->Next->Node;
+            e0->Prev = ep;
+            e0->Next = ep->Prev;
+            e0->Twin = e1;
 
-                // Twin edge, part of new polygonal boundary
-                e1->Node = ep->Prev->Node;
-                e1->Next = ep->Next;
-                e1->Prev = ep->Prev->Prev;
-                e1->Twin = e0;
+            // Twin edge, part of new polygonal boundary
+            e1->Node = ep->Prev->Node;
+            e1->Next = ep->Next;
+            e1->Prev = ep->Prev->Prev;
+            e1->Twin = e0;
 
-                // Store new edges
-                Edges.push_back(e0);
-                Edges.push_back(e1);
+            // Store new edges
+            Edges.push_back(e0);
+            Edges.push_back(e1);
 
-                // Update polygonal boundary
-                ep->Next->Prev = e1;
-                ep->Next = e0;
-                ep->Prev->Prev->Next = e1;
-                ep->Prev->Prev = e0;
+            // Update polygonal boundary
+            ep->Next->Prev = e1;
+            ep->Next = e0;
+            ep->Prev->Prev->Next = e1;
+            ep->Prev->Prev = e0;
 
-                // Next edge
-                ep = e1->Next;
-            } else {
-                ep = ep->Next;
-            }
+            // Next edge
+            ep = e1->Next;
+        } else {
+            ep = ep->Next;
         }
-        Ne += Contours[i]->size();
     }
 
     // Edge swap to make triangulation Delaunay
@@ -665,7 +661,14 @@ void Mesh::insert_internal_boundaries() {
             LocateTriangleResult result = locate_triangle(&p0, e);
 
             if (result != LocateTriangleResult::Point) {
-                throw (std::exception()); //TODO: Could not locate point within triangulation while inserting internal constraints
+                //TODO: Could not locate point within triangulation while inserting internal constraints
+                //TODO: Need to fix locate_triangle method so that search continues along boundary until the edge extrusion strip contains the point (verifying the internal/external status)
+                LocateTriangleResult result = locate_triangle(&p1, e);
+                if (result == LocateTriangleResult::Point) {
+                    std::swap(p0, p1);
+                } else {
+                    throw std::exception();
+                }
             }
 
             if (e->is_attached(&p1, e)) {
