@@ -125,7 +125,7 @@ void test_rotated_curves(Sketch &s, std::vector<size_t> index, const Vertex *cen
     }
 }
 
-TEST(Mirror, nonoverlapping) {
+TEST(MirrorCopy, nonoverlapping) {
     Sketch s;
 
     Vertex &v0 = s.new_element<Vertex>(2.0, 0.0);
@@ -179,110 +179,115 @@ TEST(Mirror, nonoverlapping) {
     }
 }
 
+TEST(MirrorCopy, overlapping) {
+    for (bool remove_internal : {true, false}) {
+        Sketch s;
 
-TEST(Mirror, overlapping) {
-    Sketch s;
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
+        Vertex &v2 = s.new_element<Vertex>(2.0, 1.0);
+        Vertex &v3 = s.new_element<Vertex>(1.0, 1.0);
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(2.0, 1.0);
-    Vertex &v3 = s.new_element<Vertex>(1.0, 1.0);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
+        LineSegment &l2 = s.new_element<LineSegment>(v2, v3);
+        LineSegment &l3 = s.new_element<LineSegment>(v3, v0);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
-    LineSegment &l2 = s.new_element<LineSegment>(v2, v3);
-    LineSegment &l3 = s.new_element<LineSegment>(v3, v0);
+        l3.ForConstruction = true;
+        s.new_element<Fixation>(v0);
+        s.new_element<Fixation>(v3);
 
-    l3.ForConstruction = true;
-    s.new_element<Fixation>(v0);
-    s.new_element<Fixation>(v3);
+        // std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
+        auto mvec = s.curves();
+        MirrorCopy &mc0 = s.new_element<MirrorCopy>(mvec, &l3, remove_internal);
 
-    std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
-    MirrorCopy &mc0 = s.new_element<MirrorCopy>(vec, &l3);
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram")+std::to_string(remove_internal));
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Mirror__overlapping_parallelogram");
-
-    s.solve();
-    s.build();
-
-    // Run Tests
-    {
-        test_sketch_size(s, 6, 7, 4, 1);
-        test_mirror_verticies(s, {1, 2}, l3);
-        test_mirror_curves(s, {0, 1, 2}, l3);
-    }
-
-    // Change elements
-    {
-        s.new_element<Length>(l1, 0.5);
         s.solve();
         s.build();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Mirror__overlapping_trapezoid");
-    }
+        // Run Tests
+        {
+            test_sketch_size(s, 6, 7, 4, 2 - remove_internal);
+            test_mirror_verticies(s, {1, 2}, l3);
+            test_mirror_curves(s, {0, 1, 2}, l3);
+        }
 
-    // Run Tests
-    {
-        test_sketch_size(s, 6, 7, 5, 1);
-        test_mirror_verticies(s, {1, 2}, l3);
-        test_mirror_curves(s, {0, 1, 2}, l3);
+        // Change elements
+        {
+            s.new_element<Length>(l1, 0.5);
+            s.solve();
+            s.build();
+
+            s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_trapezoid")+std::to_string(remove_internal));
+        }
+
+        // Run Tests
+        {
+            test_sketch_size(s, 6, 7, 5, 2 - remove_internal);
+            test_mirror_verticies(s, {1, 2}, l3);
+            test_mirror_curves(s, {0, 1, 2}, l3);
+        }
     }
 }
 
-TEST(Mirror, multiple_overlapping) {
-    Sketch s;
+TEST(MirrorCopy, multiple_overlapping) {
+    for (bool remove_internal : {true, false}) {
+        Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(2.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(2.0, 2.0);
-    Vertex &v3 = s.new_element<Vertex>(1.0, 3.0);
-    Vertex &v4 = s.new_element<Vertex>(3.0, 2.0);
-    Vertex &v5 = s.new_element<Vertex>(2.0, 6.0);
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(2.0, 1.0);
+        Vertex &v2 = s.new_element<Vertex>(2.0, 2.0);
+        Vertex &v3 = s.new_element<Vertex>(1.0, 3.0);
+        Vertex &v4 = s.new_element<Vertex>(3.0, 2.0);
+        Vertex &v5 = s.new_element<Vertex>(2.0, 6.0);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
-    LineSegment &l2 = s.new_element<LineSegment>(v2, v3);
-    LineSegment &l3 = s.new_element<LineSegment>(v3, v0);
-    LineSegment &l4 = s.new_element<LineSegment>(v2, v4);
-    LineSegment &l5 = s.new_element<LineSegment>(v4, v5);
-    LineSegment &l6 = s.new_element<LineSegment>(v5, v3);
+        LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
+        LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
+        LineSegment &l2 = s.new_element<LineSegment>(v2, v3);
+        LineSegment &l3 = s.new_element<LineSegment>(v3, v0);
+        LineSegment &l4 = s.new_element<LineSegment>(v2, v4);
+        LineSegment &l5 = s.new_element<LineSegment>(v4, v5);
+        LineSegment &l6 = s.new_element<LineSegment>(v5, v3);
 
-    l3.ForConstruction = true;
-    s.new_element<Coincident<LineSegment>>(v5, l3);
+        //l3.ForConstruction = true;
+        s.new_element<Coincident<LineSegment>>(v5, l3);
 
-    std::vector<const Curve *> vec{&l0, &l1, &l2, &l3, &l4, &l5, &l6};
-    s.new_element<MirrorCopy>(vec, &l3);
+        //std::vector<const Curve *> vec{&l0, &l1, &l2, &l3, &l4, &l5, &l6};
+        auto mvec = s.curves();
+        s.new_element<MirrorCopy>(mvec, &l3, remove_internal);
 
-    s.solve();
-    s.build();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Mirror__multiple_overlapping_0");
-
-    // Run Tests
-    {
-        test_sketch_size(s, 9, 12, 4, 3);
-        test_mirror_verticies(s, {1, 2, 4}, l3);
-        test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
-    }
-
-    // Change elements
-    {
-        s.new_element<Length>(l6, 2.0);
         s.solve();
         s.build();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Mirror__multiple_overlapping_1");
-    }
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_0_")+std::to_string(remove_internal));
 
-    // Run Tests
-    {
-        test_sketch_size(s, 9, 12, 5, 3);
-        test_mirror_verticies(s, {1, 2, 4}, l3);
-        test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
+        // Run Tests
+        {
+            test_sketch_size(s, 9, 12, 4, 4 - 2 * remove_internal);
+            test_mirror_verticies(s, {1, 2, 4}, l3);
+            test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
+        }
+
+        // Change elements
+        {
+            s.new_element<Length>(l6, 2.0);
+            s.solve();
+            s.build();
+
+            s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_1_")+std::to_string(remove_internal));
+        }
+
+        // Run Tests
+        {
+            test_sketch_size(s, 9, 12, 5, 4 - 2 * remove_internal);
+            test_mirror_verticies(s, {1, 2, 4}, l3);
+            test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
+        }
     }
 }
 
-TEST(Rotate, nonoverlapping) {
+TEST(RotateCopy, nonoverlapping) {
     Sketch s;
 
     size_t N = 4;
@@ -342,75 +347,90 @@ TEST(Rotate, nonoverlapping) {
     }
 }
 
-TEST(Rotate, overlapping) {
-    Sketch s;
+TEST(RotateCopy, overlapping) {
+    for(bool remove_internal : {true, false}) {
+        Sketch s;
 
-    size_t N = 4;
-    double a_deg = 360.0 / N;
-    double a_rad = M_PI * 2.0 / N;
+        size_t N = 4;
+        double a_deg = 360.0 / N;
+        double a_rad = M_PI * 2.0 / N;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(2.0, 0.0);
-    Vertex &v3 = s.new_element<Vertex>(2.0 * cos(a_rad), 2.0 * sin(a_rad));
-    Vertex &v4 = s.new_element<Vertex>(1.0 * cos(a_rad), 1.0 * sin(a_rad));
+        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+        Vertex &v1 = s.new_element<Vertex>(1.0, 0.1);
+        Vertex &v2 = s.new_element<Vertex>(2.0, 0.2);
+        Vertex &v3 = s.new_element<Vertex>(2.0 * cos(a_rad), 2.0 * sin(a_rad));
+        Vertex &v4 = s.new_element<Vertex>(1.0 * cos(a_rad), 1.0 * sin(a_rad));
+        Vertex &v5 = s.new_element<Vertex>(3.0, 0.0);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v1, v2);
-    LineSegment &l1 = s.new_element<LineSegment>(v4, v3);
+        LineSegment &l0 = s.new_element<LineSegment>(v1, v2);
+        LineSegment &l1 = s.new_element<LineSegment>(v4, v3);
+        LineSegment &lh = s.new_element<LineSegment>(v0, v5);
+        lh.ForConstruction = remove_internal;
 
-    CircularArc &c0 = s.new_element<CircularArc>(v2, v3, v0, 2.0);
-    CircularArc &c1 = s.new_element<CircularArc>(v1, v4, v0, 1.0);
+        CircularArc &c0 = s.new_element<CircularArc>(v2, v3, v0, 2.0);
+        CircularArc &c1 = s.new_element<CircularArc>(v1, v4, v0, 1.0);
 
-    Radius &rad0 = s.new_element<Radius>(c0, 2.0);
-    Radius &rad1 = s.new_element<Radius>(c1, 1.0);
+        Horizontal &h = s.new_element<Horizontal>(lh);
 
-    Fixation &f0 = s.new_element<Fixation>(v0);
-    Horizontal &h0 = s.new_element<Horizontal>(l0);
-    Coincident<LineSegment> &co0 = s.new_element<Coincident<LineSegment>>(v0, l1);
-    Angle &a0 = s.new_element<Angle>(l0, l1, a_deg);
+        Radius &rad0 = s.new_element<Radius>(c0, 2.0);
+        Radius &rad1 = s.new_element<Radius>(c1, 1.0);
 
-    std::vector<const Curve *> vec({&l0, &l1, &c0, &c1});
-    RotateCopy &r0 = s.new_element<RotateCopy>(vec, &v0, 360.0 / N, N - 2);
+        Fixation &f0 = s.new_element<Fixation>(v0);
 
-    s.solve();
-    s.build();
+        Coincident<LineSegment> &co0 = s.new_element<Coincident<LineSegment>>(v0, l0);
+        Coincident<LineSegment> &co1 = s.new_element<Coincident<LineSegment>>(v0, l1);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_0");
+        Angle &a0 = s.new_element<Angle>(lh, l0, 22.5);
+        //Horizontal &h = s.new_element<Horizontal>(l0);
 
-    // Run Tests
-    {
-        test_sketch_size(s, 9, 10, 10, 3);
-        test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
-        test_rotated_curves(s, {0, 1, 2, 3}, &v0, 360.0 / N, N - 2);
+        Angle &a1 = s.new_element<Angle>(l0, l1, a_deg);
+
+        s.solve();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_")+std::to_string(remove_internal));
+
+        std::vector<const Curve *> rvec = {&l0,&l1,&c0,&c1};
+        RotateCopy &r0 = s.new_element<RotateCopy>(rvec, &v0, 360.0 / N, N - 2, remove_internal);
+
+        s.solve();
+        s.build();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_0_")+std::to_string(remove_internal));
+
+        // Run Tests
+        {
+            test_sketch_size(s, 10, 11, 12, 3 - 2 * remove_internal);
+            test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
+            test_rotated_curves(s, {0, 1, 3, 4}, &v0, 360.0 / N, N - 2);
+        }
+
+        // Change Sketch
+        rad0.Dim = 2.5;
+        rad1.Dim = 0.5;
+        a0.Dim = 45;
+
+        s.solve();
+        s.build();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_1_")+std::to_string(remove_internal));
+
+        // Run Tests
+        {
+            test_sketch_size(s, 10, 11, 12, 3 - 2 * remove_internal);
+            test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
+            test_rotated_curves(s, {0, 1, 3, 4}, &v0, 360.0 / N, N - 2);
+        }
     }
-
-    // Change Sketch
-    rad0.Dim = 0.5;
-    rad1.Dim = 2.5;
-
-    s.solve();
-    s.build();
-
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__overlapping_1");
-
-    // Run Tests
-    {
-        test_sketch_size(s, 9, 10, 10, 3);
-        test_rotated_verticies(s, {1, 2, 3, 4}, &v0, 360.0 / N, N - 2);
-        test_rotated_curves(s, {0, 1, 2, 3}, &v0, 360.0 / N, N - 2);
-    }
-
-    FAIL(); // TODO: Change angle of horizontal line w.r.t. x-axis and rerun
 }
 
-TEST(Rotate, open_overlapping) {
+TEST(RotateCopy, open_overlapping) {
     FAIL(); // TODO
 }
 
-TEST(Rotate, closed_overlapping) {
-    FAIL(); // TODO
+TEST(RotateCopy, closed_overlapping) {
+    FAIL(); // TODO: Need to implement detection of completely closed rotation copy
 }
 
-TEST(Rotate, noncoincident_overlapping) {
+TEST(RotateCopy, noncoincident_overlapping) {
     FAIL(); // TODO: Current implementation will fail if rotated boundaries overlap but are not identical
 }

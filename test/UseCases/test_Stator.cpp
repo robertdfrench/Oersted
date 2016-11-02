@@ -35,7 +35,7 @@ TEST(Stator, 0) {
     MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1);
 
     auto rvec = sketch.curves();
-    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, &origin, 360.0 / Nt, 1);
+    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, &origin, 360.0 / Nt, 1, true);
 
     sketch.solve();
 

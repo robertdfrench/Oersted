@@ -1,18 +1,21 @@
 #include "Sketch.hpp"
 
-MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l) {
+MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool remove_internal) {
     // Creates mirror copies of the input curves about a line
 
     // Assign Properties
     Input = input;
     SymmetryLine = l;
+    RemoveInternalBoundaries = remove_internal;
 
     // Clone input curves and create a list of unique input verticies
     Curves.reserve(Input.size());
 
     std::list<Vertex *> input_vlist;
     for (auto c : Input) {
-        if (!(l->is_coincident(c))) {
+        if (l->is_coincident(c)) {
+            const_cast<Curve *>(c)->ForConstruction = RemoveInternalBoundaries; // TODO: const_cast is ugly
+        } else {
             Curves.push_back(c->clone());
             c->get_verticies(input_vlist);
         }

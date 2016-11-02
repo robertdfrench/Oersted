@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies) {
+RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
     // #TODO: Need to rearrange code and reserve vector sizes in a way that makes more sense (much code copied from MirrorCopy constructor)
     // #TODO: Restructure to obviate the need for local_curves and local_verticies
@@ -15,6 +15,7 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
     Curves.reserve(copies * input.size());
     Verticies.reserve(3 * copies * input.size());
     Constraints.reserve(3 * copies * input.size());
+    RemoveInternalBoundaries = remove_internal;
 
     std::vector<const Curve *> leading_curves;
     std::vector<const Curve *> lagging_curves;
@@ -101,6 +102,7 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
     // Make rotated copies
     std::vector<Vertex *> rotated_lagging(leading_verticies.begin(), leading_verticies.end());
     for (size_t i = 0; i != Copies; ++i) {
+        bool last_iteration = (i == Copies - 1);
         // Create curve clones
         std::vector<Curve *> local_curves;
         for (auto c : internal_curves) {
@@ -111,6 +113,14 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
         for (auto c : leading_curves) {
             local_curves.push_back(c->clone());
             Curves.push_back(local_curves.back());
+
+            if (RemoveInternalBoundaries) {
+                if (!last_iteration) {
+                    Curves.back()->ForConstruction = true;
+                } else {
+                    const_cast<Curve *>(c)->ForConstruction = true; // TODO: const_cast is ugly
+                }
+            }
         }
 
         // Create new verticies and constrain them

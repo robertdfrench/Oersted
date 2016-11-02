@@ -18,6 +18,7 @@ public:
 
 protected:
     std::vector<const Curve *> Input;
+    bool RemoveInternalBoundaries;
 
     std::vector<Vertex *> Verticies;
     std::vector<Curve *> Curves;

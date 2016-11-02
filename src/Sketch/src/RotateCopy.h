@@ -5,7 +5,7 @@
 
 class RotateCopy : public Pattern {
 public:
-    RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies);
+    RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies, bool remove_internal = false);
 
 private:
     Vertex *Center;
