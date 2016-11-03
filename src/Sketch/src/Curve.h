@@ -10,9 +10,9 @@ public:
     // Constructors
     Curve() : Start(nullptr), End(nullptr) {};
 
-    Curve(Vertex &v0, Vertex &v1) : Start(&v0), End(&v1) {};
+    Curve(Vertex &v0, Vertex &v1, bool fc = false) : Start(&v0), End(&v1), ForConstruction(fc) {};
 
-    Curve(Vertex *v0, Vertex *v1) : Start(v0), End(v1) {};
+    Curve(Vertex *v0, Vertex *v1, bool fc = false) : Start(v0), End(v1), ForConstruction(fc) {};
 
     // Properties
     bool ForConstruction = false;

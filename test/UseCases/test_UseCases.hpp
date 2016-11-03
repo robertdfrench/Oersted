@@ -4,6 +4,7 @@
 #include "Sketch.hpp"
 #include "Mesh.hpp"
 #include "gtest.h"
+#include "../Mesh/util.h"
 
 #define SDIR "./test/output/UseCases/sketch/"
 #define MDIR "./test/output/UseCases/mesh/"

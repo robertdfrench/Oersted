@@ -21,17 +21,14 @@ class Edge;
 
 class Mesh {
 public:
-    // Global Mesh Quality Constraints
     double MinimumElementQuality = 0.0;
     double MinimumElementSize = 0.0;
     double MaximumElementSize = DBL_MAX;
 
-    // Constructors
     Mesh(Sketch &s);
 
     void create();
 
-    // Accessors
     const Point *point(size_t i) const { return Points[i]; };
 
     const Edge *edge(size_t i) const { return Edges[i]; };
@@ -50,10 +47,8 @@ public:
 
     size_t num_triangles() const { return Triangles.size(); };
 
-    // Save
     void save_as(std::string path, std::string file_name) const;
 
-    // Topological Queries
     LocateTriangleResult locate_triangle(const Point *p, Edge *&e) const;
 
     LocateTriangleResult locate_triangle(const Point *p, const Edge *&e) const;
@@ -63,7 +58,6 @@ public:
         return locate_triangle(p, e);
     };
 
-    // Point Insertion
     InsertPointResult insert_point(const Point *p, Edge *e);
 
     InsertPointResult insert_point(const Point *p) { return insert_point(p, Edges.back()); };
@@ -72,12 +66,13 @@ public:
 
     InsertPointResult insert_midpoint(Edge *e);
 
-    // Refinement
     void refine();
 
     void refine_once();
 
     void refine_once(std::vector<size_t> index, std::vector<double> circumradius, std::vector<double> quality);
+
+    const Edge* edges_are_valid();
 
 protected:
     const Contour *Boundary;
@@ -88,7 +83,6 @@ protected:
     std::vector<Edge *> Triangles;
 
 private:
-    // Algorithm Components
     void create_boundary_polygon();
 
     void triangulate_boundary_polygon();

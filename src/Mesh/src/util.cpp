@@ -1,7 +1,7 @@
-#include "../include/Mesh.hpp"
+#include "Mesh.hpp"
 
 bool are_intersecting(const Edge *e0, const Edge *e1) {
-    // #TODO, Make more detailed return type enumeration
+    // TODO, Make more detailed return type enumeration
     if (e0->ConstraintCurve != nullptr && e0->ConstraintCurve == e1->ConstraintCurve) {
         return false;
     }

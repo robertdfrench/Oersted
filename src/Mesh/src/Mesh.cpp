@@ -1,14 +1,17 @@
 #include "Mesh.hpp"
 
-Mesh::Mesh(Sketch &s) {
-    Boundary = s.boundary();
+Mesh::Mesh(Sketch &sketch) {
+    Boundary = sketch.boundary();
 
-    for (size_t i = 0; i != s.size_curves(); ++i) {
-        Curves.push_back(s.curve(i));
+    for (size_t i = 0; i != sketch.size_curves(); ++i) {
+        auto c = sketch.curve(i);
+        if(!(c->ForConstruction)) {
+            Curves.push_back(c);
+        }
     }
 
-    for (size_t i = 0; i != s.size_contours(); ++i) {
-        Contours.push_back(s.contour(i));
+    for (size_t i = 0; i != sketch.size_contours(); ++i) {
+        Contours.push_back(sketch.contour(i));
     }
 }
 
@@ -34,59 +37,115 @@ LocateTriangleResult Mesh::locate_triangle(const Point *p, Edge *&e) const {
 }
 
 LocateTriangleResult Mesh::locate_triangle(const Point *p, const Edge *&e) const {
-    // TODO: Need to search along boundary triangles in order to ensure the internal/external status
-    const Edge *start = e;
     double xp = p->X;
     double yp = p->Y;
 
     while (true) {
-        // Verticies
-        const Point *p0 = e->base();
-        const Point *p1 = e->tip();
+        const Point *p0 = e->node();
+        const Point *p1 = e->next()->node();
+        const Point *p2 = e->prev()->node();
 
         if (*p == *p0) {
             return LocateTriangleResult::Point;
-        } else if (*p == *p1) {
+        }
+
+        if (*p == *p1) {
             e = e->next();
             return LocateTriangleResult::Point;
         }
 
-        // Signed area of triangle
+        if (*p == *p2) {
+            e = e->prev();
+            return LocateTriangleResult::Point;
+        }
+
         double dx0p = p0->X - xp;
         double dy0p = p0->Y - yp;
+        double dp0 = sqrt(dx0p * dx0p + dy0p * dy0p);
+
         double dx1p = p1->X - xp;
         double dy1p = p1->Y - yp;
+        double dp1 = sqrt(dx1p * dx1p + dy1p * dy1p);
+
+        double dx2p = p2->X - xp;
+        double dy2p = p2->Y - yp;
+        double dp2 = sqrt(dx2p * dx2p + dy2p * dy2p);
+
         double dx01 = p0->X - p1->X;
         double dy01 = p0->Y - p1->Y;
+        double d01 = sqrt(dx01 * dx01 + dy01 * dy01);
 
-        double area = dx0p * dy1p - dx1p * dy0p;
-        double tol = FLT_EPSILON * (dx01 * dx01 + dy01 * dy01);
+        double dx12 = p1->X - p2->X;
+        double dy12 = p1->Y - p2->Y;
+        double d12 = sqrt(dx12 * dx12 + dy12 * dy12);
 
-        if (area < -tol) {
-            if (e != e->twin()) {
-                start = e->twin();
-                e = start->next();
-            } else {
-                return LocateTriangleResult::Exterior;
-            }
-        } else if (area < tol) {
-            double dp0 = sqrt(dx0p * dx0p + dy0p * dy0p);
-            double dp1 = sqrt(dx1p * dx1p + dy1p * dy1p);
-            double d01 = sqrt(dx01 * dx01 + dy01 * dy01);
-            double tol = FLT_EPSILON * d01;
+        double dx20 = p2->X - p0->X;
+        double dy20 = p2->Y - p0->Y;
+        double d20 = sqrt(dx20 * dx20 + dy20 * dy20);
 
-            if (abs(dp0 + dp1 - d01) < tol) {
-                return LocateTriangleResult::Edge;
-            } else if (e->next() != start) {
-                e = e->next();
-            } else {
-                throw std::exception(); //TODO: This branch should never be reached. Supply return value"
-            }
-        } else if (e->next() != start) {
-            e = e->next();
-        } else {
+        double tola = abs(dx20 * dy01 - dy20 * dx01);
+        double tole = FLT_EPSILON * sqrt(tola);
+        tola *= FLT_EPSILON;
+
+        double area01 = dx0p * dy1p - dx1p * dy0p;
+        double area12 = dx1p * dy2p - dx2p * dy1p;
+        double area20 = dx2p * dy0p - dx0p * dy2p;
+
+        if (area01 > tola && area12 > tola && area20 > tola) {
             return LocateTriangleResult::Interior;
         }
+
+        if (area01 < -tola) {
+            if (e != e->twin()) {
+                e = e->twin()->next();
+                continue;
+            }
+        } else if (area01 < tola) {
+            if (abs(dp0 + dp1 - d01) < tole) {
+                return LocateTriangleResult::Edge;
+            }
+        }
+
+        if (area12 < -tola) {
+            if (e->next() != e->next()->twin()) {
+                e = e->next()->twin()->next();
+                continue;
+            }
+        } else if (area12 < tola) {
+            if (abs(dp1 + dp2 - d12) < tole) {
+                e = e->next();
+                return LocateTriangleResult::Edge;
+            }
+        }
+
+        if (area20 < -tola) {
+            if (e->prev() != e->prev()->twin()) {
+                e = e->prev()->twin()->next();
+                continue;
+            }
+        } else if (area20 < tola) {
+            if (abs(dp2 + dp0 - d20) < tole) {
+                e = e->prev();
+                return LocateTriangleResult::Edge;
+            }
+        }
+
+        // If not Interior, not on Edge, and cannot continue, point is exterior
+        if (area01 < -tola) {
+            return LocateTriangleResult::Exterior;
+        }
+
+        if (area12 < -tola) {
+            e = e->next();
+            return LocateTriangleResult::Exterior;
+        }
+
+        if (area20 < -tola) {
+            e = e->prev();
+            return LocateTriangleResult::Exterior;
+        }
+
+        throw std::exception();
     }
 }
 
@@ -649,7 +708,7 @@ void Mesh::insert_internal_boundaries() {
         }
     }
 
-    // Insert interior curve midpoints until constraints are naturally satisified
+    // Insert interior curve midpoints until constraints are naturally satisfied
     std::vector<Curve *> queue;
     for (size_t i = 0; i != interior.size(); ++i) {
         Edge * e = Edges.back();
@@ -661,14 +720,7 @@ void Mesh::insert_internal_boundaries() {
             LocateTriangleResult result = locate_triangle(&p0, e);
 
             if (result != LocateTriangleResult::Point) {
-                //TODO: Could not locate point within triangulation while inserting internal constraints
-                //TODO: Need to fix locate_triangle method so that search continues along boundary until the edge extrusion strip contains the point (verifying the internal/external status)
-                LocateTriangleResult result = locate_triangle(&p1, e);
-                if (result == LocateTriangleResult::Point) {
-                    std::swap(p0, p1);
-                } else {
-                    throw std::exception();
-                }
+                throw std::exception();
             }
 
             if (e->is_attached(&p1, e)) {
@@ -796,4 +848,59 @@ void Mesh::refine_once(std::vector<size_t> index, std::vector<double> radii, std
         }
     }
     get_triangles();
+}
+
+const Edge* Mesh::edges_are_valid() {
+    for (size_t i = 0; i < size_edges(); ++i) {
+        const Edge *e = edge(i);
+
+
+        if (e != e->next()->prev()) {
+            return e;
+        }
+        if (e != e->prev()->next()) {
+            return e;
+        }
+        if (e != e->twin()->twin()) {
+            return e;
+        }
+
+        if (!(e->twin() == e)) {
+            if (e->node() != e->twin()->next()->node()) {
+                return e;
+            }
+            if (e->constraint_curve() != e->twin()->constraint_curve()) {
+                return e;
+            }
+            if (e->constraint_curve() != nullptr) {
+                if (e->orientation() == e->twin()->orientation()) {
+                    return e;
+                }
+            }
+
+            if (e->node() == e->twin()->node()) {
+                return e;
+            }
+        }
+
+        if (e->constraint_curve() != nullptr) {
+            if (e->orientation()) {
+                if (*e->base() != *e->constraint_curve()->start()) {
+                    return e;
+                }
+                if (*e->tip() != *e->constraint_curve()->end()) {
+                    return e;
+                }
+            } else {
+                if (*e->base() != *e->constraint_curve()->end()) {
+                    return e;
+                }
+                if (*e->tip() != *e->constraint_curve()->start()) {
+                    return e;
+                }
+            }
+        }
+    }
+
+    return nullptr;
 }

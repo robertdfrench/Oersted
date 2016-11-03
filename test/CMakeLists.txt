@@ -19,6 +19,8 @@ set(SOURCE_FILES
 
         Mesh/test_Mesh.hpp
         Mesh/test_Mesh.cpp
+        Mesh/util.h
+        Mesh/util.cpp
 
         UseCases/test_UseCases.hpp
         UseCases/test_Stator.cpp

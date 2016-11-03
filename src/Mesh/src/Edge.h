@@ -14,7 +14,7 @@ public:
 
     Edge(Point &v, Edge &n, Edge &p, Edge &t) : Node(&v), Next(&n), Prev(&p), Twin(&t), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(Curve *c, bool Orientaiton);
+    Edge(Curve *c, bool Orientation);
 
     Edge(Curve *c, bool Orientation, const Point *v);
 
@@ -37,12 +37,10 @@ public:
 
     bool mark() const { return Mark; };
 
-    // Overloads
     bool operator==(const Edge &e) const {
         return (node() == e.node()) && (constraint_curve() == e.constraint_curve()) && (twin()->node() == e.twin()->node());
     };
 
-    // Calculation Methods
     Point circumcenter() const;
 
     double circumradius() const;
@@ -51,7 +49,6 @@ public:
 
     double shortest_edge_length() const;
 
-    // Test Methods
     bool is_protruding() const;
 
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
@@ -64,26 +61,24 @@ public:
 
     bool is_attached(const Point *p, Edge *&e) const;
 
-    // Topology Alterating Methods
     bool swap();
 
     bool recursive_swap();
 
     void split_edge(std::vector<const Point *> &verts, std::vector<Edge *> &edges);
 
-    // Auxillary Methods
     void recursive_mark();
 
 protected:
-    const Point *Node;    //Start of edge
-    Edge *Next;            //In triangle
-    Edge *Twin;            //Adjacent triangle
-    Edge *Prev;            //In triangle
+    const Point *Node;      //Start of edge
+    Edge *Next;             //In triangle
+    Edge *Twin;             //Adjacent triangle
+    Edge *Prev;             //In triangle
 
     Curve *ConstraintCurve; //==nullptr if unconstrained
-    bool Orientation;        //undefined if unconstrained
+    bool Orientation;       //undefined if unconstrained
 
-    bool Mark;                // Auxillary variable for mesh refinement
+    bool Mark;              // Auxillary variable for mesh refinement
 };
 
 #endif //OERSTED_EDGE_H

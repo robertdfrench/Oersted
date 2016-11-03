@@ -32,7 +32,7 @@ TEST(Stator, 0) {
     CircularArc &c3 = sketch.new_element<CircularArc>(v6, v3, origin, rb);
 
     auto mvec = sketch.curves();
-    MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1);
+    MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1, true);
 
     auto rvec = sketch.curves();
     RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, &origin, 360.0 / Nt, 1, true);
@@ -71,17 +71,17 @@ TEST(Stator, 0) {
 
     Mesh mesh{sketch};
 
-    mesh.MinimumElementQuality = M_SQRT1_2;
+    mesh.MinimumElementQuality = 0 * M_SQRT1_2;
     mesh.MaximumElementSize = 2.5;
     mesh.MinimumElementSize = 0.25;
 
     mesh.create();
 
+    EXPECT_TRUE(edges_are_valid(mesh));
+    EXPECT_TRUE(edges_are_optimal(mesh));
+
     mesh.save_as(MDIR, "stator0");
 
     mesh.refine();
-
     mesh.save_as(MDIR, "stator0_refined");
-
-
 }

@@ -16,13 +16,13 @@ public:
     // Constructors
     CircularArc() : Curve(), Radius(new Variable(0.0)) {};
 
-    CircularArc(const CircularArc *c) : Curve(c->Start, c->End), Center(c->Center), Radius(c->Radius) {};
+    CircularArc(const CircularArc *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
 
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c) : Curve(v0, v1), Center(&c) {};
+    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, bool fc = false) : Curve(v0, v1, fc), Center(&c) {};
 
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, double r) : Curve(v0, v1), Center(&c), Radius(new Variable{r}) {};
+    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, double r, bool fc = false) : Curve(v0, v1, fc), Center(&c), Radius(new Variable{r}) {};
 
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, Variable &r, Sketch &s) : Curve(v0, v1), Center(&c), Radius(&r) {};
+    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, Variable &r, Sketch &s, bool fc = false) : Curve(v0, v1, fc), Center(&c), Radius(&r) {};
 
     // Accessors
     const Vertex *center() const { return Center; };
@@ -85,9 +85,7 @@ protected:
 
     bool on_segment(const double x, const double y) const override;
 
-    bool
-    is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe,
-                 const double ye) const;
+    bool is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
 
 private:
     double s_to_a(double s) const;

@@ -22,9 +22,9 @@ public:
     //Constructors
     LineSegment() : Curve() {};
 
-    LineSegment(const LineSegment *l) : Curve(l->Start, l->End) {};
+    LineSegment(const LineSegment *l) : Curve(l->Start, l->End, l->ForConstruction) {};
 
-    LineSegment(Vertex &v0, Vertex &v1) : Curve(v0, v1) {};
+    LineSegment(Vertex &v0, Vertex &v1, bool fc = false) : Curve(v0, v1, fc) {};
 
     // Virtual Function Implementation
     void get_verticies(std::list<Vertex *> &v) const override {

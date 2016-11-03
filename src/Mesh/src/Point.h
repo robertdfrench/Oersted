@@ -3,7 +3,7 @@
 
 #include "Mesh.h"
 
-class Point { // #TODO, Replace Verticies member in Mesh with lighterweight Node class
+class Point { // TODO, Replace Verticies member in Mesh with lighterweight Node class
 public:
 
     Point() : X{0.0}, Y{0.0} {};
@@ -18,8 +18,6 @@ public:
     double X;
     double Y;
     //double Z; // 3-Dimensions?
-
-    //Vertex* V = nullptr; Keep track of constrained nodes?
 
     bool operator==(const Point &p) const { return (X == p.X) && (Y == p.Y); };
 
