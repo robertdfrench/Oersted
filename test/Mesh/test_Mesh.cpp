@@ -42,10 +42,10 @@ TEST(Mesh, create__triangle_domain) {
     }
 
     // Test validity, optimality
-    {
+    //{
         edges_are_valid(m);
         edges_are_optimal(m);
-    }
+    //}
 
     // Test edge and node connections
     {
@@ -81,7 +81,11 @@ TEST(Mesh, create__triangle_domain) {
     }
 
     // Forced Refinement
-    forced_refinement(m, "triangle_domain_refine_loop", 7);
+    {
+        forced_refinement(m, "triangle_domain_refine_loop", 7);
+    }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__square_domain) {
@@ -162,7 +166,11 @@ TEST(Mesh, create__square_domain) {
     }
 
     // Forced Refinement
-    forced_refinement(m, "square_domain_refine_loop", 7);
+    {
+        forced_refinement(m, "square_domain_refine_loop", 7);
+    }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__narrow_diamond_domain) {
@@ -238,6 +246,8 @@ TEST(Mesh, create__narrow_diamond_domain) {
     {
         forced_refinement(m, "narrow_diamond_domain_refine_loop", 7);
     }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__narrow_rectangle_domain) {
@@ -303,6 +313,8 @@ TEST(Mesh, create__narrow_rectangle_domain) {
     {
         forced_refinement(m, "narrow_rectangle_domain_refine_loop", 7);
     }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__half_circle_domain) {
@@ -344,6 +356,8 @@ TEST(Mesh, create__half_circle_domain) {
     {
         forced_refinement(m, "half_circle_domain_refine_loop", 7);
     }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__horseshoe_domain) {
@@ -384,11 +398,17 @@ TEST(Mesh, create__horseshoe_domain) {
         }
     }
 
-    edges_are_valid(m);
-    edges_are_optimal(m);
+    // Test validity, optimality
+    {
+        edges_are_valid(m);
+        edges_are_optimal(m);
+    }
 
-    forced_refinement(m, "horseshoe_domain_refine_loop", 7);
+    {
+        forced_refinement(m, "horseshoe_domain_refine_loop", 7);
+    }
 
+    m.delete_me();
 }
 
 TEST(Mesh, create__I_shaped_domain) {
@@ -444,6 +464,8 @@ TEST(Mesh, create__I_shaped_domain) {
     {
         forced_refinement(m, "i_shaped_domain_mesh_refine_loop", 7);
     }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__corner_square_domain) {
@@ -487,16 +509,16 @@ TEST(Mesh, create__corner_square_domain) {
         EXPECT_TRUE(m.size_triangles() == 8);
     }
 
-    // Test validity, optimality
-    {
+    { // Test validity, optimality
         edges_are_valid(m);
         edges_are_optimal(m);
     }
 
-    // Forced refinement
-    {
+    { // Forced refinement
         forced_refinement(m, "corner_square_domain_refine_loop", 7);
     }
+
+    m.delete_me();
 }
 
 TEST(Mesh, create__square_in_square_domain) {
@@ -542,6 +564,8 @@ TEST(Mesh, create__square_in_square_domain) {
     m.refine();
 
     m.save_as(SAVE_DIR, "square_in_square_domain_mesh_refine");
+
+    m.delete_me();
 }
 
 TEST(Edge, are_intersecting__nonparallel_true) {
@@ -750,15 +774,15 @@ TEST(Mesh, locate_triangle__triangular_domain) {
         const Point *vp;
 
         vp = &ve0;
-        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Edge);
+        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
 
         vp = &ve1;
-        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Edge);
+        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
 
         vp = &ve2;
-        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Edge);
+        EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[0])));
     }
 }
@@ -844,22 +868,22 @@ TEST(Mesh, locate_triange__square_domain) {
 
         vp = &ve0;
         result = mesh.locate_triangle(vp, e);
-        EXPECT_TRUE(result == LocateTriangleResult::Edge);
+        EXPECT_TRUE(result == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
 
         vp = &ve1;
         result = mesh.locate_triangle(vp, e);
-        EXPECT_TRUE(result == LocateTriangleResult::Edge);
+        EXPECT_TRUE(result == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
 
         vp = &ve2;
         result = mesh.locate_triangle(vp, e);
-        EXPECT_TRUE(result == LocateTriangleResult::Edge);
+        EXPECT_TRUE(result == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[3])));
 
         vp = &ve3;
         result = mesh.locate_triangle(vp, e);
-        EXPECT_TRUE(result == LocateTriangleResult::Edge);
+        EXPECT_TRUE(result == LocateTriangleResult::Interior);
         EXPECT_TRUE((e->node() == mesh.point(vmap[3])) && (e->next()->node() == mesh.point(vmap[0])));
     }
 
@@ -867,6 +891,6 @@ TEST(Mesh, locate_triange__square_domain) {
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
         const Edge *e = mesh.edge(i);
 
-        EXPECT_TRUE(mesh.locate_triangle(&vie, e) == LocateTriangleResult::Edge);
+        EXPECT_TRUE(mesh.locate_triangle(&vie, e) == LocateTriangleResult::Interior);
     }
 }

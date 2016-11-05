@@ -9,7 +9,7 @@ Edge::Edge(Curve *c, bool direction) {
     Orientation = direction;
 }
 
-Edge::Edge(Curve *c, bool direction, const Point *v) {
+Edge::Edge(Curve *c, bool direction, Point const *v) {
     ConstraintCurve = c;
     Node = v; //Should have C->point(0.0) == *(v) || c->point(1.0) == *(v)
     Twin = this;
@@ -22,9 +22,9 @@ bool Edge::is_protruding() const {
     /*
         See Chapter 1.4 of "Triangulations and Applications" by Øyvind Hjelle and Morten Dæhlen
     */
-    const Point *v0 = Prev->Node;
-    const Point *v1 = Node;
-    const Point *v2 = Next->Node;
+    Point const *v0 = Prev->Node;
+    Point const *v1 = Node;
+    Point const *v2 = Next->Node;
 
     double v1x = v2->X - v1->X;
     double v1y = v2->Y - v1->Y;
@@ -40,7 +40,7 @@ bool Edge::is_protruding() const {
         Edge * e = Next->Next;
 
         while (e != Prev) {
-            const Point *p = e->Node;
+            Point const *p = e->Node;
 
             double v2x = v2->X - p->X;
             double v2y = v2->Y - p->Y;
@@ -75,10 +75,10 @@ bool Edge::is_locally_optimal() const {
     if (ConstraintCurve != nullptr) {
         return true;
     } else {
-        const Point *p3 = Node;
-        const Point *p2 = Prev->Node;
-        const Point *p1 = Twin->Node;
-        const Point *p4 = Twin->Prev->Node;
+        Point const *p3 = Node;
+        Point const *p2 = Prev->Node;
+        Point const *p1 = Twin->Node;
+        Point const *p4 = Twin->Prev->Node;
 
         double v1x = p3->X - p2->X;
         double v1y = p3->Y - p2->Y;
@@ -115,7 +115,7 @@ bool Edge::is_valid() const {
     return value;
 }
 
-bool Edge::is_encroached(const Point *v2) const {
+bool Edge::is_encroached(Point const *v2) const {
     /*
     A constrained edge is encroached if a triangle and it's circumcenter lie on opposite sides of the edge.
     This is equivalent to a node being in the diameteral ball of the edge?
@@ -127,8 +127,8 @@ bool Edge::is_encroached(const Point *v2) const {
     if (ConstraintCurve == nullptr) {
         return false;
     } else {
-        const Point *v0 = base();
-        const Point *v1 = tip();
+        Point const *v0 = base();
+        Point const *v1 = tip();
 
         double dx0 = v0->X - v2->X;
         double dy0 = v0->Y - v2->Y;
@@ -143,7 +143,7 @@ bool Edge::is_encroached(const Point *v2) const {
     }
 }
 
-bool Edge::is_attached(const Point *p, Edge *&e) const {
+bool Edge::is_attached(Point const *p, Edge *&e) const {
     if (*this->tip() == *p) {
         return true;
     }
@@ -238,11 +238,13 @@ bool Edge::recursive_swap() {
     }
 }
 
-void Edge::split_edge(std::vector<const Point *> &points, std::vector<Edge *> &edges) {
+void Edge::split_edge(std::vector<Point const *> &points, std::vector<Edge *> &edges) {
     /*
         Splits edge into two edges at the midpoint without creating any new triangles.
         Used for initial polygon refinement.
     */
+
+    // TODO: Refactor into split_constrainted_edge
 
     Point * p = new Point;
     points.push_back(p);
@@ -284,56 +286,8 @@ void Edge::split_edge(std::vector<const Point *> &points, std::vector<Edge *> &e
 
         Next = e;
         Mark = false;
-    } else { // Interior Edge
-        Edge * e0 = new Edge;
-        edges.push_back(e0);
-
-        Edge * e1 = new Edge;
-        edges.push_back(e1);
-
-        // Constraint Curve
-        e0->Orientation = Orientation;
-        e1->Orientation = !Orientation;
-        Twin->Orientation = !Orientation;
-        if (Orientation) {
-            e0->ConstraintCurve = c;
-        } else {
-            e0->ConstraintCurve = ConstraintCurve;
-            ConstraintCurve = c;
-        }
-        Twin->ConstraintCurve = e0->ConstraintCurve;
-        e1->ConstraintCurve = ConstraintCurve;
-
-        // Connectivity
-        e0->Node = p;
-        e0->Next = Next;
-        e0->Prev = this;
-        e0->Twin = Twin;
-        e0->Mark = false;
-
-        e1->Node = p;
-        e1->Next = Twin->Next;
-        e1->Prev = Twin;
-        e1->Twin = this;
-        e1->Mark = false;
-
-        if (Twin->Next != nullptr) {
-            Twin->Next->Prev = e1;
-            Twin->Next->Mark = false;
-        }
-
-        Twin->Next = e1;
-        Twin->Twin = e0;
-        Twin->Mark = false;
-
-        if (Next != nullptr) {
-            Next->Prev = e0;
-            Next->Mark = false;
-        }
-
-        Next = e0;
-        Twin = e1;
-        Mark = false;
+    } else {
+        throw std::exception(); // Function should only be called on
     }
 }
 

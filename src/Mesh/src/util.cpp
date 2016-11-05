@@ -69,22 +69,6 @@ bool are_intersecting(const Edge *e0, const Edge *e1) {
     }
 }
 
-void circumradius(std::vector<Edge *> &triangles, std::vector<double> &radii) {
-    radii.resize(0);
-    radii.reserve(triangles.size());
-    for (size_t i = 0; i < triangles.size(); ++i) {
-        radii.push_back(triangles[i]->circumradius());
-    }
-}
-
-void shortest_edge_length(std::vector<Edge *> &triangle, std::vector<double> &length) {
-    length.resize(0);
-    length.reserve(triangle.size());
-    for (size_t i = 0; i < triangle.size(); ++i) {
-        length.push_back(triangle[i]->shortest_edge_length());
-    }
-}
-
 void element_quality(std::vector<Edge *> &triangle, std::vector<double> &radii, std::vector<double> &quality) {
     radii.resize(0);
     quality.resize(0);

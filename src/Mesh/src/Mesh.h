@@ -8,7 +8,7 @@
 #include <numeric>
 
 enum class LocateTriangleResult {
-    Interior, Exterior, Edge, Point
+    Interior, Exterior, Boundary, Point // TODO: Enumerate cases in function when triangle is located by a point near the boundary
 };
 
 enum class InsertPointResult {
@@ -27,13 +27,15 @@ public:
 
     Mesh(Sketch &s);
 
+    void delete_me(); // TODO: refactor to non-pointer version
+
     void create();
 
-    const Point *point(size_t i) const { return Points[i]; };
+    Point const *point(size_t i) const { return Points[i]; };
 
-    const Edge *edge(size_t i) const { return Edges[i]; };
+    Edge const *edge(size_t i) const { return Edges[i]; };
 
-    const Edge *triangle(size_t i) const { return Triangles[i]; };
+    Edge const *triangle(size_t i) const { return Triangles[i]; };
 
     size_t size_points() const { return Points.size(); };
 
@@ -49,36 +51,38 @@ public:
 
     void save_as(std::string path, std::string file_name) const;
 
-    LocateTriangleResult locate_triangle(const Point *p, Edge *&e) const;
+    LocateTriangleResult locate_triangle(Point const *p, Edge *&e) const;
 
-    LocateTriangleResult locate_triangle(const Point *p, const Edge *&e) const;
+    LocateTriangleResult locate_triangle(Point const *p, Edge const *&e) const;
 
-    LocateTriangleResult locate_triangle(const Point *p) const {
-        const Edge *e = Edges.back();
+    LocateTriangleResult locate_triangle(Point const *p) const {
+        Edge const *e = Edges.back();
         return locate_triangle(p, e);
     };
 
-    InsertPointResult insert_point(const Point *p, Edge *e);
+    bool in_triangle(Point const *p, Edge const *&e) const;
 
-    InsertPointResult insert_point(const Point *p) { return insert_point(p, Edges.back()); };
+    InsertPointResult insert_point(Point const *p, Edge *e);
+
+    InsertPointResult insert_point(Point const *p) { return insert_point(p, Edges.back()); };
 
     InsertPointResult insert_circumcenter(Edge *e);
 
     InsertPointResult insert_midpoint(Edge *e);
 
-    void refine();
+    bool refine();
 
-    void refine_once();
+    bool refine_once();
 
     void refine_once(std::vector<size_t> index, std::vector<double> circumradius, std::vector<double> quality);
 
-    const Edge* edges_are_valid();
+    bool edges_are_valid();
 
 protected:
-    const Contour *Boundary;
-    std::vector<const Curve *> Curves;
-    std::vector<const Contour *> Contours;
-    std::vector<const Point *> Points;
+    Contour const *Boundary;
+    std::vector<Curve const *> Curves;
+    std::vector<Contour const *> Contours;
+    std::vector<Point const *> Points;
     std::vector<Edge *> Edges;
     std::vector<Edge *> Triangles;
 
