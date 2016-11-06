@@ -2,7 +2,7 @@
 
 bool edges_are_optimal(Mesh &m) {
     for (size_t i = 0;i < m.size_edges();++i) {
-        EXPECT_TRUE(m.edge(i)->is_locally_optimal());
+        EXPECT_TRUE(m.is_locally_optimal(m.edge(i)));
     }
 
     return true;
@@ -29,12 +29,12 @@ bool edges_are_valid(Mesh &m) {
 
         if (e->constraint_curve() != nullptr) {
             if (e->orientation()) {
-                EXPECT_TRUE(*e->base() == *e->constraint_curve()->start());
-                EXPECT_TRUE(*e->tip() == *e->constraint_curve()->end());
+                EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.point(e->tip()) == *e->constraint_curve()->end());
             }
             else {
-                EXPECT_TRUE(*e->base() == *e->constraint_curve()->end());
-                EXPECT_TRUE(*e->tip() == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->end());
+                EXPECT_TRUE(m.point(e->tip()) == *e->constraint_curve()->start());
             }
         }
     }
@@ -74,9 +74,8 @@ std::vector<size_t> map_verticies_to_points(std::vector<Vertex> verts, Mesh m) {
     index.reserve(verts.size());
 
     for (size_t i = 0;i != verts.size();++i) {
-        size_t j = 0;
         for (size_t j = 0;j != m.size_points();++j) {
-            if (verts[i].x() == m.point(j)->X && verts[i].y() == m.point(j)->Y) {
+            if (verts[i].x() == m.point(j).X && verts[i].y() == m.point(j).Y) {
                 index.push_back(j);
                 break;
             }

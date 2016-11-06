@@ -21,8 +21,7 @@ TEST(Mesh, create__triangle_domain) {
 
     std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2}, m);
 
-    // Test number of vertices, edges, triangles
-    {
+    { // Test number of vertices, edges, triangles
         EXPECT_TRUE(m.size_points() == 3);
         EXPECT_TRUE(m.size_edges() == 3);
         EXPECT_TRUE(m.size_triangles() == 1);
@@ -31,57 +30,54 @@ TEST(Mesh, create__triangle_domain) {
         EXPECT_TRUE(m.num_edges() == 3);
         EXPECT_TRUE(m.num_triangles() == 1);
 
-        EXPECT_TRUE(v0.x() == m.point(vmap[0])->X);
-        EXPECT_TRUE(v0.y() == m.point(vmap[0])->Y);
+        EXPECT_TRUE(v0.x() == m.point(vmap[0]).X);
+        EXPECT_TRUE(v0.y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1.x() == m.point(vmap[1])->X);
-        EXPECT_TRUE(v1.y() == m.point(vmap[1])->Y);
+        EXPECT_TRUE(v1.x() == m.point(vmap[1]).X);
+        EXPECT_TRUE(v1.y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2.x() == m.point(vmap[2])->X);
-        EXPECT_TRUE(v2.y() == m.point(vmap[2])->Y);
+        EXPECT_TRUE(v2.x() == m.point(vmap[2]).X);
+        EXPECT_TRUE(v2.y() == m.point(vmap[2]).Y);
     }
 
-    // Test validity, optimality
-    //{
+    { // Test validity, optimality
         edges_are_valid(m);
         edges_are_optimal(m);
-    //}
+    }
 
-    // Test edge and node connections
-    {
+
+    { // Test edge and node connections
         const Edge *e0 = m.edge(vmap[0]);
         const Edge *e1 = m.edge(vmap[1]);
         const Edge *e2 = m.edge(vmap[2]);
 
-        EXPECT_TRUE(v0.x() == e0->node()->X);
-        EXPECT_TRUE(v0.y() == e0->node()->Y);
+        EXPECT_TRUE(v0.x() == m.point(e0->node()).X);
+        EXPECT_TRUE(v0.y() == m.point(e0->node()).Y);
         EXPECT_TRUE(e1 == e0->next());
         EXPECT_TRUE(e2 == e0->prev());
 
-        EXPECT_TRUE(v1.x() == e1->node()->X);
-        EXPECT_TRUE(v1.y() == e1->node()->Y);
+        EXPECT_TRUE(v1.x() == m.point(e1->node()).X);
+        EXPECT_TRUE(v1.y() == m.point(e1->node()).Y);
         EXPECT_TRUE(e2 == e1->next());
         EXPECT_TRUE(e0 == e1->prev());
 
-        EXPECT_TRUE(v2.x() == e2->node()->X);
-        EXPECT_TRUE(v2.y() == e2->node()->Y);
+        EXPECT_TRUE(v2.x() == m.point(e2->node()).X);
+        EXPECT_TRUE(v2.y() == m.point(e2->node()).Y);
         EXPECT_TRUE(e0 == e2->next());
         EXPECT_TRUE(e1 == e2->prev());
     }
 
-    // Test triangles
-    {
+    { // Test triangles
         const Edge *e = m.triangle(0);
-        Point cc = e->circumcenter();
+        Point cc = m.circumcenter(e);
         EXPECT_NEAR(0.0, cc.X, TOL);
         EXPECT_NEAR(sqrt(3.0) / 3.0, cc.Y, TOL);
 
-        double cr = e->circumradius();
+        double cr = m.circumradius(e);
         EXPECT_NEAR(2.0 * sqrt(3.0) / 3.0, cr, TOL);
     }
 
-    // Forced Refinement
-    {
+    { // Forced Refinement
         forced_refinement(m, "triangle_domain_refine_loop", 7);
     }
 
@@ -121,17 +117,17 @@ TEST(Mesh, create__square_domain) {
         EXPECT_TRUE(m.num_edges() == 5);
         EXPECT_TRUE(m.num_triangles() == 2);
 
-        EXPECT_TRUE(v0.x() == m.point(vmap[0])->X);
-        EXPECT_TRUE(v0.y() == m.point(vmap[0])->Y);
+        EXPECT_TRUE(v0.x() == m.point(vmap[0]).X);
+        EXPECT_TRUE(v0.y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1.x() == m.point(vmap[1])->X);
-        EXPECT_TRUE(v1.y() == m.point(vmap[1])->Y);
+        EXPECT_TRUE(v1.x() == m.point(vmap[1]).X);
+        EXPECT_TRUE(v1.y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2.x() == m.point(vmap[2])->X);
-        EXPECT_TRUE(v2.y() == m.point(vmap[2])->Y);
+        EXPECT_TRUE(v2.x() == m.point(vmap[2]).X);
+        EXPECT_TRUE(v2.y() == m.point(vmap[2]).Y);
 
-        EXPECT_TRUE(v3.x() == m.point(vmap[3])->X);
-        EXPECT_TRUE(v3.y() == m.point(vmap[3])->Y);
+        EXPECT_TRUE(v3.x() == m.point(vmap[3]).X);
+        EXPECT_TRUE(v3.y() == m.point(vmap[3]).Y);
     }
 
     // Test validity, optimality
@@ -142,12 +138,12 @@ TEST(Mesh, create__square_domain) {
 
     // Test edge and node connections
     {
-        EXPECT_TRUE(m.point(0) == m.edge(0)->node());
-        EXPECT_TRUE(m.point(1) == m.edge(1)->node());
-        EXPECT_TRUE(m.point(2) == m.edge(2)->node());
-        EXPECT_TRUE(m.point(3) == m.edge(3)->node());
-        EXPECT_TRUE(m.point(1) == m.edge(4)->node());
-        EXPECT_TRUE(m.point(3) == m.edge(5)->node());
+        EXPECT_TRUE(m.point(0) == m.point(m.edge(0)->node()));
+        EXPECT_TRUE(m.point(1) == m.point(m.edge(1)->node()));
+        EXPECT_TRUE(m.point(2) == m.point(m.edge(2)->node()));
+        EXPECT_TRUE(m.point(3) == m.point(m.edge(3)->node()));
+        EXPECT_TRUE(m.point(1) == m.point(m.edge(4)->node()));
+        EXPECT_TRUE(m.point(3) == m.point(m.edge(5)->node()));
 
         for (size_t i = 0; i < 5; i++) {
             const Edge *e = m.edge(i);
@@ -159,7 +155,7 @@ TEST(Mesh, create__square_domain) {
     // Test triangles
     {
         for (size_t i = 0; i < m.size_triangles(); ++i) {
-            Point cc = m.triangle(0)->circumcenter();
+            Point cc = m.circumcenter(m.triangle(0));
             EXPECT_NEAR(0.5, cc.X, TOL);
             EXPECT_NEAR(0.5, cc.Y, TOL);
         }
@@ -218,20 +214,20 @@ TEST(Mesh, create__narrow_diamond_domain) {
         for (size_t i = 5; i < 6; i++) {
             const Edge *e = m.edge(5);
 
-            if (e->node() == m.point(vmap[0])) {
-                EXPECT_TRUE(m.point(vmap[2]) == e->next()->node());
-                EXPECT_TRUE(m.point(vmap[2]) == e->twin()->node());
-            } else if (e->node() == m.point(vmap[2])) {
-                EXPECT_TRUE(m.point(vmap[0]) == e->next()->node());
-                EXPECT_TRUE(m.point(vmap[0]) == e->twin()->node());
+            if (m.point(e->node()) == m.point(vmap[0])) {
+                EXPECT_TRUE(m.point(vmap[2]) == m.point(e->next()->node()));
+                EXPECT_TRUE(m.point(vmap[2]) == m.point(e->twin()->node()));
+            } else if (m.point(e->node()) == m.point(vmap[2])) {
+                EXPECT_TRUE(m.point(vmap[0]) == m.point(e->next()->node()));
+                EXPECT_TRUE(m.point(vmap[0]) == m.point(e->twin()->node()));
             }
         }
     }
 
     // Test triangle circumcenters
     {
-        Point cc0 = m.triangle(0)->circumcenter();
-        Point cc1 = m.triangle(1)->circumcenter();
+        Point cc0 = m.circumcenter(m.triangle(0)); // TODO: Write m.circumcenter(size_t)
+        Point cc1 = m.circumcenter(m.triangle(1));
 
         EXPECT_NEAR(0.0, cc0.X, TOL);
         EXPECT_NEAR(0.75, std::abs(cc0.Y), TOL);
@@ -294,16 +290,16 @@ TEST(Mesh, create__narrow_rectangle_domain) {
     {
         std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3, v4}, m);
 
-        const Point *v5 = m.point(5);
-        EXPECT_NEAR(0.0, v5->X, DBL_EPSILON);
-        EXPECT_NEAR(0.0, v5->Y, DBL_EPSILON);
+        Point const &v5 = m.point(5);
+        EXPECT_NEAR(0.0, v5.X, DBL_EPSILON);
+        EXPECT_NEAR(0.0, v5.Y, DBL_EPSILON);
 
         for (size_t i = 0; i < 12; ++i) {
-            const Edge *e = m.edge(i);
+            Edge const *e = m.edge(i);
 
-            if (e->node() == m.point(vmap[2])) {
+            if (m.point(e->node()) == m.point(vmap[2])) {
                 if (e->twin() != e) {
-                    EXPECT_TRUE(e->twin()->node() == v5);
+                    EXPECT_TRUE(m.point(e->twin()->node()) == v5);
                 }
             }
         }
@@ -568,6 +564,7 @@ TEST(Mesh, create__square_in_square_domain) {
     m.delete_me();
 }
 
+/*
 TEST(Edge, are_intersecting__nonparallel_true) {
     Point v0{0.0, 0.0};
     Point v1{1.0, 1.0};
@@ -709,6 +706,7 @@ TEST(Edge, are_intersecting__colinear_false_shared_vertex) {
 
     EXPECT_FALSE(are_intersecting(&e0, &e2));
 }
+*/
 
 TEST(Mesh, locate_triangle__triangular_domain) {
     Sketch s;
@@ -746,22 +744,22 @@ TEST(Mesh, locate_triangle__triangular_domain) {
     std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2}, mesh);
 
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
-        const Edge *e = mesh.edge(i);
-        const Point *vp = &vi;
+        Edge const *e = mesh.edge(i);
+        Point vp = vi;
 
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
 
-        vp = &ve0;
+        vp = ve0;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[0])) && (mesh.point(e->next()->node()) == mesh.point(vmap[1])));
 
-        vp = &ve1;
+        vp = ve1;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[1])) && (mesh.point(e->next()->node()) == mesh.point(vmap[2])));
 
-        vp = &ve2;
+        vp = ve2;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[0])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[2])) && (mesh.point(e->next()->node()) == mesh.point(vmap[0])));
     }
 
     // Corner Cases
@@ -770,20 +768,20 @@ TEST(Mesh, locate_triangle__triangular_domain) {
     ve2 = {0.5 - DBL_EPSILON, sqrt(3.0) / 2.0 + DBL_EPSILON};
 
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
-        const Edge *e = mesh.edge(i);
-        const Point *vp;
+        Edge const *e = mesh.edge(i);
+        Point vp;
 
-        vp = &ve0;
+        vp = ve0;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[0])) && (mesh.point(e->next()->node()) == mesh.point(vmap[1])));
 
-        vp = &ve1;
+        vp = ve1;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[1])) && (mesh.point(e->next()->node()) == mesh.point(vmap[2])));
 
-        vp = &ve2;
+        vp = ve2;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[0])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[2])) && (mesh.point(e->next()->node()) == mesh.point(vmap[0])));
     }
 }
 
@@ -818,13 +816,13 @@ TEST(Mesh, locate_triange__square_domain) {
     Point vi0{0.25, 0.25};
     Point vi1{0.75, 0.75};
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
-        const Edge *e = mesh.edge(i);
-        const Point *vp;
+        Edge const *e = mesh.edge(i);
+        Point vp;
 
-        vp = &vi0;
+        vp = vi0;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
 
-        vp = &vi1;
+        vp = vi1;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Interior);
     }
 
@@ -836,24 +834,24 @@ TEST(Mesh, locate_triange__square_domain) {
     Point ve2{0.5, 2.0};
     Point ve3{-1.0, 0.5};
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
-        const Edge *e = mesh.edge(i);
-        const Point *vp;
+        Edge const *e = mesh.edge(i);
+        Point vp;
 
-        vp = &ve0;
+        vp = ve0;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[0])) && (mesh.point(e->next()->node()) == mesh.point(vmap[1])));
 
-        vp = &ve1;
+        vp = ve1;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[1])) && (mesh.point(e->next()->node()) == mesh.point(vmap[2])));
 
-        vp = &ve2;
+        vp = ve2;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[3])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[2])) && (mesh.point(e->next()->node()) == mesh.point(vmap[3])));
 
-        vp = &ve3;
+        vp = ve3;
         EXPECT_TRUE(mesh.locate_triangle(vp, e) == LocateTriangleResult::Exterior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[3])) && (e->next()->node() == mesh.point(vmap[0])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[3])) && (mesh.point(e->next()->node()) == mesh.point(vmap[0])));
     }
 
     // Exterior Edge Points
@@ -863,34 +861,34 @@ TEST(Mesh, locate_triange__square_domain) {
     ve3 = {0.0 - DBL_EPSILON, 0.5};
     LocateTriangleResult result;
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
-        const Edge *e = mesh.edge(i);
-        const Point *vp;
+        Edge const *e = mesh.edge(i);
+        Point vp;
 
-        vp = &ve0;
+        vp = ve0;
         result = mesh.locate_triangle(vp, e);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[0])) && (e->next()->node() == mesh.point(vmap[1])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[0])) && (mesh.point(e->next()->node()) == mesh.point(vmap[1])));
 
-        vp = &ve1;
+        vp = ve1;
         result = mesh.locate_triangle(vp, e);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[1])) && (e->next()->node() == mesh.point(vmap[2])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[1])) && (mesh.point(e->next()->node()) == mesh.point(vmap[2])));
 
-        vp = &ve2;
+        vp = ve2;
         result = mesh.locate_triangle(vp, e);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[2])) && (e->next()->node() == mesh.point(vmap[3])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[2])) && (mesh.point(e->next()->node()) == mesh.point(vmap[3])));
 
-        vp = &ve3;
+        vp = ve3;
         result = mesh.locate_triangle(vp, e);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
-        EXPECT_TRUE((e->node() == mesh.point(vmap[3])) && (e->next()->node() == mesh.point(vmap[0])));
+        EXPECT_TRUE((mesh.point(e->node()) == mesh.point(vmap[3])) && (mesh.point(e->next()->node()) == mesh.point(vmap[0])));
     }
 
     Point vie{0.5, 0.5};
     for (size_t i = 0; i < mesh.size_edges(); ++i) {
         const Edge *e = mesh.edge(i);
 
-        EXPECT_TRUE(mesh.locate_triangle(&vie, e) == LocateTriangleResult::Interior);
+        EXPECT_TRUE(mesh.locate_triangle(vie, e) == LocateTriangleResult::Interior);
     }
 }

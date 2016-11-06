@@ -31,14 +31,10 @@ void Mesh::delete_me() {
     }
     Edges.clear();
 
-    for (auto &p : Points) {
-        delete p;
-    }
     Points.clear();
 }
 
-// Topological Queries
-LocateTriangleResult Mesh::locate_triangle(Point const *p, Edge *&e) const {
+LocateTriangleResult Mesh::locate_triangle(Point const &p, Edge *&e) const {
     Edge const *ec = e;
 
     LocateTriangleResult result = locate_triangle(p, ec);
@@ -48,41 +44,41 @@ LocateTriangleResult Mesh::locate_triangle(Point const *p, Edge *&e) const {
     return result;
 }
 
-LocateTriangleResult Mesh::locate_triangle(Point const *p, Edge const *&e) const {
-    double xp = p->X;
-    double yp = p->Y;
+LocateTriangleResult Mesh::locate_triangle(Point const &p, Edge const *&e) const {
+    double xp = p.X;
+    double yp = p.Y;
 
-    const Point *p0 = e->node();
-    const Point *p1 = e->next()->node();
-    const Point *p2 = e->prev()->node();
+    Point p0 = Points[e->node()];
+    Point p1 = Points[e->next()->node()];
+    Point p2 = Points[e->prev()->node()];
 
-    if (*p == *p0) {
+    if (p == p0) {
         return LocateTriangleResult::Point;
-    } else if (*p == *p1) {
+    } else if (p == p1) {
         e = e->next();
         return LocateTriangleResult::Point;
-    } else if (*p == *p2) {
+    } else if (p == p2) {
         e = e->prev();
         return LocateTriangleResult::Point;
     }
 
-    double dx0p = p0->X - xp;
-    double dy0p = p0->Y - yp;
+    double dx0p = p0.X - xp;
+    double dy0p = p0.Y - yp;
 
-    double dx1p = p1->X - xp;
-    double dy1p = p1->Y - yp;
+    double dx1p = p1.X - xp;
+    double dy1p = p1.Y - yp;
 
-    double dx2p = p2->X - xp;
-    double dy2p = p2->Y - yp;
+    double dx2p = p2.X - xp;
+    double dy2p = p2.Y - yp;
 
-    double dx01 = p0->X - p1->X;
-    double dy01 = p0->Y - p1->Y;
+    double dx01 = p0.X - p1.X;
+    double dy01 = p0.Y - p1.Y;
 
-    double dx12 = p1->X - p2->X;
-    double dy12 = p1->Y - p2->Y;
+    double dx12 = p1.X - p2.X;
+    double dy12 = p1.Y - p2.Y;
 
-    double dx20 = p2->X - p0->X;
-    double dy20 = p2->Y - p0->Y;
+    double dx20 = p2.X - p0.X;
+    double dy20 = p2.Y - p0.Y;
 
     double tol = FLT_EPSILON * (dx20 * dy01 - dy20 * dx01);
 
@@ -148,21 +144,21 @@ LocateTriangleResult Mesh::locate_triangle(Point const *p, Edge const *&e) const
     }
 
     while (true) { // After first iteration, area01 > 0
-        p2 = e->prev()->node();
+        p2 = Points[e->prev()->node()];
 
-        if (*p == *p2) {
+        if (p == p2) {
             e = e->prev();
             return LocateTriangleResult::Point;
         }
 
-        dx2p = p2->X - xp;
-        dy2p = p2->Y - yp;
+        dx2p = p2.X - xp;
+        dy2p = p2.Y - yp;
 
-        dx12 = p1->X - p2->X;
-        dy12 = p1->Y - p2->Y;
+        dx12 = p1.X - p2.X;
+        dy12 = p1.Y - p2.Y;
 
-        dx20 = p2->X - p0->X;
-        dy20 = p2->Y - p0->Y;
+        dx20 = p2.X - p0.X;
+        dy20 = p2.Y - p0.Y;
 
         tol = FLT_EPSILON * (dx20 * dy01 - dy20 * dx01);
 
@@ -209,45 +205,7 @@ LocateTriangleResult Mesh::locate_triangle(Point const *p, Edge const *&e) const
     }
 }
 
-bool Mesh::in_triangle(Point const *p, Edge const *&e) const {
-    double xp = p->X;
-    double yp = p->Y;
-
-    Point const *p0 = e->node();
-    Point const *p1 = e->next()->node();
-    Point const *p2 = e->prev()->node();
-
-    double dx0p = p0->X - xp;
-    double dy0p = p0->Y - yp;
-
-    double dx1p = p1->X - xp;
-    double dy1p = p1->Y - yp;
-
-    double dx2p = p2->X - xp;
-    double dy2p = p2->Y - yp;
-
-    double dx01 = p0->X - p1->X;
-    double dy01 = p0->Y - p1->Y;
-
-    double dx12 = p1->X - p2->X;
-    double dy12 = p1->Y - p2->Y;
-
-    double dx20 = p2->X - p0->X;
-    double dy20 = p2->Y - p0->Y;
-
-    double area012 = dx01 * dy12 - dy01 * dx12;
-
-    double tol = FLT_EPSILON * area012;
-
-    double area01p = dx0p * dy1p - dx1p * dy0p;
-    double area12p = dx1p * dy2p - dx2p * dy1p;
-    double area20p = dx2p * dy0p - dx0p * dy2p;
-
-    return (area01p > -tol && area12p > -tol && area20p > -tol);
-}
-
-// Point Insertion
-InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
+InsertPointResult Mesh::insert_point(Point const &vc, Edge *tri) {
     // Find triangle containing point
     LocateTriangleResult result = locate_triangle(vc, tri);
 
@@ -258,7 +216,6 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
 
     // Test edges in current and adjacent triangles for encroachment
     // These are the only possible edges that are encroached due to empty circumcircle property
-    // TODO: write is_encroached method
     std::vector<Edge *> test_edges;
     test_edges.reserve(9);
 
@@ -275,7 +232,7 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
     // Split all encroached edges
     bool encroached = false;
     for (auto e : test_edges) {
-        if (e->is_encroached(vc)) {
+        if (is_encroached(e, vc)) {
             insert_midpoint(e);
             encroached = true;
         }
@@ -289,9 +246,9 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
         Edge * next = tri->Next;
         Edge * prev = tri->Prev;
 
-        Point const *vt = tri->Node;
-        Point const *vn = next->Node;
-        Point const *vp = prev->Node;
+        size_t vt = tri->Node;
+        size_t vn = next->Node;
+        size_t vp = prev->Node;
 
         Edge *e0 = new Edge;
         Edge *e1 = new Edge;
@@ -308,7 +265,7 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
         Edges.push_back(e4);
         Edges.push_back(e5);
 
-        e0->Node = vc;
+        e0->Node = Points.size() - 1;
         e0->Next = tri;
         e0->Prev = e1;
         e0->Twin = e5;
@@ -320,7 +277,7 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
         e1->Twin = e2;
         e1->Mark = false;
 
-        e2->Node = vc;
+        e2->Node = Points.size() - 1;
         e2->Next = next;
         e2->Prev = e3;
         e2->Twin = e1;
@@ -332,7 +289,7 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
         e3->Twin = e4;
         e3->Mark = false;
 
-        e4->Node = vc;
+        e4->Node = Points.size() - 1;
         e4->Next = prev;
         e4->Prev = e5;
         e4->Twin = e3;
@@ -356,9 +313,9 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
         tri->Prev = e0;
         tri->Mark = false;
 
-        tri->recursive_swap();
-        next->recursive_swap();
-        prev->recursive_swap();
+        recursive_swap(tri);
+        recursive_swap(next);
+        recursive_swap(prev);
 
         return InsertPointResult::Success;
     } else {
@@ -367,8 +324,7 @@ InsertPointResult Mesh::insert_point(Point const *vc, Edge *tri) {
 }
 
 InsertPointResult Mesh::insert_circumcenter(Edge *t) {
-    Point const *p = new Point(t->circumcenter());
-    return insert_point(p, t);
+    return insert_point(circumcenter(t), t);
 }
 
 InsertPointResult Mesh::insert_midpoint(Edge *e) {
@@ -376,19 +332,16 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         Splits edge into two edges and creates two new triangles.
     */
 
-    Point * p = new Point;
-    Points.push_back(p);
-
     Curve *c;
     if (e->ConstraintCurve != nullptr) { // Constrained Edge
-        Vertex *v = new Vertex;
+        Vertex *v = new Vertex; // TODO: Manage memory
         c = e->ConstraintCurve->split(v, 0.5);
-
-        p->X = v->x();
-        p->Y = v->y();
+        Points.push_back(Point(v->x(), v->y()));
     } else { // Unconstrained Edge
         c = nullptr;
-        *(p) = Point((e->Node->X + e->Next->Node->X) / 2.0, (e->Node->Y + e->Next->Node->Y) / 2.0);
+        Point const base = Points[e->base()];
+        Point const tip = Points[e->tip()];
+        Points.push_back(Point((base.X + tip.X) / 2.0, (base.Y + tip.Y) / 2.0));
     }
 
     if (e == e->Twin) { // Boundary Edge
@@ -421,13 +374,13 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         e0->Twin = e1;
         e0->Mark = false;
 
-        e1->Node = p;
+        e1->Node = Points.size() - 1;
         e1->Next = e->Prev;
         e1->Prev = e;
         e1->Twin = e0;
         e1->Mark = false;
 
-        e2->Node = p;
+        e2->Node = Points.size() - 1;
         e2->Next = e->Next;
         e2->Prev = e0;
         e2->Twin = e2;
@@ -444,9 +397,9 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         e->Mark = false;
 
         // Recursive swap
-        e0->recursive_swap();
-        next->recursive_swap();
-        prev->recursive_swap();
+        recursive_swap(e0);
+        recursive_swap(next);
+        recursive_swap(prev);
     } else { // Interior Edge
         Edge * e0 = new Edge;
         Edges.push_back(e0);
@@ -486,13 +439,13 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         e4->ConstraintCurve = e->ConstraintCurve;
 
         // Construct Edges
-        e0->Node = p;
+        e0->Node = Points.size() - 1;
         e0->Next = e->Prev;
         e0->Prev = e;
         e0->Twin = e2;
         e0->Mark = false;
 
-        e1->Node = p;
+        e1->Node = Points.size() - 1;
         e1->Next = e->Next;
         e1->Prev = e2;
         e1->Twin = e->Twin;
@@ -504,13 +457,13 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         e2->Twin = e0;
         e2->Mark = false;
 
-        e3->Node = p;
+        e3->Node = Points.size() - 1;
         e3->Next = e->Twin->Prev;
         e3->Prev = e->Twin;
         e3->Twin = e5;
         e3->Mark = false;
 
-        e4->Node = p;
+        e4->Node = Points.size() - 1;
         e4->Next = e->Twin->Next;
         e4->Prev = e5;
         e4->Twin = e;
@@ -545,18 +498,17 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
         e->Mark = false;
 
         // Recursive swap
-        e0->recursive_swap();
-        e3->recursive_swap();
-        this_next->recursive_swap();
-        this_prev->recursive_swap();
-        twin_next->recursive_swap();
-        twin_prev->recursive_swap();
+        recursive_swap(e0);
+        recursive_swap(e3);
+        recursive_swap(this_next);
+        recursive_swap(this_prev);
+        recursive_swap(twin_next);
+        recursive_swap(twin_prev);
     }
 
     return InsertPointResult::Midpoint;
 }
 
-// Mesh Creation
 void Mesh::create() {
     create_boundary_polygon();
     triangulate_boundary_polygon();
@@ -566,14 +518,15 @@ void Mesh::create() {
     get_triangles();
 }
 
-// Algorithm Components
 void Mesh::create_boundary_polygon() {
     // Create input edges
     Edges.reserve(Boundary->size());
     Points.reserve(Boundary->size());
     for (size_t i = 0; i != Boundary->size(); ++i) {
-        Edges.push_back(new Edge(Boundary->curve(i)->clone(), Boundary->orientation(i))); //clone() to prevent alteration of input Contour when Edge is split
-        Points.push_back(Edges[i]->Node);
+        Curve * c = Boundary->curve(i)->clone(); //clone() to prevent alteration of input Contour when Edge is split
+        bool dir = Boundary->orientation(i);
+        Edges.push_back(new Edge(c, dir, Points.size()));
+        Points.push_back(Point(dir ? c->start() : c->end()));
     }
 
     // Set Next/Prev edges from Boundary
@@ -593,12 +546,12 @@ void Mesh::create_boundary_polygon() {
         any_split = false;
         for (size_t i = 0; i != Edges.size(); ++i) {
             for (size_t j = i + 1; j != Edges.size(); ++j) {
-                if (are_intersecting(Edges[i], Edges[j])) {
+                if (are_intersecting(Edges[i], Edges[j], *this)) {
                     any_split = true;
-                    if (Edges[i]->length() > Edges[j]->length()) {
-                        Edges[i]->split_edge(Points, Edges);
+                    if (length(Edges[i]) > length(Edges[j])) {
+                        split_edge(Edges[i]);
                     } else {
-                        Edges[j]->split_edge(Points, Edges);
+                        split_edge(Edges[j]);
                     }
                 }
             }
@@ -611,7 +564,7 @@ void Mesh::triangulate_boundary_polygon() {
 
     Edge * ep = Edges[0];
     while (ep != ep->Next->Next->Next) {
-        if (ep->is_protruding()) {
+        if (is_protruding(ep)) {
             Edge * e0 = new Edge;
             Edge * e1 = new Edge;
 
@@ -646,7 +599,7 @@ void Mesh::triangulate_boundary_polygon() {
 
     // Edge swap to make triangulation Delaunay
     for (size_t i = 0; i < Edges.size(); ++i) {
-        Edges[i]->recursive_swap();
+        recursive_swap(Edges[i]);
     }
 
     split_encroached_edges();
@@ -691,21 +644,17 @@ void Mesh::insert_internal_boundaries() {
     // Insert interior curve end points
     for (size_t i = 0; i != interior.size(); ++i) {
         // Insert start point
-        Point const *p = new Point(interior[i]->start());
+        Point p = interior[i]->start();
         LocateTriangleResult result = locate_triangle(p);
         if (result == LocateTriangleResult::Interior) {
             while (insert_point(p) == InsertPointResult::Midpoint);
-        } else {
-            delete p;
         }
 
         // Insert end point
-        p = new Point(interior[i]->end());
+        p = interior[i]->end();
         result = locate_triangle(p);
         if (result == LocateTriangleResult::Interior) {
             while (insert_point(p) == InsertPointResult::Midpoint);
-        } else {
-            delete p;
         }
     }
 
@@ -718,13 +667,13 @@ void Mesh::insert_internal_boundaries() {
             Point p0 = queue.back()->start();
             Point p1 = queue.back()->end();
 
-            LocateTriangleResult result = locate_triangle(&p0, e);
+            LocateTriangleResult result = locate_triangle(p0, e);
 
             if (result != LocateTriangleResult::Point) {
                 throw std::exception();
             }
 
-            if (e->is_attached(&p1, e)) {
+            if (is_attached(e, p1)) {
                 e->ConstraintCurve = queue.back();
                 e->Orientation = true;
 
@@ -733,10 +682,10 @@ void Mesh::insert_internal_boundaries() {
 
                 queue.pop_back();
             } else {
-                Vertex *v = new Vertex;
+                Vertex *v = new Vertex; // TODO: Manage memory
                 queue.push_back(queue.back()->split(v, 0.5));
 
-                Point const *p = new Point(queue.back()->start());
+                Point const p = queue.back()->start();
 
                 while (insert_point(p) == InsertPointResult::Midpoint);
             }
@@ -752,7 +701,7 @@ void Mesh::split_encroached_edges() {
         any_split = false;
         for (size_t i = 0; i != Edges.size(); ++i) {
             if (Edges[i]->constraint_curve() != nullptr) {
-                if (Edges[i]->is_encroached(Edges[i]->prev()->base())) {
+                if (is_encroached(Edges[i], Points[Edges[i]->prev()->base()])) {
                     any_split = true;
                     insert_midpoint(Edges[i]);
                 }
@@ -761,7 +710,6 @@ void Mesh::split_encroached_edges() {
     }
 }
 
-// Misc
 void Mesh::mark_triangles() {
     for (size_t i = 0; i < Edges.size(); ++i) {
         Edges[i]->Mark = true;
@@ -784,7 +732,6 @@ void Mesh::get_triangles() {
     }
 }
 
-// Save
 void Mesh::save_as(std::string path, std::string file_name) const {
     /*
         This is a stub for visualization
@@ -798,24 +745,23 @@ void Mesh::save_as(std::string path, std::string file_name) const {
     fs.open(path + file_name + ".oeme", std::fstream::out);
 
     for (size_t i = 0; i < Edges.size(); i++) {
-        Point const *v0 = Edges[i]->Node;
-        Point const *v1 = Edges[i]->Next->Node;
-        Point const *v2 = Edges[i]->Next->Next->Node;
-        fs << v0->X << ',' << v1->X << ',' << v2->X << ',' << v0->Y << ',' << v1->Y << ',' << v2->Y << '\n';
+        Point const v0 = Points[Edges[i]->Node];
+        Point const v1 = Points[Edges[i]->Next->Node];
+        Point const v2 = Points[Edges[i]->Next->Next->Node];
+        fs << v0.X << ',' << v1.X << ',' << v2.X << ',' << v0.Y << ',' << v1.Y << ',' << v2.Y << '\n';
     }
 
     fs.close();
 }
 
-// Refinement
 bool Mesh::refine() {
     std::vector<double> radii;
     std::vector<double> quality;
     std::vector<size_t> index;
 
     // #TODO, Loop until quality is satisfied
-    element_quality(Triangles, radii, quality);
-    sort_permutation(quality, index);
+    element_quality(Triangles, radii, quality, *this);
+    sort_permutation_ascending(quality, index);
     size_t N = Triangles.size();
 
     refine_once(index, radii, quality);
@@ -823,8 +769,8 @@ bool Mesh::refine() {
 
     while (M > N) {
         N = M;
-        element_quality(Triangles, radii, quality);
-        sort_permutation(quality, index);
+        element_quality(Triangles, radii, quality, *this);
+        sort_permutation_ascending(quality, index);
         refine_once(index, radii, quality);
         M = Triangles.size();
     }
@@ -837,8 +783,9 @@ bool Mesh::refine_once() {
     std::vector<double> quality;
     std::vector<size_t> index;
 
-    element_quality(Triangles, radii, quality);
-    sort_permutation(quality, index);
+    element_quality(Triangles, radii, quality, *this);
+    sort_permutation_ascending(quality, index);
+    //sort_permutation_descending(radii, index);
     refine_once(index, radii, quality);
 
     return edges_are_valid();
@@ -854,7 +801,7 @@ void Mesh::refine_once(std::vector<size_t> index, std::vector<double> radii, std
     get_triangles();
 }
 
-bool Mesh::edges_are_valid() {
+bool Mesh::edges_are_valid() const {
     bool result = true;
     Edge const *e;
 
@@ -898,20 +845,20 @@ bool Mesh::edges_are_valid() {
 
         if (e->constraint_curve() != nullptr) {
             if (e->orientation()) {
-                if (*e->base() != *e->constraint_curve()->start()) {
+                if (Points[e->base()] != *e->constraint_curve()->start()) {
                     result = false;
                     break;
                 }
-                if (*e->tip() != *e->constraint_curve()->end()) {
+                if (Points[e->tip()] != *e->constraint_curve()->end()) {
                     result = false;
                     break;
                 }
             } else {
-                if (*e->base() != *e->constraint_curve()->end()) {
+                if (Points[e->base()] != *e->constraint_curve()->end()) {
                     result = false;
                     break;
                 }
-                if (*e->tip() != *e->constraint_curve()->start()) {
+                if (Points[e->tip()] != *e->constraint_curve()->start()) {
                     result = false;
                     break;
                 }
@@ -920,4 +867,304 @@ bool Mesh::edges_are_valid() {
     }
 
     return result;
+}
+
+Point Mesh::circumcenter(Edge const *e) const {
+    Point const node = Points[e->Node];
+    Point const prev = Points[e->Prev->Node];
+    Point const next = Points[e->Next->Node];
+
+    double xa = node.X;
+    double ya = node.Y;
+    double xb = prev.X - xa;
+    double yb = prev.Y - ya;
+    double xc = next.X - xa;
+    double yc = next.Y - ya;
+
+    double d = 2.0 * (xb * yc - yb * xc);
+    double db = xb * xb + yb * yb;
+    double dc = xc * xc + yc * yc;
+    double x = (yc * db - yb * dc) / d + xa;
+    double y = (xb * dc - xc * db) / d + ya;
+
+    return Point{x, y};
+}
+
+double Mesh::circumradius(Edge const *e) const {
+    Point const node = Points[e->Node];
+    Point const prev = Points[e->Prev->Node];
+    Point const next = Points[e->Next->Node];
+
+    double xa = node.X;
+    double ya = node.Y;
+    double xb = prev.X - xa;
+    double yb = prev.Y - ya;
+    double xc = next.X - xa;
+    double yc = next.Y - ya;
+    xa = xb - xc;
+    ya = yb - yc;
+
+    double den = 2.0 * abs(xb * yc - yb * xc);
+    double num = sqrt(xa * xa + ya * ya) * sqrt(xb * xb + yb * yb) * sqrt(xc * xc + yc * yc);
+
+    return num / den;
+}
+
+double Mesh::length(Edge const *e) const {
+    Point const base = Points[e->base()];
+    Point const tip = Points[e->tip()];
+
+    double dx = base.X - tip.X;
+    double dy = base.Y - tip.Y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
+double Mesh::shortest_edge_length(Edge const *e) const {
+    Point const node = Points[e->Node];
+    Point const prev = Points[e->Prev->Node];
+    Point const next = Points[e->Next->Node];
+
+    double x0 = node.X;
+    double y0 = node.Y;
+    double x1 = next.X;
+    double y1 = next.Y;
+    double x2 = prev.X;
+    double y2 = prev.Y;
+
+    double dx = x0 - x1;
+    double dy = y0 - y1;
+    double dl = dx * dx + dy * dy;
+
+    dx = x1 - x2;
+    dy = y1 - y2;
+    dl = fmin(dl, dx * dx + dy * dy);
+
+    dx = x2 - x0;
+    dy = y2 - y0;
+    dl = fmin(dl, dx * dx + dy * dy);
+
+    return sqrt(dl);
+}
+
+bool Mesh::is_protruding(Edge const *edge) const {
+    //
+    //    See Chapter 1.4 of "Triangulations and Applications" by Øyvind Hjelle and Morten Dæhlen
+    //
+
+    Point const p0 = Points[edge->Prev->Node];
+    Point const p1 = Points[edge->Node];
+    Point const p2 = Points[edge->Next->Node];
+
+    double v1x = p2.X - p1.X;
+    double v1y = p2.Y - p1.Y;
+
+    double v0x = p0.X - p1.X;
+    double v0y = p0.Y - p1.Y;
+
+    double area = v1x * v0y - v1y * v0x;
+
+    if (area > 0.0) {
+        // Make sure no boundary points interior to triangle
+        // Calculate barrycentric coordinates of p
+        Edge * next = edge->Next->Next;
+
+        while (next != edge->Prev) {
+            Point const p4 = Points[next->Node];
+
+            double v2x = p2.X - p4.X;
+            double v2y = p2.Y - p4.Y;
+
+            v1x = p1.X - p4.X;
+            v1y = p1.Y - p4.Y;
+
+            v0x = p0.X - p4.X;
+            v0y = p0.Y - p4.Y;
+
+            double b0 = (v0x * v1y - v0y * v1x);
+            double b1 = (v1x * v2y - v1y * v2x);
+            double b2 = (v2x * v0y - v2y * v0x);
+
+            if (b0 >= 0.0 && b0 <= area && b1 >= 0.0 && b1 <= area && b2 >= 0.0 && b2 <= area) {
+                return false;    // Point is interior to triangle
+            } else {
+                next = next->Next;
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Mesh::recursive_swap(Edge *edge) const {
+    // TODO, May need to have two different recursive swap methods, one for midpoint insertion and one for circumcenter insertion
+    if (!is_locally_optimal(edge) && edge->swap()) {
+        Edge * enext = edge->Next;
+        Edge * eprev = edge->Prev;
+        Edge * tnext = edge->Twin->Next;
+        Edge * tprev = edge->Twin->Prev;
+
+        recursive_swap(enext);
+        recursive_swap(eprev);
+        recursive_swap(tnext);
+        recursive_swap(tprev);
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Mesh::is_locally_optimal(Edge const *edge) const {
+    /*
+        See Chapter 3.7 of "Triangulations and Applications" by Øyvind Hjelle and Morten Dæhlen
+    */
+
+    if (edge->ConstraintCurve != nullptr) {
+        return true;
+    } else {
+        Point const p3 = Points[edge->Node];
+        Point const p2 = Points[edge->Prev->Node];
+        Point const p1 = Points[edge->Twin->Node];
+        Point const p4 = Points[edge->Twin->Prev->Node];
+
+        double v1x = p3.X - p2.X;
+        double v1y = p3.Y - p2.Y;
+        double v2x = p1.X - p2.X;
+        double v2y = p1.Y - p2.Y;
+        double v3x = p1.X - p4.X;
+        double v3y = p1.Y - p4.Y;
+        double v4x = p3.X - p4.X;
+        double v4y = p3.Y - p4.Y;
+
+        double d1 = sqrt(v1x * v1x + v1y * v1y);
+        double d2 = sqrt(v2x * v2x + v2y * v2y);
+        double d3 = sqrt(v3x * v3x + v3y * v3y);
+        double d4 = sqrt(v4x * v4x + v4y * v4y);
+        double tol = -(d1 * d2 * d3 * d4 * FLT_EPSILON);
+
+        double sina = v1x * v2y - v1y * v2x;
+        double sinb = v3x * v4y - v3y * v4x;
+        double cosa = v1x * v2x + v1y * v2y;
+        double cosb = v3x * v4x + v3y * v4y;
+        double cct = sina * cosb + cosa * sinb;
+
+        return cct > tol;
+    }
+}
+
+void Mesh::split_edge(Edge *edge) {
+    /*
+        Splits edge into two edges at the midpoint without creating any new triangles.
+        Used for initial polygon refinement.
+    */
+
+    // TODO: Refactor into split_constrained_edge
+
+    Curve *c;
+    if (edge->ConstraintCurve != nullptr) { // Constrained Edge
+        Vertex *v = new Vertex;    // TODO: Need to manage this memory.
+        c = edge->ConstraintCurve->split(v, 0.5);
+
+        Points.push_back(Point(v->x(),v->y()));
+    } else { // Unconstrained Edge
+        c = nullptr;
+        Point const base = Points[edge->base()];
+        Point const tip = Points[edge->tip()];
+
+        Points.push_back(Point((base.X + tip.X) / 2.0, (base.Y + tip.Y) / 2.0));
+    }
+
+    if (edge == edge->Twin) { // Boundary Edge, TODO: write bool Edge::is_boundary()
+        Edge * newe = new Edge;
+        Edges.push_back(newe);
+
+        // Constraint Curve
+        newe->Orientation = edge->Orientation;
+        if (edge->Orientation) {
+            newe->ConstraintCurve = c;
+        } else {
+            newe->ConstraintCurve = edge->ConstraintCurve;
+            edge->ConstraintCurve = c;
+        }
+
+        // Connectivity
+        newe->Node = Points.size() - 1;
+        newe->Next = edge->Next;
+        newe->Prev = edge;
+        newe->Twin = newe;
+        newe->Mark = false;
+
+        edge->Next->Prev = newe;
+        edge->Next->Mark = false;
+
+        edge->Next = newe;
+        edge->Mark = false;
+    } else {
+        throw std::exception(); // Function should only be called on constrained edges
+    }
+}
+
+bool Mesh::is_encroached(Edge const *edge, Point const p2) const {
+    /*
+        A constrained edge is encroached if a triangle and it's circumcenter lie on opposite sides of the edge.
+        This is equivalent to a node being in the diameteral ball of the edge?
+        This only occurs if one of the triangles attached to the edge encroaches the edge?
+        This only occurs if the angle of the triangles attached to the edge has an angle opposite the edge of greater than 90 degrees.
+        Using the dot product, this requires that the normalized dot product < cos(90) = 0
+    */
+
+    if (edge->ConstraintCurve == nullptr) {
+        return false;
+    } else {
+        Point const p0 = Points[edge->base()];
+        Point const p1 = Points[edge->tip()];
+
+        double dx0 = p0.X - p2.X;
+        double dy0 = p0.Y - p2.Y;
+
+        double dx1 = p1.X - p2.X;
+        double dy1 = p1.Y - p2.Y;
+
+        double dot = dx0 * dx1 + dy0 * dy1;
+        double tol = sqrt(dx0 * dx0 + dy0 * dy0) * sqrt(dx1 * dx1 + dy1 * dy1) * FLT_EPSILON;
+
+        return (dot < tol);
+    }
+}
+
+bool Mesh::is_attached(Edge *&edge_out, Point const &point) const {
+    if (Points[edge_out->tip()] == point) {
+        return true;
+    }
+
+    Edge * edge_in = edge_out;
+
+    if (edge_out != edge_out->Twin) {
+        edge_out = edge_out->Twin->Next;
+        while (edge_out != edge_in) {
+            if (Points[edge_out->tip()] == point) {
+                return true;
+            } else if (edge_out->Twin != edge_out) {
+                edge_out = edge_out->Twin->Next;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (edge_out == edge_out->Twin) {
+        edge_out = edge_in->Prev;
+        while (edge_out != edge_out->Twin) {
+            if (Points[edge_out->base()] == point) {
+                edge_out = edge_out->Twin;
+                return true;
+            } else {
+                edge_out = edge_out->Twin->Prev;
+            }
+        }
+    }
+
+    return false;
 }

@@ -1,29 +1,29 @@
 #ifndef OERSTED_EDGE_H
 #define OERSTED_EDGE_H
 
-#include "Mesh.h"
+#include "Point.h"
+
+class Mesh;
 
 class Edge {
 public:
     friend class Mesh;
 
-    friend bool are_intersecting(Edge const *e0, Edge const *e1);
+    friend bool are_intersecting(Edge const *e0, Edge const *e1, Mesh const &m);
 
     // Constructors
-    Edge() : Node(nullptr), Next(nullptr), Prev(nullptr), Twin(this), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge() : Node(SIZE_MAX), Next(nullptr), Prev(nullptr), Twin(this), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(Point &v, Edge &n, Edge &p, Edge &t) : Node(&v), Next(&n), Prev(&p), Twin(&t), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge(size_t v, Edge &n, Edge &p, Edge &t) : Node(v), Next(&n), Prev(&p), Twin(&t), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(Curve *c, bool Orientation);
-
-    Edge(Curve *c, bool Orientation, Point const *v);
+    Edge(Curve *c, bool Orientation, size_t v);
 
     // Accessors
-    Point const *node() const { return Node; };
+    size_t node() const { return Node; };
 
-    Point const *base() const { return Node; };
+    size_t base() const { return Node; };
 
-    Point const *tip() const { return (next() == nullptr ? twin()->base() : next()->base()); };
+    size_t tip() const { return (next() == nullptr ? twin()->base() : next()->base()); };
 
     Edge const *next() const { return Next; };
 
@@ -41,36 +41,16 @@ public:
         return (node() == e.node()) && (constraint_curve() == e.constraint_curve()) && (twin()->node() == e.twin()->node());
     };
 
-    Point circumcenter() const;
-
-    double circumradius() const;
-
-    double length() const;
-
-    double shortest_edge_length() const;
-
-    bool is_protruding() const;
-
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
-
-    bool is_locally_optimal() const;
 
     bool is_valid() const;
 
-    bool is_encroached(Point const *p) const;
-
-    bool is_attached(Point const *p, Edge *&e) const;
-
     bool swap();
-
-    bool recursive_swap();
-
-    void split_edge(std::vector<Point const *> &verts, std::vector<Edge *> &edges);
 
     void recursive_mark();
 
 protected:
-    Point const *Node;      //Start of edge
+    size_t Node;            //Start of edge
     Edge *Next;             //In triangle
     Edge *Twin;             //Adjacent triangle
     Edge *Prev;             //In triangle
