@@ -8,9 +8,9 @@ bool are_intersecting(Edge const *e0, Edge const *e1, Mesh const &m) {
     }
 
     Point const v00 = m.point(e0->base());
-    Point const v01 = m.point(e0->tip());
+    Point const v01 = m.point(e0->tip(m));
     Point const v10 = m.point(e1->base());
-    Point const v11 = m.point(e1->tip());
+    Point const v11 = m.point(e1->tip(m));
 
     double xs0 = (v00.X + v01.X) / 2.0;
     double ys0 = (v00.Y + v01.Y) / 2.0;
@@ -73,8 +73,8 @@ bool in_triangle(Point const &p, Edge const *&e, Mesh const &m) {
     double yp = p.Y;
 
     Point const p0 = m.point(e->node());
-    Point const p1 = m.point(e->next()->node());
-    Point const p2 = m.point(e->prev()->node());
+    Point const p1 = m.point(m.edge(e->next())->node());
+    Point const p2 = m.point(m.edge(e->prev())->node());
 
     double dx0p = p0.X - xp;
     double dy0p = p0.Y - yp;

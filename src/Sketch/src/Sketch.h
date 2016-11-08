@@ -3,16 +3,17 @@
 
 #define SIGN(x) (double)((x > 0.0) - (x < 0.0))
 
-#include <cmath>
-#include <vector>
-#include <list>
-#include <fstream>
 #include <algorithm>
-#include <numeric>
 #include <cfloat>
-#include "Eigen"
+#include <cmath>
+#include <fstream>
+#include <list>
+#include <numeric>
+#include <vector>
 
 #include <boost/filesystem.hpp>
+
+#include "Eigen"
 
 class Sketch;
 

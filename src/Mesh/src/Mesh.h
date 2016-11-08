@@ -5,8 +5,8 @@
 #include "Point.h"
 #include "Edge.h"
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 #include <numeric>
 
 enum class LocateTriangleResult {
@@ -95,6 +95,11 @@ public:
     bool is_encroached(Edge const *e, Point const p2) const;
 
     bool is_attached(Edge *&edge_out, Point const &p) const;
+
+    void add_edge(Edge *&e) {
+        e->Self = Edges.size();
+        Edges.push_back(e);
+    };
 
 protected:
     Contour const *Boundary;

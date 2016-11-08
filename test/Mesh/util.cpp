@@ -12,29 +12,29 @@ bool edges_are_valid(Mesh &m) {
     for (size_t i = 0;i < m.size_edges();++i) {
         const Edge *e = m.edge(i);
 
-        EXPECT_TRUE(e == e->next()->prev());
-        EXPECT_TRUE(e == e->prev()->next());
-        EXPECT_TRUE(e == e->twin()->twin());
+        EXPECT_TRUE(e->self() == m.edge(e->next())->prev());
+        EXPECT_TRUE(e->self() == m.edge(e->prev())->next());
+        EXPECT_TRUE(e->self() == m.edge(e->twin())->twin());
 
         //e->ConstraintCurve == e->Twin->ConstraintCurve and e->Orientation != e->Orientation
-        if (!(e->twin() == e)) {
-            EXPECT_TRUE(e->node() == e->twin()->next()->node());
-            EXPECT_TRUE(e->constraint_curve() == e->twin()->constraint_curve());
+        if ((e->twin() != e->self())) {
+            EXPECT_TRUE(e->node() == m.edge(m.edge(e->twin())->next())->node());
+            EXPECT_TRUE(e->constraint_curve() == m.edge(e->twin())->constraint_curve());
             if (e->constraint_curve() != nullptr) {
-                EXPECT_TRUE(e->orientation() != e->twin()->orientation());
+                EXPECT_TRUE(e->orientation() != m.edge(e->twin())->orientation());
             }
 
-            EXPECT_FALSE(e->node() == e->twin()->node());
+            EXPECT_FALSE(e->node() == m.edge(e->twin())->node());
         }
 
         if (e->constraint_curve() != nullptr) {
             if (e->orientation()) {
                 EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->start());
-                EXPECT_TRUE(m.point(e->tip()) == *e->constraint_curve()->end());
+                EXPECT_TRUE(m.point(e->tip(m)) == *e->constraint_curve()->end());
             }
             else {
                 EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->end());
-                EXPECT_TRUE(m.point(e->tip()) == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.point(e->tip(m)) == *e->constraint_curve()->start());
             }
         }
     }

@@ -12,24 +12,26 @@ public:
     friend bool are_intersecting(Edge const *e0, Edge const *e1, Mesh const &m);
 
     // Constructors
-    Edge() : Node(SIZE_MAX), Next(nullptr), Prev(nullptr), Twin(this), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge() : Node(SIZE_MAX), Self(SIZE_MAX), Next(SIZE_MAX), Prev(SIZE_MAX), Twin(SIZE_MAX), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(size_t v, Edge &n, Edge &p, Edge &t) : Node(v), Next(&n), Prev(&p), Twin(&t), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge(size_t v, size_t s, Edge &n, Edge &p, Edge &tw) : Node(v), Self(s), Next(n.Self), Prev(p.Self), Twin(tw.Self), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(Curve *c, bool Orientation, size_t v);
+    Edge(Curve *c, bool Orientation, size_t v, size_t s);
 
     // Accessors
     size_t node() const { return Node; };
 
     size_t base() const { return Node; };
 
-    size_t tip() const { return (next() == nullptr ? twin()->base() : next()->base()); };
+    size_t tip(Mesh const &mesh) const;
 
-    Edge const *next() const { return Next; };
+    size_t self() const { return Self; };
 
-    Edge const *twin() const { return Twin; };
+    size_t next() const { return Next; };
 
-    Edge const *prev() const { return Prev; };
+    size_t twin() const { return Twin; };
+
+    size_t prev() const { return Prev; };
 
     Curve const *constraint_curve() const { return ConstraintCurve; };
 
@@ -38,22 +40,29 @@ public:
     bool mark() const { return Mark; };
 
     bool operator==(Edge const &e) const {
-        return (node() == e.node()) && (constraint_curve() == e.constraint_curve()) && (twin()->node() == e.twin()->node());
+        return (Node == e.Node &&
+                Self == e.Self &&
+                Next == e.Next &&
+                Twin == e.Twin &&
+                Prev == e.Twin &&
+                ConstraintCurve == e.ConstraintCurve &&
+                Orientation == e.Orientation);
     };
 
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
 
-    bool is_valid() const;
+    bool is_valid(Mesh const &mesh) const;
 
-    bool swap();
+    bool swap(Mesh const &mesh);
 
-    void recursive_mark();
+    void recursive_mark(Mesh const &mesh);
 
 protected:
     size_t Node;            //Start of edge
-    Edge *Next;             //In triangle
-    Edge *Twin;             //Adjacent triangle
-    Edge *Prev;             //In triangle
+    size_t Self;            //This triangle
+    size_t Next;            //In triangle
+    size_t Twin;            //Adjacent triangle
+    size_t Prev;            //In triangle
 
     Curve *ConstraintCurve; //==nullptr if unconstrained
     bool Orientation;       //undefined if unconstrained

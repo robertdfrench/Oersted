@@ -1,55 +1,61 @@
 #include "Mesh.hpp"
 
-Edge::Edge(Curve *c, bool direction, size_t v) {
+Edge::Edge(Curve *c, bool d, size_t n, size_t s) {
     ConstraintCurve = c;
-    Node = v;
-    Twin = this;
-    Next = nullptr;
-    Prev = nullptr;
-    Orientation = direction;
+    Node = n;
+    Self = s;
+    Twin = SIZE_MAX;
+    Next = SIZE_MAX;
+    Prev = SIZE_MAX;
+    Orientation = d;
 }
 
-bool Edge::is_valid() const {
+size_t Edge::tip(Mesh const &mesh) const {
+    return (Next == Self ? mesh.Edges[Twin]->Node : mesh.Edges[Next]->Node);
+};
+
+bool Edge::is_valid(Mesh const &mesh) const {
     bool value = true;
 
-    value = value && (this == Next->Prev);
-    value = value && (this == Prev->Next);
-    value = value && (this == Twin->Twin);
+    value = value && (Self == mesh.Edges[Next]->Prev);
+    value = value && (Self == mesh.Edges[Prev]->Next);
+    value = value && (Self == mesh.Edges[Twin]->Twin);
 
     return value;
 }
 
-bool Edge::swap() {
+bool Edge::swap(Mesh const &mesh) {
     if (ConstraintCurve == nullptr) {
-        Edge * e1 = Next;
-        Edge * e2 = Prev;
-        Edge * e3 = Twin->Next;
-        Edge * e4 = Twin->Prev;
+        Edge *e1 = mesh.Edges[Next];
+        Edge *e2 = mesh.Edges[Prev];
+        Edge *e3 = mesh.Edges[mesh.Edges[Twin]->Next];
+        Edge *e4 = mesh.Edges[mesh.Edges[Twin]->Prev];
+        Edge *twin = mesh.Edges[Twin];
 
         Node = e2->Node;
-        Next = e4;
-        Prev = e1;
+        Next = e4->Self;
+        Prev = e1->Self;
         Mark = false;
 
-        Twin->Node = e4->Node;
-        Twin->Next = e2;
-        Twin->Prev = e3;
-        Twin->Mark = false;
+        twin->Node = e4->Node;
+        twin->Next = e2->Self;
+        twin->Prev = e3->Self;
+        twin->Mark = false;
 
-        e1->Next = this;
-        e1->Prev = e4;
+        e1->Next = Self;
+        e1->Prev = e4->Self;
         e1->Mark = false;
 
-        e2->Next = e3;
+        e2->Next = e3->Self;
         e2->Prev = Twin;
         e2->Mark = false;
 
         e3->Next = Twin;
-        e3->Prev = e2;
+        e3->Prev = e2->Self;
         e3->Mark = false;
 
-        e4->Next = e1;
-        e4->Prev = this;
+        e4->Next = e1->Self;
+        e4->Prev = Self;
         e4->Mark = false;
 
         return true;
@@ -59,9 +65,9 @@ bool Edge::swap() {
     }
 }
 
-void Edge::recursive_mark() {
-    if (Mark && Next->Mark && Prev->Mark) {
-        Next->Mark = false;
-        Prev->Mark = false;
+void Edge::recursive_mark(Mesh const &mesh) {
+    if (Mark && mesh.Edges[Next]->Mark && mesh.Edges[Prev]->Mark) {
+        mesh.Edges[Next]->Mark = false;
+        mesh.Edges[Prev]->Mark = false;
     }
 }
