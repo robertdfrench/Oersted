@@ -333,7 +333,7 @@ InsertPointResult Mesh::insert_midpoint(Edge *e) {
     */
 
     Curve *c;
-    if (e->ConstraintCurve != nullptr) { // Constrained Edge
+    if (e->is_constrained()) { // Constrained Edge
         Vertex *v = new Vertex; // TODO: Manage memory
         c = e->ConstraintCurve->split(v, 0.5);
         Points.push_back(Point(v->x(), v->y()));
@@ -700,7 +700,7 @@ void Mesh::split_encroached_edges() {
     while (any_split) {
         any_split = false;
         for (size_t i = 0; i != Edges.size(); ++i) {
-            if (Edges[i]->constraint_curve() != nullptr) {
+            if (Edges[i]->is_constrained()) {
                 if (is_encroached(Edges[i], Points[Edges[Edges[i]->Prev]->base()])) {
                     any_split = true;
                     insert_midpoint(Edges[i]);
@@ -716,7 +716,7 @@ void Mesh::mark_triangles() {
     }
 
     for (size_t i = 0; i < Edges.size(); ++i) {
-        Edges[i]->recursive_mark(*this);
+        recursive_mark(Edges[i]);
     }
 }
 
@@ -830,7 +830,7 @@ bool Mesh::edges_are_valid() const {
                 result = false;
                 break;
             }
-            if (e->constraint_curve() != nullptr) {
+            if (e->is_constrained()) {
                 if (e->orientation() == Edges[e->twin()]->orientation()) {
                     result = false;
                     break;
@@ -843,7 +843,7 @@ bool Mesh::edges_are_valid() const {
             }
         }
 
-        if (e->constraint_curve() != nullptr) {
+        if (e->is_constrained()) {
             if (e->orientation()) {
                 if (Points[e->base()] != *e->constraint_curve()->start()) {
                     result = false;
@@ -999,7 +999,7 @@ bool Mesh::is_protruding(Edge const *edge) const {
 
 bool Mesh::recursive_swap(Edge *edge) const {
     // TODO, May need to have two different recursive swap methods, one for midpoint insertion and one for circumcenter insertion
-    if (!is_locally_optimal(edge) && edge->swap(*this)) {
+    if (!is_locally_optimal(edge) && swap(edge)) {
         Edge * enext = Edges[edge->Next];
         Edge * eprev = Edges[edge->Prev];
         Edge * tnext = Edges[Edges[edge->Twin]->Next];
@@ -1021,7 +1021,7 @@ bool Mesh::is_locally_optimal(Edge const *edge) const {
         See Chapter 3.7 of "Triangulations and Applications" by Øyvind Hjelle and Morten Dæhlen
     */
 
-    if (edge->ConstraintCurve != nullptr) {
+    if (edge->is_constrained()) {
         return true;
     } else {
         Point const p3 = Points[edge->Node];
@@ -1063,7 +1063,7 @@ void Mesh::split_edge(Edge *edge) {
     // TODO: Refactor into split_constrained_edge
 
     Curve *c;
-    if (edge->ConstraintCurve != nullptr) { // Constrained Edge
+    if (edge->is_constrained()) {
         Vertex *v = new Vertex;    // TODO: Need to manage this memory.
         c = edge->ConstraintCurve->split(v, 0.5);
 
@@ -1115,7 +1115,7 @@ bool Mesh::is_encroached(Edge const *edge, Point const p2) const {
         Using the dot product, this requires that the normalized dot product < cos(90) = 0
     */
 
-    if (edge->ConstraintCurve == nullptr) {
+    if (!(edge->is_constrained())) {
         return false;
     } else {
         Point const p0 = Points[edge->base()];
@@ -1167,4 +1167,62 @@ bool Mesh::is_attached(Edge *&edge_out, Point const &point) const {
     }
 
     return false;
+}
+
+void Mesh::recursive_mark(Edge *&e) const {
+    if (e->Mark && Edges[e->Next]->Mark && Edges[e->Prev]->Mark) {
+        Edges[e->Next]->Mark = false;
+        Edges[e->Prev]->Mark = false;
+    }
+}
+
+bool Mesh::is_valid(Edge const *&e) const {
+    bool value = true;
+
+    value = value && (e->Self == Edges[e->Next]->Prev);
+    value = value && (e->Self == Edges[e->Prev]->Next);
+    value = value && (e->Self == Edges[e->Twin]->Twin);
+
+    return value;
+}
+
+bool Mesh::swap(Edge *&e0) const {
+    if (!e0->is_constrained()) {
+        Edge *e1 = Edges[e0->Next];
+        Edge *e2 = Edges[e0->Prev];
+        Edge *e3 = Edges[Edges[e0->Twin]->Next];
+        Edge *e4 = Edges[Edges[e0->Twin]->Prev];
+        Edge *twin = Edges[e0->Twin];
+
+        e0->Node = e2->Node;
+        e0->Next = e4->Self;
+        e0->Prev = e1->Self;
+        e0->Mark = false;
+
+        twin->Node = e4->Node;
+        twin->Next = e2->Self;
+        twin->Prev = e3->Self;
+        twin->Mark = false;
+
+        e1->Next = e0->Self;
+        e1->Prev = e4->Self;
+        e1->Mark = false;
+
+        e2->Next = e3->Self;
+        e2->Prev = e0->Twin;
+        e2->Mark = false;
+
+        e3->Next = e0->Twin;
+        e3->Prev = e2->Self;
+        e3->Mark = false;
+
+        e4->Next = e1->Self;
+        e4->Prev = e0->Self;
+        e4->Mark = false;
+
+        return true;
+    } else {
+        e0->Mark = false;
+        return false;
+    }
 }

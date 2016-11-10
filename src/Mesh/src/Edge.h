@@ -44,18 +44,12 @@ public:
                 Self == e.Self &&
                 Next == e.Next &&
                 Twin == e.Twin &&
-                Prev == e.Twin &&
+                Prev == e.Prev &&
                 ConstraintCurve == e.ConstraintCurve &&
                 Orientation == e.Orientation);
     };
 
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
-
-    bool is_valid(Mesh const &mesh) const;
-
-    bool swap(Mesh const &mesh);
-
-    void recursive_mark(Mesh const &mesh);
 
 protected:
     size_t Node;            //Start of edge

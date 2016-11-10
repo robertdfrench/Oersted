@@ -96,10 +96,16 @@ public:
 
     bool is_attached(Edge *&edge_out, Point const &p) const;
 
+    bool is_valid(Edge const *&e) const;
+
+    bool swap(Edge *&e0) const;
+
     void add_edge(Edge *&e) {
         e->Self = Edges.size();
         Edges.push_back(e);
     };
+
+    void recursive_mark(Edge *&e) const;
 
 protected:
     Contour const *Boundary;
