@@ -282,7 +282,7 @@ TEST(CircularArc, on_manifold) {
     }
 }
 
-TEST(CircularARc, on_segment) {
+TEST(CircularArc, on_segment) {
     { //ARGS::(Vertex)
         Sketch s;
 
