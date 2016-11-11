@@ -18,8 +18,6 @@ enum class InsertPointResult {
 };
 
 class Mesh {
-    friend class Edge;
-
 public:
     double MinimumElementQuality = 0.0;
     double MinimumElementSize = 0.0;
@@ -57,6 +55,8 @@ public:
 
     size_t size_triangles() const { return Triangles.size(); };
 
+    size_t node(Edge const *e) const { return e->Node; };
+
     size_t num_points() const { return Points.size(); };
 
     size_t num_edges() const;
@@ -71,9 +71,27 @@ public:
 
     Point circumcenter(Edge const *e) const;
 
+    Point const base(Edge const *e) const { return Points[e->Node]; };
+
     Point const point(size_t i) const { return Points[i]; };
 
+    Point const point(Edge const *e) const { return Points[e->Node]; };
+
+    Point const tip(Edge const *e) const { return Points[next(e)->Node]; };
+
     Edge const *edge(size_t i) const { return Edges[i]; };
+
+    Edge const *next(Edge const *e) const { return Edges[e->Next]; };
+
+    Edge *&next(Edge *e) { return Edges[e->Next]; };
+
+    Edge const *prev(Edge const *e) const { return Edges[e->Prev]; };
+
+    Edge *&prev(Edge *e) { return Edges[e->Prev]; };
+
+    Edge const *twin(Edge const *e) const { return Edges[e->Twin]; };
+
+    Edge *&twin(Edge *e) { return Edges[e->Twin]; };
 
     Edge const *triangle(size_t i) const { return Triangles[i]; };
 
@@ -95,11 +113,11 @@ protected:
     std::vector<Edge *> Triangles;
 
 private:
-    bool find_attached(Edge *&e_out, Point const p) const;
+    bool find_attached(Edge *&e_out, Point const p);
 
-    bool recursive_swap(Edge *e) const;
+    bool recursive_swap(Edge *e);
 
-    bool swap(Edge *&e0) const;
+    bool swap(Edge *&e0);
 
     void add_edge(Edge *&e) {
         e->Self = Edges.size();
@@ -115,8 +133,6 @@ private:
     void insert_internal_boundaries();
 
     void mark_triangles();
-
-    void recursive_mark(Edge *e) const;
 
     void refine_once(std::vector<size_t> index, std::vector<double> circumradius, std::vector<double> quality);
 

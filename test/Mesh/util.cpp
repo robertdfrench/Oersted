@@ -16,7 +16,6 @@ bool edges_are_valid(Mesh &m) {
         EXPECT_TRUE(e->self() == m.edge(e->prev())->next());
         EXPECT_TRUE(e->self() == m.edge(e->twin())->twin());
 
-        //e->ConstraintCurve == e->Twin->ConstraintCurve and e->Orientation != e->Orientation
         if ((e->twin() != e->self())) {
             EXPECT_TRUE(e->node() == m.edge(m.edge(e->twin())->next())->node());
             EXPECT_TRUE(e->constraint_curve() == m.edge(e->twin())->constraint_curve());
@@ -29,12 +28,12 @@ bool edges_are_valid(Mesh &m) {
 
         if (e->constraint_curve() != nullptr) {
             if (e->orientation()) {
-                EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->start());
-                EXPECT_TRUE(m.point(e->tip(m)) == *e->constraint_curve()->end());
+                EXPECT_TRUE(m.base(e) == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.tip(e) == *e->constraint_curve()->end());
             }
             else {
-                EXPECT_TRUE(m.point(e->base()) == *e->constraint_curve()->end());
-                EXPECT_TRUE(m.point(e->tip(m)) == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.base(e) == *e->constraint_curve()->end());
+                EXPECT_TRUE(m.tip(e) == *e->constraint_curve()->start());
             }
         }
     }

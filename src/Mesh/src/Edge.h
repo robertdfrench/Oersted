@@ -9,21 +9,13 @@ class Edge {
 public:
     friend class Mesh;
 
-    friend bool are_intersecting(Edge const *e0, Edge const *e1, Mesh const &m);
+    Edge() : Node(SIZE_MAX), Self(SIZE_MAX), Next(SIZE_MAX), Twin(SIZE_MAX), Prev(SIZE_MAX), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    // Constructors
-    Edge() : Node(SIZE_MAX), Self(SIZE_MAX), Next(SIZE_MAX), Prev(SIZE_MAX), Twin(SIZE_MAX), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge(size_t n, size_t s, Edge &nx, Edge &pr, Edge &tw) : Node(n), Self(s), Next(nx.Self), Twin(tw.Self), Prev(pr.Self), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
-    Edge(size_t v, size_t s, Edge &n, Edge &p, Edge &tw) : Node(v), Self(s), Next(n.Self), Prev(p.Self), Twin(tw.Self), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+    Edge(size_t n, size_t s, Curve *c, bool d) : Node(n), Self(s), Next(SIZE_MAX), Twin(SIZE_MAX), Prev(SIZE_MAX), ConstraintCurve(c), Orientation(d), Mark(false) {};
 
-    Edge(Curve *c, bool Orientation, size_t v, size_t s);
-
-    // Accessors
     size_t node() const { return Node; };
-
-    size_t base() const { return Node; };
-
-    size_t tip(Mesh const &mesh) const;
 
     size_t self() const { return Self; };
 
@@ -52,16 +44,16 @@ public:
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
 
 protected:
-    size_t Node;            //Start of edge
-    size_t Self;            //This triangle
-    size_t Next;            //In triangle
-    size_t Twin;            //Adjacent triangle
-    size_t Prev;            //In triangle
+    size_t Node;            //Point at start of this edge
+    size_t Self;            //This edge in this triangle
+    size_t Next;            //Next edge in this triangle
+    size_t Twin;            //Twin edge in adjacent triangle
+    size_t Prev;            //Previous edge in this triangle
 
     Curve *ConstraintCurve; //==nullptr if unconstrained
-    bool Orientation;       //undefined if unconstrained
+    bool Orientation;       //don't care if unconstrained
 
-    bool Mark;              // Auxillary variable for mesh refinement
+    bool Mark;              //Auxiliary variable for mesh refinement
 };
 
 #endif //OERSTED_EDGE_H

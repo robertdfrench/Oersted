@@ -138,12 +138,12 @@ TEST(Mesh, create__square_domain) {
 
     // Test edge and node connections
     {
-        EXPECT_TRUE(m.point(0) == m.point(m.edge(0)->node()));
-        EXPECT_TRUE(m.point(1) == m.point(m.edge(1)->node()));
-        EXPECT_TRUE(m.point(2) == m.point(m.edge(2)->node()));
-        EXPECT_TRUE(m.point(3) == m.point(m.edge(3)->node()));
-        EXPECT_TRUE(m.point(1) == m.point(m.edge(4)->node()));
-        EXPECT_TRUE(m.point(3) == m.point(m.edge(5)->node()));
+        EXPECT_TRUE(m.point((size_t)0) == m.point(m.edge(0)));
+        EXPECT_TRUE(m.point((size_t)1) == m.point(m.edge(1)));
+        EXPECT_TRUE(m.point((size_t)2) == m.point(m.edge(2)));
+        EXPECT_TRUE(m.point((size_t)3) == m.point(m.edge(3)));
+        EXPECT_TRUE(m.point((size_t)1) == m.point(m.edge(4)));
+        EXPECT_TRUE(m.point((size_t)3) == m.point(m.edge(5)));
 
         for (size_t i = 0; i < 5; i++) {
             const Edge *e = m.edge(i);
