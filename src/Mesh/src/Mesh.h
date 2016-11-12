@@ -31,7 +31,7 @@ public:
 
     bool in_triangle(Point const p, size_t ei) const;
 
-    bool is_constrained(size_t ei) const { return Edges[ei]->is_constrained(); };
+    bool is_constrained(size_t ei) const { return Edges[ei].is_constrained(); };
 
     bool is_encroached(Point const p, size_t ei) const;
 
@@ -41,7 +41,7 @@ public:
 
     bool is_valid(size_t ei) const;
 
-    bool orientation(size_t ei) const { return Edges[ei]->Orientation; };
+    bool orientation(size_t ei) const { return Edges[ei].Orientation; };
 
     bool refine();
 
@@ -53,11 +53,11 @@ public:
 
     double shortest_edge_length(size_t ei) const;
 
-    size_t next(size_t ei) const { return Edges[ei]->Next; };
+    size_t next(size_t ei) const { return Edges[ei].Next; };
 
-    size_t node(size_t ei) const { return Edges[ei]->Node; };
+    size_t node(size_t ei) const { return Edges[ei].Node; };
 
-    size_t node(Edge const *e) const { return e->Node; };
+    size_t node(Edge const e) const { return e.Node; };
 
     size_t num_points() const { return Points.size(); };
 
@@ -65,7 +65,7 @@ public:
 
     size_t num_triangles() const { return Triangles.size(); };
 
-    size_t prev(size_t ei) const { return Edges[ei]->Prev; };
+    size_t prev(size_t ei) const { return Edges[ei].Prev; };
 
     size_t size_points() const { return Points.size(); };
 
@@ -73,45 +73,37 @@ public:
 
     size_t size_triangles() const { return Triangles.size(); };
 
-    size_t twin(size_t ei) const { return Edges[ei]->Twin; };
+    size_t twin(size_t ei) const { return Edges[ei].Twin; };
 
     void create();
 
-    void delete_me(); // TODO: refactor to non-pointer version
-
     void save_as(std::string path, std::string file_name) const;
 
-    Curve const *constraint_curve(size_t ei) const { return Edges[ei]->ConstraintCurve; };
+    Curve const *constraint_curve(size_t ei) const { return Edges[ei].ConstraintCurve; };
 
     Point circumcenter(size_t ei) const;
 
-    Point const base(Edge const *e) const { return Points[e->Node]; };
+    Point const base(Edge const e) const { return Points[e.Node]; };
 
     Point const base(size_t ei) const { return Points[node(ei)]; };
 
     Point const point(size_t i) const { return Points[i]; };
 
-    Point const point(Edge const *e) const { return Points[e->Node]; };
+    Point const point(Edge const e) const { return Points[e.Node]; };
 
-    Point const tip(Edge const *e) const { return Points[next(e)->Node]; };
+    Point const tip(Edge const e) const { return Points[next(e).Node]; };
 
     Point const tip(size_t ei) const { return Points[node(next(ei))]; };
 
-    Edge const *edge(size_t i) const { return Edges[i]; };
+    Edge const edge(size_t i) const { return Edges[i]; };
 
-    Edge const *next(Edge const *e) const { return Edges[e->Next]; };
+    Edge const next(Edge const e) const { return Edges[e.Next]; };
 
-    Edge *&next(Edge *e) { return Edges[e->Next]; };
+    Edge const prev(Edge const e) const { return Edges[e.Prev]; };
 
-    Edge const *prev(Edge const *e) const { return Edges[e->Prev]; };
+    Edge const twin(Edge const e) const { return Edges[e.Twin]; };
 
-    Edge *&prev(Edge *e) { return Edges[e->Prev]; };
-
-    Edge const *twin(Edge const *e) const { return Edges[e->Twin]; };
-
-    Edge *&twin(Edge *e) { return Edges[e->Twin]; };
-
-    Edge const *triangle(size_t i) const { return Edges[Triangles[i]]; };
+    Edge const triangle(size_t i) const { return Edges[Triangles[i]]; };
 
     LocateTriangleResult locate_triangle(Point const p, size_t &ei) const;
 
@@ -128,7 +120,7 @@ protected:
     std::vector<Curve const *> Curves;
     std::vector<Contour const *> Contours;
     std::vector<Point> Points;
-    std::vector<Edge *> Edges;
+    std::vector<Edge> Edges;
     std::vector<size_t> Triangles;
 
 private:
@@ -138,13 +130,15 @@ private:
 
     bool swap(size_t ei);
 
-    Edge *&new_edge() {
-        Edges.push_back(new Edge(Edges.size()));
-        return Edges.back();
+    auto new_edges(size_t num_new) {
+        for (size_t i = 0; i != num_new; ++i) {
+            Edges.push_back(Edge(Edges.size()));
+        }
+        return Edges.end();
     }
 
-    Edge *&new_edge(size_t p, Curve *c, bool dir) {
-        Edges.push_back(new Edge(p, Edges.size(), c, dir));
+    Edge &new_edge(size_t p, Curve *c, bool dir) {
+        Edges.push_back(Edge(p, Edges.size(), c, dir));
         return Edges.back();
     }
 

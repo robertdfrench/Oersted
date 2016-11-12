@@ -187,7 +187,9 @@ bool Mesh::refine() {
     std::vector<double> quality;
     std::vector<size_t> index;
 
-    // #TODO, Loop until quality is satisfied
+    // TODO: Loop until quality is satisfied
+    // TODO: Iteratively decrease the minimum element size until quality is satisfied
+
     element_quality(radii, quality);
     sort_permutation_ascending(quality, index);
     size_t N = Triangles.size();
@@ -319,7 +321,7 @@ bool Mesh::is_locally_optimal(size_t ei) const {
         double cosb = v3x * v4x + v3y * v4y;
         double cct = sina * cosb + cosa * sinb;
 
-        return cct > tol;
+        return cct >= 0; // cct >= 0 > tol?
     }
 }
 
@@ -403,43 +405,43 @@ bool Mesh::recursive_swap(size_t ei) {
 }
 
 bool Mesh::swap(size_t ei) {
-    Edge *e0 = Edges[ei];
-    if (!e0->is_constrained()) {
-        Edge *e1 = next(e0);
-        Edge *e2 = prev(e0);
-        Edge *e3 = next(twin(e0));
-        Edge *e4 = prev(twin(e0));
-        Edge *e5 = twin(e0);
+    Edge &e0 = Edges[ei];
+    if (!e0.is_constrained()) {
+        Edge &e1 = Edges[e0.Next];
+        Edge &e2 = Edges[e0.Prev];
+        Edge &e5 = Edges[e0.Twin];
+        Edge &e3 = Edges[e5.Next];
+        Edge &e4 = Edges[e5.Prev];
 
-        e0->Node = e2->Node;
-        e0->Next = e4->Self;
-        e0->Prev = e1->Self;
-        e0->Mark = false;
+        e0.Node = e2.Node;
+        e0.Next = e4.Self;
+        e0.Prev = e1.Self;
+        e0.Mark = false;
 
-        e5->Node = e4->Node;
-        e5->Next = e2->Self;
-        e5->Prev = e3->Self;
-        e5->Mark = false;
+        e5.Node = e4.Node;
+        e5.Next = e2.Self;
+        e5.Prev = e3.Self;
+        e5.Mark = false;
 
-        e1->Next = e0->Self;
-        e1->Prev = e4->Self;
-        e1->Mark = false;
+        e1.Next = e0.Self;
+        e1.Prev = e4.Self;
+        e1.Mark = false;
 
-        e2->Next = e3->Self;
-        e2->Prev = e0->Twin;
-        e2->Mark = false;
+        e2.Next = e3.Self;
+        e2.Prev = e0.Twin;
+        e2.Mark = false;
 
-        e3->Next = e0->Twin;
-        e3->Prev = e2->Self;
-        e3->Mark = false;
+        e3.Next = e0.Twin;
+        e3.Prev = e2.Self;
+        e3.Mark = false;
 
-        e4->Next = e1->Self;
-        e4->Prev = e0->Self;
-        e4->Mark = false;
+        e4.Next = e1.Self;
+        e4.Prev = e0.Self;
+        e4.Mark = false;
 
         return true;
     } else {
-        e0->Mark = false;
+        e0.Mark = false;
         return false;
     }
 }
@@ -527,8 +529,8 @@ void Mesh::create_boundary_polygon() {
     for (size_t i = 0; i != Boundary->size(); ++i) {
         Curve *c = Boundary->curve(i)->clone(); //clone() to prevent alteration of input Contour when Edge is split
         bool dir = Boundary->orientation(i);
-        Edge *e = new_edge(Points.size(), c, dir);
-        e->Twin = e->Self;
+        Edge &e = new_edge(Points.size(), c, dir); // TODO: change to new_edge(Edge)
+        e.Twin = e.Self;
         Points.push_back(Point(dir ? c->start() : c->end()));
     }
 
@@ -536,13 +538,13 @@ void Mesh::create_boundary_polygon() {
     size_t Ne = 0;
     for (size_t i = 0; i != Edges.size(); ++i) {
         size_t j = (i + 1) % Edges.size();
-        Edges[i]->Next = Edges[j]->Self;
-        Edges[j]->Prev = Edges[i]->Self;
+        Edges[i].Next = Edges[j].Self;
+        Edges[j].Prev = Edges[i].Self;
     }
 
     // TODO: Length Based Refinement of Boundary curves
 
-    // Some edges may be intersect due to discretization error
+    // Some edges may intersect due to discretization error
     // If two edges intersect, split the longest edge
     bool any_split = true;
     while (any_split) {
@@ -562,15 +564,6 @@ void Mesh::create_boundary_polygon() {
     }
 }
 
-void Mesh::delete_me() {
-    for (auto &ed : Edges) {
-        delete ed;
-    }
-    Edges.clear();
-
-    Points.clear();
-}
-
 void Mesh::element_quality(std::vector<double> &radii, std::vector<double> &quality) {
     radii.resize(0);
     quality.resize(0);
@@ -578,8 +571,8 @@ void Mesh::element_quality(std::vector<double> &radii, std::vector<double> &qual
     radii.reserve(Triangles.size());
     quality.reserve(Triangles.size());
     for (size_t i = 0; i < Triangles.size(); ++i) {
-        double r = circumradius(Triangles[i]); // TODO: Change this method to index into triangles instead of Edges
-        double l = shortest_edge_length(Triangles[i]); // TODO: Change this method to index into triangles instead of Edges
+        double r = circumradius(Triangles[i]);
+        double l = shortest_edge_length(Triangles[i]);
 
         radii.push_back(r);
         quality.push_back(l / r);
@@ -591,9 +584,9 @@ void Mesh::get_triangles() {
     Triangles.reserve(2 * num_points());
 
     mark_triangles();
-    for (auto e : Edges) {
-        if (e->Mark) {
-            Triangles.push_back(e->Self);
+    for (auto &e : Edges) {
+        if (e.Mark) {
+            Triangles.push_back(e.Self);
         }
     }
 }
@@ -667,13 +660,13 @@ void Mesh::insert_internal_boundaries() {
             }
 
             if (find_attached(p1, ei)) {
-                Edge *e = Edges[ei];
-                e->ConstraintCurve = queue.back();
-                e->Orientation = true;
+                Edge &e = Edges[ei];
+                e.ConstraintCurve = queue.back();
+                e.Orientation = true;
 
-                e = Edges[twin(ei)];
-                e->ConstraintCurve = queue.back();
-                e->Orientation = false;
+                Edge &et = Edges[e.Twin];
+                et.ConstraintCurve = queue.back();
+                et.Orientation = false;
 
                 queue.pop_back();
             } else {
@@ -692,22 +685,22 @@ void Mesh::insert_internal_boundaries() {
 
 void Mesh::mark_triangles() {
     for (size_t i = 0; i != Edges.size(); ++i) {
-        Edges[i]->Mark = true;
+        Edges[i].Mark = true;
     }
 
     for (size_t i = 0; i != Edges.size(); ++i) {
-        if (Edges[i]->Mark && Edges[next(i)]->Mark && Edges[prev(i)]->Mark) {
-            Edges[next(i)]->Mark = false;
-            Edges[prev(i)]->Mark = false;
+        if (Edges[i].Mark && Edges[next(i)].Mark && Edges[prev(i)].Mark) {
+            Edges[next(i)].Mark = false;
+            Edges[prev(i)].Mark = false;
         }
     }
 }
 
 void Mesh::refine_once(std::vector<size_t> index, std::vector<double> radii, std::vector<double> quality) {
-    for (size_t i = 0; i < Triangles.size(); ++i) {
+    for (size_t i = 0; i != Triangles.size(); ++i) {
         size_t j = index[i];
-        if ((triangle(j)->Mark) && ((radii[j] > MaximumElementSize) || (radii[j] > MinimumElementSize && quality[j] < MinimumElementQuality))) {
-            insert_circumcenter(Triangles[j]); // TODO: Change this function to index into triangles
+        if ((triangle(j).Mark) && ((radii[j] > MaximumElementSize) || (radii[j] > MinimumElementSize && quality[j] < MinimumElementQuality))) {
+            insert_circumcenter(Triangles[j]);
         }
     }
     get_triangles();
@@ -757,7 +750,7 @@ void Mesh::split_edge(size_t ei) {
     Curve *c;
     if (is_constrained(ei)) {
         Vertex *v = new Vertex;    // TODO: Need to manage this memory.
-        c = Edges[ei]->ConstraintCurve->split(v, 0.5);
+        c = Edges[ei].ConstraintCurve->split(v, 0.5);
 
         Points.push_back(Point(v->x(), v->y()));
     } else { // Unconstrained Edge
@@ -769,30 +762,32 @@ void Mesh::split_edge(size_t ei) {
     }
 
     if (ei == twin(ei)) { // Boundary Edge, TODO: write bool Edge::is_boundary()
-        Edge *newe = new_edge();
-        Edge *e = Edges[ei];
+        auto itr = new_edges(1);
+        Edge &newe = *(--itr);
+        Edge &e = Edges[ei];
+        Edge &nxt = Edges[e.Next];
 
         // Constraint Curve
-        newe->Orientation = e->Orientation;
-        if (e->Orientation) {
-            newe->ConstraintCurve = c;
+        newe.Orientation = e.Orientation;
+        if (e.Orientation) {
+            newe.ConstraintCurve = c;
         } else {
-            newe->ConstraintCurve = e->ConstraintCurve;
-            e->ConstraintCurve = c;
+            newe.ConstraintCurve = e.ConstraintCurve;
+            e.ConstraintCurve = c;
         }
 
         // Connectivity
-        newe->Node = Points.size() - 1;
-        newe->Next = e->Next;
-        newe->Prev = e->Self;
-        newe->Twin = newe->Self;
-        newe->Mark = false;
+        newe.Node = Points.size() - 1;
+        newe.Next = e.Next;
+        newe.Prev = e.Self;
+        newe.Twin = newe.Self;
+        newe.Mark = false;
 
-        next(e)->Prev = newe->Self;
-        next(e)->Mark = false;
+        nxt.Prev = newe.Self;
+        nxt.Mark = false;
 
-        e->Next = newe->Self;
-        e->Mark = false;
+        e.Next = newe.Self;
+        e.Mark = false;
     } else {
         throw std::exception(); // Function should only be called on constrained edges
     }
@@ -819,30 +814,36 @@ void Mesh::triangulate_boundary_polygon() {
     size_t i = 0;
     while (i != next(next(next(i)))) {
         if (is_protruding(i)) {
-            Edge *e0 = new_edge();
-            Edge *e1 = new_edge();
-            Edge *ei = Edges[i];
+            auto itr = new_edges(2);
+            Edge &e1 = *(--itr);
+            Edge &e0 = *(--itr);
+
+            Edge &ei = Edges[i];
+            Edge &nxt = Edges[ei.Next];
+            Edge &prv = Edges[ei.Prev];
+
+            Edge &prvprv = Edges[prv.Prev];
 
             // Edge of new triangle
-            e0->Node = next(ei)->Node;
-            e0->Prev = ei->Self;
-            e0->Next = ei->Prev;
-            e0->Twin = e1->Self;
+            e0.Node = nxt.Node;
+            e0.Prev = ei.Self;
+            e0.Next = ei.Prev;
+            e0.Twin = e1.Self;
 
             // Twin edge, part of new polygonal boundary
-            e1->Node = prev(ei)->Node;
-            e1->Next = ei->Next;
-            e1->Prev = prev(ei)->Prev;
-            e1->Twin = e0->Self;
+            e1.Node = prv.Node;
+            e1.Next = ei.Next;
+            e1.Prev = prv.Prev;
+            e1.Twin = e0.Self;
 
             // Update polygonal boundary
-            next(ei)->Prev = e1->Self;
-            ei->Next = e0->Self;
-            prev(prev(ei))->Next = e1->Self;
-            prev(ei)->Prev = e0->Self;
+            nxt.Prev = e1.Self;
+            ei.Next = e0.Self;
+            prvprv.Next = e1.Self;
+            prv.Prev = e0.Self;
 
             // Next edge
-            i = next(e1->Self);
+            i = next(e1.Self);
         } else {
             i = next(i);
         }
@@ -1030,7 +1031,7 @@ InsertPointResult Mesh::insert_midpoint(size_t ei) {
     Curve *c;
     if (is_constrained(ei)) { // Constrained Edge
         Vertex *v = new Vertex; // TODO: Manage memory
-        c = Edges[ei]->ConstraintCurve->split(v, 0.5);
+        c = Edges[ei].ConstraintCurve->split(v, 0.5);
         Points.push_back(Point(v->x(), v->y()));
     } else { // Unconstrained Edge
         c = nullptr;
@@ -1040,170 +1041,152 @@ InsertPointResult Mesh::insert_midpoint(size_t ei) {
     }
 
     if (ei == twin(ei)) { // Boundary Edge
-        Edge *e0 = new_edge();
-        Edge *e1 = new_edge();
-        Edge *e2 = new_edge();
+        auto itr = new_edges(3);
+        Edge &e2 = *(--itr);
+        Edge &e1 = *(--itr);
+        Edge &e0 = *(--itr);
 
-        Edge *e = Edges[ei];
-        Edge *nxt = next(e);
-        Edge *prv = prev(e);
+        Edge &e = Edges[ei];
+        Edge &nxt = Edges[e.Next];
+        Edge &prv = Edges[e.Prev];
 
         // Handle constraint curves
-        e2->Orientation = e->Orientation;
-        if (e->Orientation) {
-            e2->ConstraintCurve = c;
+        e2.Orientation = e.Orientation;
+        if (e.Orientation) {
+            e2.ConstraintCurve = c;
         } else {
-            e2->ConstraintCurve = e->ConstraintCurve;
-            e->ConstraintCurve = c;
+            e2.ConstraintCurve = e.ConstraintCurve;
+            e.ConstraintCurve = c;
         }
 
         // Construct edges
-        e0->Node = prv->Node;
-        e0->Next = e2->Self;
-        e0->Prev = e->Next;
-        e0->Twin = e1->Self;
-        e0->Mark = false;
+        e0.Node = prv.Node;
+        e0.Next = e2.Self;
+        e0.Prev = e.Next;
+        e0.Twin = e1.Self;
+        e0.Mark = false;
 
-        e1->Node = Points.size() - 1; // TODO: write add_point() method
-        e1->Next = e->Prev;
-        e1->Prev = e->Self;
-        e1->Twin = e0->Self;
-        e1->Mark = false;
+        e1.Node = Points.size() - 1; // TODO: write new_point(Point) method
+        e1.Next = e.Prev;
+        e1.Prev = e.Self;
+        e1.Twin = e0.Self;
+        e1.Mark = false;
 
-        e2->Node = Points.size() - 1;
-        e2->Next = e->Next;
-        e2->Prev = e0->Self;
-        e2->Twin = e2->Self;
-        e2->Mark = false;
+        e2.Node = Points.size() - 1;
+        e2.Next = e.Next;
+        e2.Prev = e0.Self;
+        e2.Twin = e2.Self;
+        e2.Mark = false;
 
-        nxt->Next = e0->Self;
-        nxt->Prev = e2->Self;
-        nxt->Mark = false;
+        nxt.Next = e0.Self;
+        nxt.Prev = e2.Self;
+        nxt.Mark = false;
 
-        prv->Prev = e1->Self;
-        prv->Mark = false;
+        prv.Prev = e1.Self;
+        prv.Mark = false;
 
-        e->Next = e1->Self;
-        e->Mark = false;
+        e.Next = e1.Self;
+        e.Mark = false;
 
         // Recursive swap
-        recursive_swap(e0->Self);
-        recursive_swap(nxt->Self);
-        recursive_swap(prv->Self);
+        recursive_swap(e0.Self);
+        recursive_swap(nxt.Self);
+        recursive_swap(prv.Self);
     } else { // Interior Edge
-        /*
-        Edge *e0 = new Edge;
-        add_edge(e0);
+        auto itr = new_edges(6);
+        Edge &e5 = *(--itr);
+        Edge &e4 = *(--itr);
+        Edge &e3 = *(--itr);
+        Edge &e2 = *(--itr);
+        Edge &e1 = *(--itr);
+        Edge &e0 = *(--itr);
 
-        Edge *e1 = new Edge;
-        add_edge(e1);
-
-        Edge *e2 = new Edge;
-        add_edge(e2);
-
-        Edge *e3 = new Edge;
-        add_edge(e3);
-
-        Edge *e4 = new Edge;
-        add_edge(e4);
-
-        Edge *e5 = new Edge;
-        add_edge(e5);
-        */
-
-        Edge *e0 = new_edge();
-        Edge *e1 = new_edge();
-        Edge *e2 = new_edge();
-        Edge *e3 = new_edge();
-        Edge *e4 = new_edge();
-        Edge *e5 = new_edge();
-
-        Edge *e = Edges[ei];
-        Edge *nxt = next(e);
-        Edge *prv = prev(e);
-        Edge *twn = twin(e);
-        Edge *tnxt = next(twn);
-        Edge *tprv = prev(twn);
+        Edge &e = Edges[ei];
+        Edge &nxt = Edges[e.Next];
+        Edge &prv = Edges[e.Prev];
+        Edge &twn = Edges[e.Twin];
+        Edge &tnxt = Edges[twn.Next];
+        Edge &tprv = Edges[twn.Prev];
 
         // Handle constraint curves
-        e1->Orientation = e->Orientation;
-        e4->Orientation = !e->Orientation;
-        twn->Orientation = !e->Orientation;
-        if (e->Orientation) {
-            e1->ConstraintCurve = c;
+        e1.Orientation = e.Orientation;
+        e4.Orientation = !e.Orientation;
+        twn.Orientation = !e.Orientation;
+        if (e.Orientation) {
+            e1.ConstraintCurve = c;
         } else {
-            e1->ConstraintCurve = e->ConstraintCurve;
-            e->ConstraintCurve = c;
+            e1.ConstraintCurve = e.ConstraintCurve;
+            e.ConstraintCurve = c;
         }
-        twn->ConstraintCurve = e1->ConstraintCurve;
-        e4->ConstraintCurve = e->ConstraintCurve;
+        twn.ConstraintCurve = e1.ConstraintCurve;
+        e4.ConstraintCurve = e.ConstraintCurve;
 
         // Construct Edges
-        e0->Node = Points.size() - 1;
-        e0->Next = e->Prev;
-        e0->Prev = e->Self;
-        e0->Twin = e2->Self;
-        e0->Mark = false;
+        e0.Node = Points.size() - 1;
+        e0.Next = e.Prev;
+        e0.Prev = e.Self;
+        e0.Twin = e2.Self;
+        e0.Mark = false;
 
-        e1->Node = Points.size() - 1;
-        e1->Next = e->Next;
-        e1->Prev = e2->Self;
-        e1->Twin = e->Twin;
-        e1->Mark = false;
+        e1.Node = Points.size() - 1;
+        e1.Next = e.Next;
+        e1.Prev = e2.Self;
+        e1.Twin = e.Twin;
+        e1.Mark = false;
 
-        e2->Node = prv->Node;
-        e2->Next = e1->Self;
-        e2->Prev = e->Next;
-        e2->Twin = e0->Self;
-        e2->Mark = false;
+        e2.Node = prv.Node;
+        e2.Next = e1.Self;
+        e2.Prev = e.Next;
+        e2.Twin = e0.Self;
+        e2.Mark = false;
 
-        e3->Node = Points.size() - 1;
-        e3->Next = twn->Prev;
-        e3->Prev = e->Twin;
-        e3->Twin = e5->Self;
-        e3->Mark = false;
+        e3.Node = Points.size() - 1;
+        e3.Next = twn.Prev;
+        e3.Prev = e.Twin;
+        e3.Twin = e5.Self;
+        e3.Mark = false;
 
-        e4->Node = Points.size() - 1;
-        e4->Next = twn->Next;
-        e4->Prev = e5->Self;
-        e4->Twin = e->Self;
-        e4->Mark = false;
+        e4.Node = Points.size() - 1;
+        e4.Next = twn.Next;
+        e4.Prev = e5.Self;
+        e4.Twin = e.Self;
+        e4.Mark = false;
 
-        e5->Node = tprv->Node;
-        e5->Next = e4->Self;
-        e5->Prev = twn->Next;
-        e5->Twin = e3->Self;
-        e5->Mark = false;
+        e5.Node = tprv.Node;
+        e5.Next = e4.Self;
+        e5.Prev = twn.Next;
+        e5.Twin = e3.Self;
+        e5.Mark = false;
 
-        tnxt->Next = e5->Self;
-        tnxt->Prev = e4->Self;
-        tnxt->Mark = false;
+        tnxt.Next = e5.Self;
+        tnxt.Prev = e4.Self;
+        tnxt.Mark = false;
 
-        tprv->Prev = e3->Self;
-        tprv->Mark = false;
+        tprv.Prev = e3.Self;
+        tprv.Mark = false;
 
-        twn->Next = e3->Self;
-        twn->Twin = e1->Self;
-        twn->Mark = false;
+        twn.Next = e3.Self;
+        twn.Twin = e1.Self;
+        twn.Mark = false;
 
-        nxt->Next = e2->Self;
-        nxt->Prev = e1->Self;
-        nxt->Mark = false;
+        nxt.Next = e2.Self;
+        nxt.Prev = e1.Self;
+        nxt.Mark = false;
 
-        prv->Prev = e0->Self;
-        prv->Mark = false;
+        prv.Prev = e0.Self;
+        prv.Mark = false;
 
-        e->Next = e0->Self;
-        e->Twin = e4->Self;
-        e->Mark = false;
+        e.Next = e0.Self;
+        e.Twin = e4.Self;
+        e.Mark = false;
 
         // Recursive swap
-        recursive_swap(e0->Self);
-        recursive_swap(e3->Self);
-        recursive_swap(nxt->Self);
-        recursive_swap(prv->Self);
-        recursive_swap(tnxt->Self);
-        recursive_swap(tprv->Self);
+        recursive_swap(e0.Self);
+        recursive_swap(e3.Self);
+        recursive_swap(nxt.Self);
+        recursive_swap(prv.Self);
+        recursive_swap(tnxt.Self);
+        recursive_swap(tprv.Self);
     }
 
     return InsertPointResult::Midpoint;
@@ -1227,10 +1210,10 @@ InsertPointResult Mesh::insert_point(Point const vc, size_t ei) {
     test_edges.push_back(next(ei));
     test_edges.push_back(prev(ei));
     for (size_t i = 0; i != 3; ++i) {
-        auto e = Edges[test_edges[i]];
-        if (e->Self != e->Twin) {
-            test_edges.push_back(twin(e)->Next);
-            test_edges.push_back(twin(e)->Prev);
+        Edge e = Edges[test_edges[i]];
+        if (e.Self != e.Twin) {
+            test_edges.push_back(twin(e).Next);
+            test_edges.push_back(twin(e).Prev);
         }
     }
 
@@ -1247,16 +1230,17 @@ InsertPointResult Mesh::insert_point(Point const vc, size_t ei) {
     if (encroached) {
         return InsertPointResult::Midpoint;
     } else if (result == LocateTriangleResult::Interior) {
-        Edge *e0 = new_edge();
-        Edge *e1 = new_edge();
-        Edge *e2 = new_edge();
-        Edge *e3 = new_edge();
-        Edge *e4 = new_edge();
-        Edge *e5 = new_edge();
+        auto itr = new_edges(6);
+        Edge &e5 = *(--itr);
+        Edge &e4 = *(--itr);
+        Edge &e3 = *(--itr);
+        Edge &e2 = *(--itr);
+        Edge &e1 = *(--itr);
+        Edge &e0 = *(--itr);
 
-        Edge *tri = Edges[ei];
-        Edge *nxt = next(tri);
-        Edge *prv = prev(tri);
+        Edge &tri = Edges[ei];
+        Edge &nxt = Edges[tri.Next];//next(tri);
+        Edge &prv = Edges[tri.Prev];//prev(tri);
 
         size_t vt = node(tri);
         size_t vn = node(nxt);
@@ -1264,57 +1248,57 @@ InsertPointResult Mesh::insert_point(Point const vc, size_t ei) {
 
         Points.push_back(vc);
 
-        e0->Node = Points.size() - 1;
-        e0->Next = tri->Self;
-        e0->Prev = e1->Self;
-        e0->Twin = e5->Self;
-        e0->Mark = false;
+        e0.Node = Points.size() - 1;
+        e0.Next = tri.Self;
+        e0.Prev = e1.Self;
+        e0.Twin = e5.Self;
+        e0.Mark = false;
 
-        e1->Node = vn;
-        e1->Next = e0->Self;
-        e1->Prev = tri->Self;
-        e1->Twin = e2->Self;
-        e1->Mark = false;
+        e1.Node = vn;
+        e1.Next = e0.Self;
+        e1.Prev = tri.Self;
+        e1.Twin = e2.Self;
+        e1.Mark = false;
 
-        e2->Node = Points.size() - 1;
-        e2->Next = nxt->Self;
-        e2->Prev = e3->Self;
-        e2->Twin = e1->Self;
-        e2->Mark = false;
+        e2.Node = Points.size() - 1;
+        e2.Next = nxt.Self;
+        e2.Prev = e3.Self;
+        e2.Twin = e1.Self;
+        e2.Mark = false;
 
-        e3->Node = vp;
-        e3->Next = e2->Self;
-        e3->Prev = nxt->Self;
-        e3->Twin = e4->Self;
-        e3->Mark = false;
+        e3.Node = vp;
+        e3.Next = e2.Self;
+        e3.Prev = nxt.Self;
+        e3.Twin = e4.Self;
+        e3.Mark = false;
 
-        e4->Node = Points.size() - 1;
-        e4->Next = prv->Self;
-        e4->Prev = e5->Self;
-        e4->Twin = e3->Self;
-        e4->Mark = false;
+        e4.Node = Points.size() - 1;
+        e4.Next = prv.Self;
+        e4.Prev = e5.Self;
+        e4.Twin = e3.Self;
+        e4.Mark = false;
 
-        e5->Node = vt;
-        e5->Next = e4->Self;
-        e5->Prev = prv->Self;
-        e5->Twin = e0->Self;
-        e5->Mark = false;
+        e5.Node = vt;
+        e5.Next = e4.Self;
+        e5.Prev = prv.Self;
+        e5.Twin = e0.Self;
+        e5.Mark = false;
 
-        nxt->Next = e3->Self;
-        nxt->Prev = e2->Self;
-        nxt->Mark = false;
+        nxt.Next = e3.Self;
+        nxt.Prev = e2.Self;
+        nxt.Mark = false;
 
-        prv->Next = e5->Self;
-        prv->Prev = e4->Self;
-        prv->Mark = false;
+        prv.Next = e5.Self;
+        prv.Prev = e4.Self;
+        prv.Mark = false;
 
-        tri->Next = e1->Self;
-        tri->Prev = e0->Self;
-        tri->Mark = false;
+        tri.Next = e1.Self;
+        tri.Prev = e0.Self;
+        tri.Mark = false;
 
-        recursive_swap(tri->Self);
-        recursive_swap(nxt->Self);
-        recursive_swap(prv->Self);
+        recursive_swap(tri.Self);
+        recursive_swap(nxt.Self);
+        recursive_swap(prv.Self);
 
         return InsertPointResult::Success;
     } else {

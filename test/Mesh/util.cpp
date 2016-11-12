@@ -10,30 +10,30 @@ bool edges_are_optimal(Mesh &m) {
 
 bool edges_are_valid(Mesh &m) {
     for (size_t i = 0;i < m.size_edges();++i) {
-        const Edge *e = m.edge(i);
+        const Edge e = m.edge(i);
 
-        EXPECT_TRUE(e->self() == m.edge(e->next())->prev());
-        EXPECT_TRUE(e->self() == m.edge(e->prev())->next());
-        EXPECT_TRUE(e->self() == m.edge(e->twin())->twin());
+        EXPECT_TRUE(e.self() == m.edge(e.next()).prev());
+        EXPECT_TRUE(e.self() == m.edge(e.prev()).next());
+        EXPECT_TRUE(e.self() == m.edge(e.twin()).twin());
 
-        if ((e->twin() != e->self())) {
-            EXPECT_TRUE(e->node() == m.edge(m.edge(e->twin())->next())->node());
-            EXPECT_TRUE(e->constraint_curve() == m.edge(e->twin())->constraint_curve());
-            if (e->constraint_curve() != nullptr) {
-                EXPECT_TRUE(e->orientation() != m.edge(e->twin())->orientation());
+        if ((e.twin() != e.self())) {
+            EXPECT_TRUE(e.node() == m.edge(m.edge(e.twin()).next()).node());
+            EXPECT_TRUE(e.constraint_curve() == m.edge(e.twin()).constraint_curve());
+            if (e.constraint_curve() != nullptr) {
+                EXPECT_TRUE(e.orientation() != m.edge(e.twin()).orientation());
             }
 
-            EXPECT_FALSE(e->node() == m.edge(e->twin())->node());
+            EXPECT_FALSE(e.node() == m.edge(e.twin()).node());
         }
 
-        if (e->constraint_curve() != nullptr) {
-            if (e->orientation()) {
-                EXPECT_TRUE(m.base(e) == *e->constraint_curve()->start());
-                EXPECT_TRUE(m.tip(e) == *e->constraint_curve()->end());
+        if (e.constraint_curve() != nullptr) {
+            if (e.orientation()) {
+                EXPECT_TRUE(m.base(e) == *e.constraint_curve()->start());
+                EXPECT_TRUE(m.tip(e) == *e.constraint_curve()->end());
             }
             else {
-                EXPECT_TRUE(m.base(e) == *e->constraint_curve()->end());
-                EXPECT_TRUE(m.tip(e) == *e->constraint_curve()->start());
+                EXPECT_TRUE(m.base(e) == *e.constraint_curve()->end());
+                EXPECT_TRUE(m.tip(e) == *e.constraint_curve()->start());
             }
         }
     }
