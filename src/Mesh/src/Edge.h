@@ -11,6 +11,8 @@ public:
 
     Edge() : Node(SIZE_MAX), Self(SIZE_MAX), Next(SIZE_MAX), Twin(SIZE_MAX), Prev(SIZE_MAX), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
+    Edge(size_t s) : Node(SIZE_MAX), Self(s), Next(SIZE_MAX), Twin(SIZE_MAX), Prev(SIZE_MAX), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
+
     Edge(size_t n, size_t s, Edge &nx, Edge &pr, Edge &tw) : Node(n), Self(s), Next(nx.Self), Twin(tw.Self), Prev(pr.Self), ConstraintCurve(nullptr), Orientation(true), Mark(false) {};
 
     Edge(size_t n, size_t s, Curve *c, bool d) : Node(n), Self(s), Next(SIZE_MAX), Twin(SIZE_MAX), Prev(SIZE_MAX), ConstraintCurve(c), Orientation(d), Mark(false) {};
@@ -42,6 +44,8 @@ public:
     };
 
     bool is_constrained() const { return (ConstraintCurve != nullptr); };
+
+    bool is_not_constrained() const { return (ConstraintCurve == nullptr); };
 
 protected:
     size_t Node;            //Point at start of this edge

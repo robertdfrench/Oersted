@@ -25,35 +25,37 @@ public:
 
     Mesh(Sketch &s);
 
-    bool are_intersecting(Edge const *e0, Edge const *e1) const;
+    bool are_intersecting(size_t ei, size_t ej) const;
 
     bool edges_are_valid() const;
 
-    bool in_triangle(Point const p, Edge const *e) const;
+    bool in_triangle(Point const p, size_t ei) const;
 
-    bool is_encroached(Edge const *e, Point const p) const;
+    bool is_constrained(size_t ei) const { return Edges[ei]->is_constrained(); };
 
-    bool is_locally_optimal(Edge const *e) const;
+    bool is_encroached(Point const p, size_t ei) const;
 
-    bool is_protruding(Edge const *e) const;
+    bool is_locally_optimal(size_t ei) const;
 
-    bool is_valid(Edge const *e) const;
+    bool is_protruding(size_t ei) const;
+
+    bool is_valid(size_t ei) const;
+
+    bool orientation(size_t ei) const { return Edges[ei]->Orientation; };
 
     bool refine();
 
     bool refine_once();
 
-    double circumradius(Edge const *e) const;
+    double circumradius(size_t ei) const;
 
-    double length(Edge const *e) const;
+    double length(size_t ei) const;
 
-    double shortest_edge_length(Edge const *e) const;
+    double shortest_edge_length(size_t ei) const;
 
-    size_t size_points() const { return Points.size(); };
+    size_t next(size_t ei) const { return Edges[ei]->Next; };
 
-    size_t size_edges() const { return Edges.size(); };
-
-    size_t size_triangles() const { return Triangles.size(); };
+    size_t node(size_t ei) const { return Edges[ei]->Node; };
 
     size_t node(Edge const *e) const { return e->Node; };
 
@@ -63,21 +65,37 @@ public:
 
     size_t num_triangles() const { return Triangles.size(); };
 
+    size_t prev(size_t ei) const { return Edges[ei]->Prev; };
+
+    size_t size_points() const { return Points.size(); };
+
+    size_t size_edges() const { return Edges.size(); };
+
+    size_t size_triangles() const { return Triangles.size(); };
+
+    size_t twin(size_t ei) const { return Edges[ei]->Twin; };
+
     void create();
 
     void delete_me(); // TODO: refactor to non-pointer version
 
     void save_as(std::string path, std::string file_name) const;
 
-    Point circumcenter(Edge const *e) const;
+    Curve const *constraint_curve(size_t ei) const { return Edges[ei]->ConstraintCurve; };
+
+    Point circumcenter(size_t ei) const;
 
     Point const base(Edge const *e) const { return Points[e->Node]; };
+
+    Point const base(size_t ei) const { return Points[node(ei)]; };
 
     Point const point(size_t i) const { return Points[i]; };
 
     Point const point(Edge const *e) const { return Points[e->Node]; };
 
     Point const tip(Edge const *e) const { return Points[next(e)->Node]; };
+
+    Point const tip(size_t ei) const { return Points[node(next(ei))]; };
 
     Edge const *edge(size_t i) const { return Edges[i]; };
 
@@ -93,16 +111,17 @@ public:
 
     Edge *&twin(Edge *e) { return Edges[e->Twin]; };
 
-    Edge const *triangle(size_t i) const { return Triangles[i]; };
+    Edge const *triangle(size_t i) const { return Edges[Triangles[i]]; };
 
-    LocateTriangleResult locate_triangle(Point const p, Edge const *&e) const;
+    LocateTriangleResult locate_triangle(Point const p, size_t &ei) const;
 
     LocateTriangleResult locate_triangle(Point const p) const {
-        Edge const *e = Edges.back();
-        return locate_triangle(p, e);
+        //Edge const *e = Edges.back();
+        size_t ei = Edges.size() - 1;
+        return locate_triangle(p, ei);
     };
 
-    InsertPointResult insert_point(Point const p) { return insert_point(p, Edges.back()); };
+    InsertPointResult insert_point(Point const p) { return insert_point(p, Edges.size() - 1); };
 
 protected:
     Contour const *Boundary;
@@ -110,23 +129,28 @@ protected:
     std::vector<Contour const *> Contours;
     std::vector<Point> Points;
     std::vector<Edge *> Edges;
-    std::vector<Edge *> Triangles;
+    std::vector<size_t> Triangles;
 
 private:
-    bool find_attached(Edge *&e_out, Point const p);
+    bool find_attached(Point const p, size_t &ei);
 
-    bool recursive_swap(Edge *e);
+    bool recursive_swap(size_t ei);
 
-    bool swap(Edge *&e0);
+    bool swap(size_t ei);
 
-    void add_edge(Edge *&e) {
-        e->Self = Edges.size();
-        Edges.push_back(e);
-    };
+    Edge *&new_edge() {
+        Edges.push_back(new Edge(Edges.size()));
+        return Edges.back();
+    }
+
+    Edge *&new_edge(size_t p, Curve *c, bool dir) {
+        Edges.push_back(new Edge(p, Edges.size(), c, dir));
+        return Edges.back();
+    }
 
     void create_boundary_polygon();
 
-    void element_quality(std::vector<Edge *> &triangle, std::vector<double> &radii, std::vector<double> &quality);
+    void element_quality(std::vector<double> &radii, std::vector<double> &quality);
 
     void get_triangles();
 
@@ -140,19 +164,17 @@ private:
 
     void sort_permutation_descending(std::vector<double> &values, std::vector<size_t> &index) const;
 
-    void split_edge(Edge *e);
+    void split_edge(size_t ei);
 
     void split_encroached_edges();
 
     void triangulate_boundary_polygon();
 
-    LocateTriangleResult locate_triangle(Point const p, Edge *&e) const;
+    InsertPointResult insert_circumcenter(size_t ei);
 
-    InsertPointResult insert_circumcenter(Edge *e);
+    InsertPointResult insert_point(Point const p, size_t ei);
 
-    InsertPointResult insert_point(Point const p, Edge *e);
-
-    InsertPointResult insert_midpoint(Edge *e);
+    InsertPointResult insert_midpoint(size_t ei);
 };
 
 #endif //OERSTED_MESH_H

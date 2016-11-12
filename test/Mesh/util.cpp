@@ -1,8 +1,8 @@
 #include "test_Mesh.hpp"
 
 bool edges_are_optimal(Mesh &m) {
-    for (size_t i = 0;i < m.size_edges();++i) {
-        EXPECT_TRUE(m.is_locally_optimal(m.edge(i)));
+    for (size_t i = 0;i != m.size_edges();++i) {
+        EXPECT_TRUE(m.is_locally_optimal(i));
     }
 
     return true;
