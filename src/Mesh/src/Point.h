@@ -28,4 +28,6 @@ public:
     bool operator!=(Vertex const &v) const { return (X != v.x()) && (Y != v.y()); };
 };
 
+double dist(Point const &p0, Point const &p1);
+
 #endif //OERSTED_POINT_H

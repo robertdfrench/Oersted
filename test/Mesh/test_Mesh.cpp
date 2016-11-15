@@ -45,7 +45,6 @@ TEST(Mesh, create__triangle_domain) {
         edges_are_optimal(m);
     }
 
-
     { // Test edge and node connections
         const Edge e0 = m.edge(vmap[0]);
         const Edge e1 = m.edge(vmap[1]);

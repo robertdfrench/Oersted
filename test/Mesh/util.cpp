@@ -18,22 +18,33 @@ bool edges_are_valid(Mesh &m) {
 
         if ((e.twin() != e.self())) {
             EXPECT_TRUE(e.node() == m.edge(m.edge(e.twin()).next()).node());
-            EXPECT_TRUE(e.constraint_curve() == m.edge(e.twin()).constraint_curve());
-            if (e.constraint_curve() != nullptr) {
+            EXPECT_TRUE(m.constraint_curve(e.self()) == m.constraint_curve(e.twin()));
+            if (m.constraint_curve(e.self()) != nullptr) {
                 EXPECT_TRUE(e.orientation() != m.edge(e.twin()).orientation());
             }
 
             EXPECT_FALSE(e.node() == m.edge(e.twin()).node());
         }
 
-        if (e.constraint_curve() != nullptr) {
+        if (m.constraint_curve(i) != nullptr) {
+            double tol = m.length(i) * FLT_EPSILON;
             if (e.orientation()) {
-                EXPECT_TRUE(m.base(e) == *e.constraint_curve()->start());
-                EXPECT_TRUE(m.tip(e) == *e.constraint_curve()->end());
+                Point p0 = m.base(e);
+                Point p1 = m.constraint_curve(e.self())->point(m.constraint(e.self()).S0);
+                EXPECT_NEAR(dist(p0,p1), 0.0, tol);
+
+                p0 = m.tip(e);
+                p1 = m.constraint_curve(e.self())->point(m.constraint(e.self()).S1);
+                EXPECT_NEAR(dist(p0,p1), 0.0, tol);
             }
             else {
-                EXPECT_TRUE(m.base(e) == *e.constraint_curve()->end());
-                EXPECT_TRUE(m.tip(e) == *e.constraint_curve()->start());
+                Point p0 = m.base(e);
+                Point p1 = m.constraint_curve(e.self())->point(m.constraint(e.self()).S1);
+                EXPECT_NEAR(dist(p0,p1), 0.0, tol);
+
+                p0 = m.tip(e);
+                p1 = m.constraint_curve(e.self())->point(m.constraint(e.self()).S0);
+                EXPECT_NEAR(dist(p0,p1), 0.0, tol);
             }
         }
     }
@@ -51,8 +62,9 @@ void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
     m.MaximumElementSize = DBL_MAX;
 
     for (size_t i = 0;i < num_refines;++i) {
+        bool success = false;
         try {
-            m.refine_once();
+            success = m.refine_once();
         }
         catch (const std::exception except) {
             throw;

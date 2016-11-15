@@ -17,6 +17,17 @@ enum class InsertPointResult {
     Success, Midpoint, Duplicate, Failure
 };
 
+class DartConstraint {
+public:
+    DartConstraint() : S0(DBL_MAX), S1(DBL_MAX), ConstraintCurve(nullptr) {};
+
+    DartConstraint(double s0, double s1, Curve const *cc) : S0(s0), S1(s1), ConstraintCurve(cc) {};
+
+    double S0;
+    double S1;
+    Curve const *ConstraintCurve;
+};
+
 class Mesh {
 public:
     double MinimumElementQuality = 0.0;
@@ -31,7 +42,7 @@ public:
 
     bool in_triangle(Point const p, size_t ei) const;
 
-    bool is_constrained(size_t ei) const { return Edges[ei].is_constrained(); };
+    bool is_constrained(size_t ei) const { return Edges[ei].Constraint != 0; };
 
     bool is_encroached(Point const p, size_t ei) const;
 
@@ -79,7 +90,9 @@ public:
 
     void save_as(std::string path, std::string file_name) const;
 
-    Curve const *constraint_curve(size_t ei) const { return Edges[ei].ConstraintCurve; };
+    DartConstraint const constraint(size_t ei) const { return Constraints[Edges[ei].Constraint]; };
+
+    Curve const *constraint_curve(size_t ei) const { return Constraints[Edges[ei].Constraint].ConstraintCurve; };
 
     Point circumcenter(size_t ei) const;
 
@@ -108,7 +121,6 @@ public:
     LocateTriangleResult locate_triangle(Point const p, size_t &ei) const;
 
     LocateTriangleResult locate_triangle(Point const p) const {
-        //Edge const *e = Edges.back();
         size_t ei = Edges.size() - 1;
         return locate_triangle(p, ei);
     };
@@ -119,8 +131,11 @@ protected:
     Contour const *Boundary;
     std::vector<Curve const *> Curves;
     std::vector<Contour const *> Contours;
+
     std::vector<Point> Points;
     std::vector<Edge> Edges;
+    std::vector<DartConstraint> Constraints;
+
     std::vector<size_t> Triangles;
 
 private:
@@ -130,14 +145,15 @@ private:
 
     bool swap(size_t ei);
 
-    auto new_edges(size_t num_new) {
+    size_t new_edges(size_t num_new) {
         for (size_t i = 0; i != num_new; ++i) {
             Edges.push_back(Edge(Edges.size()));
+            Edges.back().Constraint = 0;
         }
-        return Edges.end();
+        return Edges.size();
     }
 
-    Edge &new_edge(size_t p, Curve *c, bool dir) {
+    Edge &new_edge(size_t p, size_t c, bool dir) {
         Edges.push_back(Edge(p, Edges.size(), c, dir));
         return Edges.back();
     }
