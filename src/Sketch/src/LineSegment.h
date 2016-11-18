@@ -24,10 +24,10 @@ public:
 
     LineSegment(const LineSegment *l) : Curve(l->Start, l->End, l->ForConstruction) {};
 
-    LineSegment(Vertex &v0, Vertex &v1, bool fc = false) : Curve(v0, v1, fc) {};
+    LineSegment(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, bool fc = false) : Curve(v0, v1, fc) {};
 
     // Virtual Function Implementation
-    void get_verticies(std::list<Vertex *> &v) const override {
+    void get_verticies(std::list<std::shared_ptr<Vertex>> &v) const override {
         v.push_back(Start);
         v.push_back(End);
     };
@@ -42,7 +42,7 @@ public:
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
 
     // Calculation
-    Vertex point(double s) const override;
+    sPoint point(double s) const override;
 
     Vertex tangent(double s, bool orientation) const override;
 
@@ -64,14 +64,14 @@ public:
     // Curve-Curve Comparison
     bool is_identical(const Curve *c) const override;
 
-    bool is_identical(const Curve *c, const Vertex *origin, const double angle) const override;
+    bool is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const override;
 
     bool is_coincident(const Curve *c) const override;
 
     // Modification
     Curve *clone() const override { return new LineSegment(this); };
 
-    void replace_verticies(std::vector<Vertex *> oldv, std::vector<Vertex *> newv) override;
+    void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
 
 protected:
     bool on_manifold(const double x, const double y) const override;

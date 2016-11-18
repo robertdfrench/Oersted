@@ -70,14 +70,15 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Curve.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_LineSegment.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Pattern.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Sketch.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_MirrorCopy.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Contour.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_CircularArc.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Vertex.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Star.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Sketch.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_RotateCopy.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Constraint.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test/Sketch/test_Sketch.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/UseCases/test_Rotor.cpp" isTestSource="false" />

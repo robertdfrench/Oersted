@@ -7,10 +7,10 @@ Contour::Contour(const std::vector<const Curve *> &c) {
     Curves = std::vector<const Curve *>();
     Curves.reserve(c.size());
 
-    std::vector<const Vertex *> start;
+    std::vector<std::shared_ptr<Vertex>> start;
     start.reserve(c.size());
 
-    std::vector<const Vertex *> end;
+    std::vector<std::shared_ptr<Vertex>> end;
     end.reserve(c.size());
 
     for (size_t i = 0; i < c.size(); i++) {
@@ -73,8 +73,8 @@ bool Contour::initialize(const std::vector<const Curve *> &c, const std::vector<
         Orientation.push_back(dir[i]);
 
         size_t j = (i + 1) % c.size();
-        const Vertex *vi = (dir[i] ? c[i]->end() : c[i]->start());
-        const Vertex *vj = (dir[j] ? c[j]->start() : c[j]->end());
+        std::shared_ptr<Vertex> vi = (dir[i] ? c[i]->end() : c[i]->start());
+        std::shared_ptr<Vertex> vj = (dir[j] ? c[j]->start() : c[j]->end());
         if (vi != vj) {
             return false;
         }
@@ -119,8 +119,8 @@ double Contour::area() const {
     double area{0.0};
 
     for (size_t i = 0; i != Curves.size(); ++i) {
-        const Vertex *v0 = Curves[i]->start();
-        const Vertex *v1 = Curves[i]->end();
+        std::shared_ptr<Vertex> v0 = Curves[i]->start();
+        std::shared_ptr<Vertex> v1 = Curves[i]->end();
         const double da = Curves[i]->area() + v0->x() * v1->y() - v0->y() * v1->x();
 
         if (Orientation[i]) {

@@ -4,11 +4,11 @@
 template<class T>
 class Coincident : public Constraint {
 public:
-    Vertex *Point;
+    std::shared_ptr<Vertex> Point;
     T *Element;
 
     // Constructors
-    Coincident(Vertex &p, T &e) : Point(&p), Element(&e) {};
+    Coincident(std::shared_ptr<Vertex> p, T &e) : Point(p), Element(&e) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {

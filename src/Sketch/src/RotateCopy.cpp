@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double angle, size_t copies, bool remove_internal) {
+RotateCopy::RotateCopy(std::vector<const Curve *> &input, std::shared_ptr<Vertex> center, double angle, size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
     // #TODO: Need to rearrange code and reserve vector sizes in a way that makes more sense (much code copied from MirrorCopy constructor)
     // #TODO: Restructure to obviate the need for local_curves and local_verticies
@@ -48,9 +48,9 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
     // TODO: Check for complete elimination of leading/lagging curves
 
     // Get leading/lagging verticies
-    std::vector<Vertex *> leading_verticies;
+    std::vector<std::shared_ptr<Vertex>> leading_verticies;
     {
-        std::list<Vertex *> local_verts;
+        std::list<std::shared_ptr<Vertex>> local_verts;
         for (auto i : leading_curves) {
             i->get_verticies(local_verts);
         }
@@ -61,9 +61,9 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
         leading_verticies.assign(local_verts.begin(),local_verts.end()); // assign to vector
     }
 
-    std::vector<Vertex *> lagging_verticies;
+    std::vector<std::shared_ptr<Vertex>> lagging_verticies;
     {
-        std::list<Vertex *> local_verts;
+        std::list<std::shared_ptr<Vertex>> local_verts;
         for (auto i : lagging_curves) {
             i->get_verticies(local_verts);
         }
@@ -75,9 +75,9 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
     }
 
     // Get internal verticies
-    std::vector<Vertex *> internal_verticies;
+    std::vector<std::shared_ptr<Vertex>> internal_verticies;
     {
-        std::list<Vertex *> local_verts;
+        std::list<std::shared_ptr<Vertex>> local_verts;
         for (auto c : internal_curves) {
             c->get_verticies(local_verts);
         }
@@ -100,7 +100,7 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
     }
 
     // Make rotated copies
-    std::vector<Vertex *> rotated_lagging(leading_verticies.begin(), leading_verticies.end());
+    std::vector<std::shared_ptr<Vertex>> rotated_lagging(leading_verticies.begin(), leading_verticies.end());
     for (size_t i = 0; i != Copies; ++i) {
         bool last_iteration = (i == Copies - 1);
         // Create curve clones
@@ -130,7 +130,7 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
         double x0 = Center->x();
         double y0 = Center->y();
 
-        std::vector<Vertex *> rotated_leading;
+        std::vector<std::shared_ptr<Vertex>> rotated_leading;
         for(auto v : leading_verticies) {
             double dx = v->x() - x0;
             double dy = v->y() - y0;
@@ -138,14 +138,16 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
             double vx = cosa * dx - sina * dy + x0;
             double vy = sina * dx + cosa * dy + y0;
 
-            rotated_leading.push_back(new Vertex(vx, vy));
+            //rotated_leading.push_back(new Vertex(vx, vy));
+            rotated_leading.push_back(std::make_shared<Vertex>(vx, vy));
+
 
             Verticies.push_back(rotated_leading.back());
 
-            Constraints.push_back(new Rotation(*v, *rotated_leading.back(), *Center, Angle * (i + 1)));
+            Constraints.push_back(new Rotation(v, rotated_leading.back(), Center, Angle * (i + 1)));
         }
 
-        std::vector<Vertex *> rotated_internal;
+        std::vector<std::shared_ptr<Vertex>> rotated_internal;
         for(auto v : internal_verticies) {
             double dx = v->x() - x0;
             double dy = v->y() - y0;
@@ -153,11 +155,12 @@ RotateCopy::RotateCopy(std::vector<const Curve *> &input, Vertex *center, double
             double vx = cosa * dx - sina * dy + x0;
             double vy = sina * dx + cosa * dy + y0;
 
-            rotated_internal.push_back(new Vertex(vx, vy));
-
+            //rotated_internal.push_back(new Vertex(vx, vy));
+            rotated_internal.push_back(std::make_shared<Vertex>(vx, vy));
+            
             Verticies.push_back(rotated_internal.back());
 
-            Constraints.push_back(new Rotation(*v, *rotated_internal.back(), *Center, Angle * (i + 1)));
+            Constraints.push_back(new Rotation(v, rotated_internal.back(), Center, Angle * (i + 1)));
         }
 
         // Replace verticies in clones curves

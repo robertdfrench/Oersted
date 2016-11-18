@@ -3,21 +3,21 @@
 TEST(Constraint, Vertex) {
     Sketch s;
 
-    Vertex &v = s.new_element<Vertex>(M_E, M_PI);
+    auto v = s.new_element_SHARED_PTR<Vertex>(M_E, M_PI);
 
     Fixation &f = s.new_element<Fixation>(v);
 
     s.solve();
 
-    EXPECT_NEAR(M_E, v.x(), TOL);
-    EXPECT_NEAR(M_PI, v.y(), TOL);
+    EXPECT_NEAR(M_E, v->x(), TOL);
+    EXPECT_NEAR(M_PI, v->y(), TOL);
 }
 
 TEST(Constraint, Fixation_Length) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &v1 = s.new_element<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
     LineSegment &line = s.new_element<LineSegment>(v0, v1);
 
@@ -28,16 +28,16 @@ TEST(Constraint, Fixation_Length) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Fixation_Length");
 
-    EXPECT_NEAR(M_1_PI, v0.x(), TOL);
-    EXPECT_NEAR(M_2_SQRTPI, v0.y(), TOL);
+    EXPECT_NEAR(M_1_PI, v0->x(), TOL);
+    EXPECT_NEAR(M_2_SQRTPI, v0->y(), TOL);
     EXPECT_NEAR(M_LN2, line.length(), TOL);
 }
 
 TEST(Constraint, Horizontal) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &v1 = s.new_element<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
     LineSegment &line = s.new_element<LineSegment>(v0, v1);
     Horizontal &horz = s.new_element<Horizontal>(line);
@@ -46,14 +46,14 @@ TEST(Constraint, Horizontal) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Horizontal");
 
-    EXPECT_NEAR(v0.y(), v1.y(), TOL);
+    EXPECT_NEAR(v0->y(), v1->y(), TOL);
 }
 
 TEST(Constraint, Vertical) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &v1 = s.new_element<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
     LineSegment &line = s.new_element<LineSegment>(v0, v1);
 
@@ -63,14 +63,14 @@ TEST(Constraint, Vertical) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical");
 
-    EXPECT_NEAR(v0.x(), v1.x(), TOL);
+    EXPECT_NEAR(v0->x(), v1->x(), TOL);
 }
 
 TEST(Constraint, Length) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(3.14159, 2.7183);
-    Vertex &v1 = s.new_element<Vertex>(6.14159, 6.7183);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(3.14159, 2.7183);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(6.14159, 6.7183);
 
     LineSegment &line = s.new_element<LineSegment>(v0, v1);
 
@@ -87,9 +87,9 @@ TEST(Constraint, CircularArc) {
     // Internal constraints
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.1, 0.9);
-    Vertex &v1 = s.new_element<Vertex>(0.8, 0.2);
-    Vertex &vc = s.new_element<Vertex>(0.4, 0.5);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.9);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
+    auto vc = s.new_element_SHARED_PTR<Vertex>(0.4, 0.5);
 
     CircularArc &c = s.new_element<CircularArc>(v0, v1, vc, 2.1);
 
@@ -97,16 +97,16 @@ TEST(Constraint, CircularArc) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__CircularArc");
 
-    EXPECT_NEAR(c.radius(), hypot(v0.x() - vc.x(), v0.y() - vc.y()), TOL);
-    EXPECT_NEAR(c.radius(), hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
+    EXPECT_NEAR(c.radius(), hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
+    EXPECT_NEAR(c.radius(), hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
 }
 
 TEST(Constraint, Radius) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.1, 0.9);
-    Vertex &v1 = s.new_element<Vertex>(0.8, 0.2);
-    Vertex &vc = s.new_element<Vertex>(0.4, 0.5);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.9);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
+    auto vc = s.new_element_SHARED_PTR<Vertex>(0.4, 0.5);
 
     CircularArc &c = s.new_element<CircularArc>(v0, v1, vc, 2.1);
 
@@ -116,44 +116,44 @@ TEST(Constraint, Radius) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Radius");
 
-    EXPECT_NEAR(c.radius(), hypot(v0.x() - vc.x(), v0.y() - vc.y()), TOL);
-    EXPECT_NEAR(c.radius(), hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
+    EXPECT_NEAR(c.radius(), hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
+    EXPECT_NEAR(c.radius(), hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
     EXPECT_NEAR(3.14, c.radius(), TOL);
-    EXPECT_NEAR(3.14, hypot(v0.x() - vc.x(), v0.y() - vc.y()), TOL);
-    EXPECT_NEAR(3.14, hypot(v1.x() - vc.x(), v1.y() - vc.y()), TOL);
+    EXPECT_NEAR(3.14, hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
+    EXPECT_NEAR(3.14, hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
 }
 
 TEST(Constraint, Tangency_CircularArc_LineSegment) {
     {// Case 0: Test when CircularArc and LineSegment have no shared endpoints
         Sketch s;
 
-        Vertex &vc0 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &vc1 = s.new_element<Vertex>(0.0, 1.0);
-        Vertex &vcc = s.new_element<Vertex>(0.0, 0.0);
+        auto vc0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+        auto vcc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
         CircularArc &c = s.new_element<CircularArc>(vc0, vc1, vcc, 1.0);
 
         Fixation &fix = s.new_element<Fixation>(vcc);
         Radius &rad = s.new_element<Radius>(c, 1.0);
 
-        Vertex &vv0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-        Vertex &vv1 = s.new_element<Vertex>(M_E, M_LN10);
+        auto vv0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+        auto vv1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
         LineSegment &lv = s.new_element<LineSegment>(vv0, vv1);
 
         Vertical &vert = s.new_element<Vertical>(lv);
         Tangency &tanv = s.new_element<Tangency>(c, lv);
 
-        Vertex &vh0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-        Vertex &vh1 = s.new_element<Vertex>(M_E, M_LN10);
+        auto vh0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+        auto vh1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
         LineSegment &lh = s.new_element<LineSegment>(vh0, vh1);
 
         Horizontal &horz = s.new_element<Horizontal>(lh);
         Tangency &tanh = s.new_element<Tangency>(c, lh);
 
-        Vertex &v450 = s.new_element<Vertex>(M_SQRT2, 0.0);
-        Vertex &v451 = s.new_element<Vertex>(-M_1_PI, M_SQRT2);
+        auto v450 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
+        auto v451 = s.new_element_SHARED_PTR<Vertex>(-M_1_PI, M_SQRT2);
 
         Fixation &fix45 = s.new_element<Fixation>(v450);
 
@@ -167,33 +167,33 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_0");
 
-        EXPECT_NEAR(0.0, vcc.x(), TOL);
-        EXPECT_NEAR(0.0, vcc.y(), TOL);
+        EXPECT_NEAR(0.0, vcc->x(), TOL);
+        EXPECT_NEAR(0.0, vcc->y(), TOL);
         EXPECT_NEAR(1.0, c.radius(), TOL);
 
-        EXPECT_NEAR(vv0.x(), vv1.x(), TOL);
-        EXPECT_NEAR(vh0.y(), vh1.y(), TOL);
-        EXPECT_NEAR(M_SQRT2, v450.x(), TOL);
-        EXPECT_NEAR(0.0, v450.y(), TOL);
+        EXPECT_NEAR(vv0->x(), vv1->x(), TOL);
+        EXPECT_NEAR(vh0->y(), vh1->y(), TOL);
+        EXPECT_NEAR(M_SQRT2, v450->x(), TOL);
+        EXPECT_NEAR(0.0, v450->y(), TOL);
 
-        EXPECT_NEAR(1.0, vv0.x(), TOL);
-        EXPECT_NEAR(1.0, vv1.x(), TOL);
+        EXPECT_NEAR(1.0, vv0->x(), TOL);
+        EXPECT_NEAR(1.0, vv1->x(), TOL);
 
-        EXPECT_NEAR(1.0, vh0.y(), TOL);
-        EXPECT_NEAR(1.0, vh1.y(), TOL);
+        EXPECT_NEAR(1.0, vh0->y(), TOL);
+        EXPECT_NEAR(1.0, vh1->y(), TOL);
 
-        EXPECT_NEAR((M_SQRT2 - v451.x()), v451.y(), TOL);
-        EXPECT_NEAR(0.0, v451.x(), TOL);
-        EXPECT_NEAR(M_SQRT2, v451.y(), TOL);
+        EXPECT_NEAR((M_SQRT2 - v451->x()), v451->y(), TOL);
+        EXPECT_NEAR(0.0, v451->x(), TOL);
+        EXPECT_NEAR(M_SQRT2, v451->y(), TOL);
     }
 
     { // Case 1: Test when CircularArc and LineSegment have shared endpoints
         Sketch s;
 
-        Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
-        Vertex &v2 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+        auto v2 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
 
         CircularArc &c = s.new_element<CircularArc>(v0, v1, vc, 1.0);
         LineSegment &l = s.new_element<LineSegment>(v1, v2);
@@ -208,18 +208,18 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_1");
 
         EXPECT_NEAR(1.0, c.radius(), TOL);
-        EXPECT_NEAR(M_PI_2, (atan2(v1.y() - vc.y(), v1.x() - vc.x()) - atan2(v2.y() - v1.y(), v2.x() - v1.x())), TOL * M_PI_2);
-        EXPECT_NEAR(M_SQRT1_2, v1.x(), TOL * M_SQRT1_2);
-        EXPECT_NEAR(M_SQRT1_2, v1.y(), TOL * M_SQRT1_2);
+        EXPECT_NEAR(M_PI_2, (atan2(v1->y() - vc->y(), v1->x() - vc->x()) - atan2(v2->y() - v1->y(), v2->x() - v1->x())), TOL * M_PI_2);
+        EXPECT_NEAR(M_SQRT1_2, v1->x(), TOL);
+        EXPECT_NEAR(M_SQRT1_2, v1->y(), TOL);
     }
 }
 
 TEST(Constraint, Angle) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v01 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
     LineSegment &line0 = s.new_element<LineSegment>(v0, v00);
     LineSegment &line1 = s.new_element<LineSegment>(v0, v01);
@@ -238,26 +238,26 @@ TEST(Constraint, Angle) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_LineSegment_LineSegment_")+std::to_string(i));
 
-        EXPECT_NEAR(0.0, v0.x(), TOL);
-        EXPECT_NEAR(0.0, v0.y(), TOL);
-        EXPECT_NEAR(v0.y(), v00.y(), TOL);
+        EXPECT_NEAR(0.0, v0->x(), TOL);
+        EXPECT_NEAR(0.0, v0->y(), TOL);
+        EXPECT_NEAR(v0->y(), v00->y(), TOL);
         EXPECT_NEAR(1.0, line1.length(), TOL);
 
-        EXPECT_NEAR(tan(M_PI * i / 8.0), ((v01.y() - v0.y()) / (v01.x() - v0.x())), TOL);
-        EXPECT_NEAR(cos(M_PI * i / 8.0), v01.x(), TOL);
-        EXPECT_NEAR(sin(M_PI * i / 8.0), v01.y(), TOL);
+        EXPECT_NEAR(tan(M_PI * i / 8.0), ((v01->y() - v0->y()) / (v01->x() - v0->x())), TOL);
+        EXPECT_NEAR(cos(M_PI * i / 8.0), v01->x(), TOL);
+        EXPECT_NEAR(sin(M_PI * i / 8.0), v01->y(), TOL);
     }
 }
 
 TEST(Constraint, Angle_Coincident) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
-    Vertex &v00 = s.new_element<Vertex>(0.5, 0.0);
-    Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v10 = s.new_element<Vertex>(0.5, 0.5);
-    Vertex &v11 = s.new_element<Vertex>(1.0, 1.0);
+    auto v00 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.0);
+    auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v10 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
+    auto v11 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
 
     LineSegment &line0 = s.new_element<LineSegment>(v00, v01);
     LineSegment &line1 = s.new_element<LineSegment>(v10, v11);
@@ -281,40 +281,40 @@ TEST(Constraint, Angle_Coincident) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_Coincident_")+std::to_string(i));
 
-        EXPECT_NEAR(0.0, v0.x(), TOL);
-        EXPECT_NEAR(0.0, v0.y(), TOL);
-        EXPECT_NEAR(v00.y(), v01.y(), TOL);
+        EXPECT_NEAR(0.0, v0->x(), TOL);
+        EXPECT_NEAR(0.0, v0->y(), TOL);
+        EXPECT_NEAR(v00->y(), v01->y(), TOL);
         EXPECT_NEAR(0.5, line1.length(), TOL);
 
-        EXPECT_NEAR(tan(dar * i) * (v11.x() - v10.x()), (v11.y() - v10.y()), TOL);
-        EXPECT_NEAR(0.0, tan(dar * i) * v11.x() - v11.y(), TOL);
-        EXPECT_NEAR(0.0, tan(dar * i) * v10.x() - v10.y(), TOL);
+        EXPECT_NEAR(tan(dar * i) * (v11->x() - v10->x()), (v11->y() - v10->y()), TOL);
+        EXPECT_NEAR(0.0, tan(dar * i) * v11->x() - v11->y(), TOL);
+        EXPECT_NEAR(0.0, tan(dar * i) * v10->x() - v10->y(), TOL);
     }
 }
 
 TEST(Constraint, Distance_Vertex_Vertex) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &v1 = s.new_element<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
-    Distance<Vertex> &d = s.new_element<Distance<Vertex>>(v0, v1, M_LN2);
+    Distance<std::shared_ptr<Vertex>> &d = s.new_element<Distance<std::shared_ptr<Vertex>>>(v0, v1, M_LN2);
 
     s.solve();
 
     //s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
 
-    EXPECT_NEAR(M_LN2, hypot(v0.x() - v1.x(), v0.y() - v1.y()), TOL * M_LN2);
+    EXPECT_NEAR(M_LN2, hypot(v0->x() - v1->x(), v0->y() - v1->y()), TOL * M_LN2);
 }
 
 TEST(Constraint, Distance_LineSegment) {
     { // Case 0: The standard case
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(M_1_PI, M_LOG10E);
-        Vertex &v01 = s.new_element<Vertex>(M_2_SQRTPI, M_LOG10E);
-        Vertex &v10 = s.new_element<Vertex>(M_E, M_LOG2E);
-        Vertex &v11 = s.new_element<Vertex>(M_LN2, M_LOG2E);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_LOG10E);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(M_2_SQRTPI, M_LOG10E);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LOG2E);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(M_LN2, M_LOG2E);
 
         LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
         LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
@@ -324,10 +324,10 @@ TEST(Constraint, Distance_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment");
 
-        double v0x = v01.x() - v00.x();
-        double v1x = v11.x() - v10.x();
-        double v0y = v01.y() - v00.y();
-        double v1y = v11.y() - v10.y();
+        double v0x = v01->x() - v00->x();
+        double v1x = v11->x() - v10->x();
+        double v0y = v01->y() - v00->y();
+        double v1y = v11->y() - v10->y();
 
         double d0 = sqrt(v0x * v0x + v0y * v0y);
         v0x /= d0;
@@ -341,8 +341,8 @@ TEST(Constraint, Distance_LineSegment) {
         double cross = abs(v0x * v1y - v0y * v1x);
 
         double len;
-        len = ((v01.x() - v00.x()) * (v11.y() - v00.y()) - (v01.y() - v00.y()) * (v11.x() - v00.x()));
-        len -= ((v11.x() - v00.x()) * (v10.y() - v00.y()) - (v11.y() - v00.y()) * (v10.x() - v00.x()));
+        len = ((v01->x() - v00->x()) * (v11->y() - v00->y()) - (v01->y() - v00->y()) * (v11->x() - v00->x()));
+        len -= ((v11->x() - v00->x()) * (v10->y() - v00->y()) - (v11->y() - v00->y()) * (v10->x() - v00->x()));
         len = len / (d0 + d1);
 
         EXPECT_NEAR(1.0, dot, TOL);
@@ -353,10 +353,10 @@ TEST(Constraint, Distance_LineSegment) {
     { // Case 1: Corner case when LineSegments are initially perpendicular
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
-        Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v10 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v11 = s.new_element<Vertex>(1.0, 1.0);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
 
         LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
         LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
@@ -366,14 +366,14 @@ TEST(Constraint, Distance_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_initially_perpendicular");
 
-        double dx0 = v01.x() - v00.x();
-        double dy0 = v01.y() - v00.y();
+        double dx0 = v01->x() - v00->x();
+        double dy0 = v01->y() - v00->y();
         double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
         dx0 /= dr0;
         dy0 /= dr0;
 
-        double dx1 = v11.x() - v10.x();
-        double dy1 = v11.y() - v10.y();
+        double dx1 = v11->x() - v10->x();
+        double dy1 = v11->y() - v10->y();
         double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
         dx1 /= dr1;
         dy1 /= dr1;
@@ -383,24 +383,24 @@ TEST(Constraint, Distance_LineSegment) {
         EXPECT_NEAR(1.0, dot, TOL);
 
         double x, y, l;
-        x = (v01.x() + v00.x()) / 2.0;
-        y = (v01.y() + v00.y()) / 2.0;
+        x = (v01->x() + v00->x()) / 2.0;
+        y = (v01->y() + v00->y()) / 2.0;
 
-        dx0 = (v10.x() - x);
-        dx1 = (v11.x() - x);
-        dy0 = (v10.y() - y);
-        dy1 = (v11.y() - y);
+        dx0 = (v10->x() - x);
+        dx1 = (v11->x() - x);
+        dy0 = (v10->y() - y);
+        dy1 = (v11->y() - y);
 
         l = abs(dx0 * dy1 - dy0 * dx1) / dr1;
         EXPECT_NEAR(1.0, l, TOL);
 
-        x = (v11.x() + v10.x()) / 2.0;
-        y = (v11.y() + v10.y()) / 2.0;
+        x = (v11->x() + v10->x()) / 2.0;
+        y = (v11->y() + v10->y()) / 2.0;
 
-        dx0 = (v00.x() - x);
-        dx1 = (v01.x() - x);
-        dy0 = (v00.y() - y);
-        dy1 = (v01.y() - y);
+        dx0 = (v00->x() - x);
+        dx1 = (v01->x() - x);
+        dy0 = (v00->y() - y);
+        dy1 = (v01->y() - y);
 
         l = abs(dx0 * dy1 - dy0 * dx1) / dr0;
         EXPECT_NEAR(1.0, l, TOL);
@@ -409,10 +409,10 @@ TEST(Constraint, Distance_LineSegment) {
     { // Case 2: Corner case when two LineSegments initially intersect at their midpoint
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(-1.0, 0.0);
-        Vertex &v01 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v10 = s.new_element<Vertex>(0.0, -1.0);
-        Vertex &v11 = s.new_element<Vertex>(0.0, 1.0);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
         LineSegment &l0 = s.new_element<LineSegment>(v00, v01);
         LineSegment &l1 = s.new_element<LineSegment>(v10, v11);
@@ -422,14 +422,14 @@ TEST(Constraint, Distance_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_midpoint_intersection");
 
-        double dx0 = v01.x() - v00.x();
-        double dy0 = v01.y() - v00.y();
+        double dx0 = v01->x() - v00->x();
+        double dy0 = v01->y() - v00->y();
         double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
         dx0 /= dr0;
         dy0 /= dr0;
 
-        double dx1 = v11.x() - v10.x();
-        double dy1 = v11.y() - v10.y();
+        double dx1 = v11->x() - v10->x();
+        double dy1 = v11->y() - v10->y();
         double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
         dx1 /= dr1;
         dy1 /= dr1;
@@ -444,13 +444,13 @@ TEST(Constraint, Distance_CircularArc) {
     { // Case 0: Distance between two circular arcs having defining manifolds which do not intersect and have non-intersecting bounding boxes
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(0.2, 0.0);
-        Vertex &v01 = s.new_element<Vertex>(-0.2, 0.0);
-        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.0);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(-0.2, 0.0);
+        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
-        Vertex &vc1 = s.new_element<Vertex>(1.0, 1.0);
-        Vertex &v10 = s.new_element<Vertex>(0.8, 1.0);
-        Vertex &v11 = s.new_element<Vertex>(1.2, 1.0);
+        auto vc1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.8, 1.0);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(1.2, 1.0);
 
         CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 0.2);
         CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
@@ -463,19 +463,19 @@ TEST(Constraint, Distance_CircularArc) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior");
 
-        EXPECT_NEAR(1.0 / 3.0, hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c0.radius() - c1.radius(), TOL / 3.0);
+        EXPECT_NEAR(1.0 / 3.0, hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c0.radius() - c1.radius(), TOL / 3.0);
     }
 
     { // Case 1: Distance between two circular arcs, the second being contained within the defining circular of the first
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
-        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
-        Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
-        Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
-        Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
+        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.2);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.4, 0.2);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.2);
 
         CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
         CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
@@ -488,19 +488,19 @@ TEST(Constraint, Distance_CircularArc) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0");
 
-        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
+        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1.radius(), TOL / 3.0);
     }
 
     { // Case 2: Distance between two circular arcs, the second being contained within the defining circular of the first
         Sketch s;
 
-        Vertex &v00 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v01 = s.new_element<Vertex>(-1.0, 0.0);
-        Vertex &vc0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v01 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
-        Vertex &vc1 = s.new_element<Vertex>(0.2, 0.2);
-        Vertex &v10 = s.new_element<Vertex>(0.4, 0.2);
-        Vertex &v11 = s.new_element<Vertex>(0.0, 0.2);
+        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.2);
+        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.4, 0.2);
+        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.2);
 
         CircularArc &c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
         CircularArc &c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
@@ -513,20 +513,20 @@ TEST(Constraint, Distance_CircularArc) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1");
 
-        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0.x() - vc1.x(), vc0.y() - vc1.y()) - c1.radius(), TOL / 3.0);
+        EXPECT_NEAR(1.0 / 3.0, c0.radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1.radius(), TOL / 3.0);
     }
 }
 
 TEST(Constraint, Coincident_CircularArc) {
     Sketch s;
 
-    Vertex &vc = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
-    Vertex &v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI + M_LN2);
-    Vertex &v1 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI - M_LN2);
+    auto vc = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI + M_LN2);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI - M_LN2);
 
     CircularArc &ca = s.new_element<CircularArc>(v0, v1, vc, M_LN2);
 
-    Vertex &vp = s.new_element<Vertex>(M_E, M_LN10);
+    auto vp = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
 
     Coincident<CircularArc> &co = s.new_element<Coincident<CircularArc>>(vp, ca);
 
@@ -534,8 +534,8 @@ TEST(Constraint, Coincident_CircularArc) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_CircularArc");
 
-    double dx = vc.x() - vp.x();
-    double dy = vc.y() - vp.y();
+    double dx = vc->x() - vp->x();
+    double dy = vc->y() - vp->y();
     double d = sqrt(dx * dx + dy * dy);
     EXPECT_NEAR(0.0, d - ca.radius(), TOL * ca.radius());
 }
@@ -544,9 +544,9 @@ TEST(Constraint, Coincident_LineSegment) {
     { // Case 0: Standard case (no corner cases)
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-        Vertex &vp = s.new_element<Vertex>(1.1, 0.9);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto vp = s.new_element_SHARED_PTR<Vertex>(1.1, 0.9);
 
         LineSegment &l = s.new_element<LineSegment>(v0, v1);
 
@@ -556,10 +556,10 @@ TEST(Constraint, Coincident_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment");
 
-        double dx0 = v0.x() - vp.x();
-        double dy0 = v0.y() - vp.y();
-        double dx1 = v1.x() - vp.x();
-        double dy1 = v1.y() - vp.y();
+        double dx0 = v0->x() - vp->x();
+        double dy0 = v0->y() - vp->y();
+        double dx1 = v1->x() - vp->x();
+        double dy1 = v1->y() - vp->y();
         double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
         double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
         dx0 /= dr0;
@@ -573,9 +573,9 @@ TEST(Constraint, Coincident_LineSegment) {
     { // Case 1: Corner case where midpoint of LineSegment is
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-        Vertex &vp = s.new_element<Vertex>(0.25, 0.75);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto vp = s.new_element_SHARED_PTR<Vertex>(0.25, 0.75);
 
         LineSegment &l = s.new_element<LineSegment>(v0, v1);
 
@@ -585,10 +585,10 @@ TEST(Constraint, Coincident_LineSegment) {
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment_deg180.csv");
 
-        double dx0 = v0.x() - vp.x();
-        double dy0 = v0.y() - vp.y();
-        double dx1 = v1.x() - vp.x();
-        double dy1 = v1.y() - vp.y();
+        double dx0 = v0->x() - vp->x();
+        double dy0 = v0->y() - vp->y();
+        double dx1 = v1->x() - vp->x();
+        double dy1 = v1->y() - vp->y();
         double dr0 = sqrt(dx0 * dx0 + dy0 * dy0);
         double dr1 = sqrt(dx1 * dx1 + dy1 * dy1);
         dx0 /= dr0;
@@ -620,10 +620,10 @@ TEST(Constraint, Symmetry) {
     { // Case 0: Horizontal
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-        Vertex &v2 = s.new_element<Vertex>(0.41, -0.62);
-        Vertex &v3 = s.new_element<Vertex>(0.63, 0.44);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+        auto v2 = s.new_element_SHARED_PTR<Vertex>(0.41, -0.62);
+        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.63, 0.44);
 
         LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
 
@@ -633,26 +633,26 @@ TEST(Constraint, Symmetry) {
 
         s.solve();
 
-        EXPECT_NEAR(0.0, v0.x(), TOL);
-        EXPECT_NEAR(0.0, v0.y(), TOL);
-        EXPECT_NEAR(0.0, v1.y(), TOL);
+        EXPECT_NEAR(0.0, v0->x(), TOL);
+        EXPECT_NEAR(0.0, v0->y(), TOL);
+        EXPECT_NEAR(0.0, v1->y(), TOL);
         EXPECT_NEAR(1.0, l0.length(), TOL);
-        EXPECT_NEAR(1.0, v1.x(), TOL);
+        EXPECT_NEAR(1.0, v1->x(), TOL);
 
         s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
-        EXPECT_NEAR(v2.x(), v3.x(), TOL);
-        EXPECT_NEAR(v2.y(), -v3.y(), TOL);
+        EXPECT_NEAR(v2->x(), v3->x(), TOL);
+        EXPECT_NEAR(v2->y(), -v3->y(), TOL);
     }
 
     { // Case 1: Vertical
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(0.0, 1.0);
-        Vertex &v2 = s.new_element<Vertex>(-0.62, 0.41);
-        Vertex &v3 = s.new_element<Vertex>(0.44, 0.63);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+        auto v2 = s.new_element_SHARED_PTR<Vertex>(-0.62, 0.41);
+        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.44, 0.63);
 
         LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
 
@@ -662,26 +662,26 @@ TEST(Constraint, Symmetry) {
 
         s.solve();
 
-        EXPECT_NEAR(0.0, v0.x(), TOL);
-        EXPECT_NEAR(0.0, v0.y(), TOL);
-        EXPECT_NEAR(0.0, v1.x(), TOL);
+        EXPECT_NEAR(0.0, v0->x(), TOL);
+        EXPECT_NEAR(0.0, v0->y(), TOL);
+        EXPECT_NEAR(0.0, v1->x(), TOL);
         EXPECT_NEAR(1.0, l0.length(), TOL);
-        EXPECT_NEAR(1.0, v1.y(), TOL);
+        EXPECT_NEAR(1.0, v1->y(), TOL);
 
         s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
-        EXPECT_NEAR(v2.x(), -v3.x(), TOL);
-        EXPECT_NEAR(v2.y(), v3.y(), TOL);
+        EXPECT_NEAR(v2->x(), -v3->x(), TOL);
+        EXPECT_NEAR(v2->y(), v3->y(), TOL);
     }
 
     { // Case 2: 45 degrees
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-        Vertex &v1 = s.new_element<Vertex>(1.0, 1.0);
-        Vertex &v2 = s.new_element<Vertex>(0.1, 0.7);
-        Vertex &v3 = s.new_element<Vertex>(0.8, 0.2);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto v2 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.7);
+        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
 
         LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
         s.new_element<Fixation>(v0);
@@ -689,26 +689,26 @@ TEST(Constraint, Symmetry) {
 
         s.solve();
 
-        EXPECT_NEAR(0.0, v0.x(), TOL);
-        EXPECT_NEAR(0.0, v0.y(), TOL);
-        EXPECT_NEAR(1.0, v1.x(), TOL);
-        EXPECT_NEAR(1.0, v1.y(), TOL);
+        EXPECT_NEAR(0.0, v0->x(), TOL);
+        EXPECT_NEAR(0.0, v0->y(), TOL);
+        EXPECT_NEAR(1.0, v1->x(), TOL);
+        EXPECT_NEAR(1.0, v1->y(), TOL);
         EXPECT_NEAR(M_SQRT2, l0.length(), TOL);
 
         s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
-        EXPECT_NEAR(v3.y(), v2.x(), TOL);
-        EXPECT_NEAR(v3.x(), v2.y(), TOL);
+        EXPECT_NEAR(v3->y(), v2->x(), TOL);
+        EXPECT_NEAR(v3->x(), v2->y(), TOL);
     }
 }
 
 TEST(Constraint, Rotation) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 1.0);
-    Vertex &v1 = s.new_element<Vertex>(2.0, 3.0);
-    Vertex &v2 = s.new_element<Vertex>(3.0, 4.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 3.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(3.0, 4.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v0, v2);
@@ -719,15 +719,15 @@ TEST(Constraint, Rotation) {
 
     s.solve();
 
-    double dx1 = v1.x() - v0.x();
-    double dy1 = v1.y() - v0.y();
-    double dx2 = v2.x() - v0.x();
-    double dy2 = v2.y() - v0.y();
+    double dx1 = v1->x() - v0->x();
+    double dy1 = v1->y() - v0->y();
+    double dx2 = v2->x() - v0->x();
+    double dy2 = v2->y() - v0->y();
 
     double r1 = sqrt(dx1 * dx1 + dy1 * dy1);
     double r2 = sqrt(dx2 * dx2 + dy2 * dy2);
 
     EXPECT_NEAR(r1, r2, TOL);
-    EXPECT_NEAR(v2.x(), dx1 * cos(a) - dy1 * sin(a) + v0.x(), TOL);
-    EXPECT_NEAR(v2.y(), dx1 * sin(a) + dy1 * cos(a) + v0.y(), TOL);
+    EXPECT_NEAR(v2->x(), dx1 * cos(a) - dy1 * sin(a) + v0->x(), TOL);
+    EXPECT_NEAR(v2->y(), dx1 * sin(a) + dy1 * cos(a) + v0->y(), TOL);
 }

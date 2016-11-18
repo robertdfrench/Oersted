@@ -15,16 +15,16 @@ TEST(Rotor, 0) {
     double xm = 70.0 * cos(a);
     double ym = yo - (xo - xm);
 
-    Vertex &origin = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = s.new_element<Vertex>(xi, yi);
-    Vertex &v1 = s.new_element<Vertex>(xi, -yi);
-    Vertex &v2 = s.new_element<Vertex>(xo, -yo);
-    Vertex &v3 = s.new_element<Vertex>(xo, yo);
+    auto origin = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(xi, yi);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(xi, -yi);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(xo, -yo);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(xo, yo);
 
-    Vertex &v4 = s.new_element<Vertex>(xo, -ym);
-    Vertex &v5 = s.new_element<Vertex>(xo, ym);
-    Vertex &v6 = s.new_element<Vertex>(xm, ym);
-    Vertex &v7 = s.new_element<Vertex>(xm, -ym);
+    auto v4 = s.new_element_SHARED_PTR<Vertex>(xo, -ym);
+    auto v5 = s.new_element_SHARED_PTR<Vertex>(xo, ym);
+    auto v6 = s.new_element_SHARED_PTR<Vertex>(xm, ym);
+    auto v7 = s.new_element_SHARED_PTR<Vertex>(xm, -ym);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v3);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -70,20 +70,20 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     double rd1 = rd0 - pd * dmax;
 
     // Vertex
-    Vertex &origin = s.new_element<Vertex>(0.0, 0.0);
+    auto origin = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
 
-    Vertex &vi0 = s.new_element<Vertex>(ri, 0.0);
-    Vertex &vo0 = s.new_element<Vertex>(ro, 0.0);
+    auto vi0 = s.new_element_SHARED_PTR<Vertex>(ri, 0.0);
+    auto vo0 = s.new_element_SHARED_PTR<Vertex>(ro, 0.0);
 
-    Vertex &vi1 = s.new_element<Vertex>(ri * cos(arad), ri * sin(arad));
-    Vertex &vo1 = s.new_element<Vertex>(ro * cos(arad), ro * sin(arad));
+    auto vi1 = s.new_element_SHARED_PTR<Vertex>(ri * cos(arad), ri * sin(arad));
+    auto vo1 = s.new_element_SHARED_PTR<Vertex>(ro * cos(arad), ro * sin(arad));
 
-    Vertex &vm0 = s.new_element<Vertex>(rd0 * cos(arad), rd0 * sin(arad));
-    Vertex &vr0 = s.new_element<Vertex>(ro * cos(arad * (1.0 - pd)), ro * sin(arad * (1.0 - pd)));
-    Vertex &vc0 = s.new_element<Vertex>(ro * cos(arad), ro * sin(arad));
+    auto vm0 = s.new_element_SHARED_PTR<Vertex>(rd0 * cos(arad), rd0 * sin(arad));
+    auto vr0 = s.new_element_SHARED_PTR<Vertex>(ro * cos(arad * (1.0 - pd)), ro * sin(arad * (1.0 - pd)));
+    auto vc0 = s.new_element_SHARED_PTR<Vertex>(ro * cos(arad), ro * sin(arad));
 
-    Vertex &vm1 = s.new_element<Vertex>(rd1 * cos(arad), rd1 * sin(arad));
-    Vertex &vr1 = s.new_element<Vertex>(ro * cos(arad * (1.0 - 2.0 * pd)), ro * sin(arad * (1.0 - 2.0 * pd)));
+    auto vm1 = s.new_element_SHARED_PTR<Vertex>(rd1 * cos(arad), rd1 * sin(arad));
+    auto vr1 = s.new_element_SHARED_PTR<Vertex>(ro * cos(arad * (1.0 - 2.0 * pd)), ro * sin(arad * (1.0 - 2.0 * pd)));
 
     // LineSegment
     LineSegment &l0 = s.new_element<LineSegment>(vi0, vo0);
@@ -123,8 +123,8 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     Radius &rad3 = s.new_element<Radius>(c3, ro);
 
     // Distance
-    Distance<Vertex> &dist0 = s.new_element<Distance<Vertex>>(vr0, vo1, pd * dmax);
-    Distance<Vertex> &dist1 = s.new_element<Distance<Vertex>>(vr1, vr0, pd * dmax);
+    Distance<std::shared_ptr<Vertex>> &dist0 = s.new_element<Distance<std::shared_ptr<Vertex>>>(vr0, vo1, pd * dmax);
+    Distance<std::shared_ptr<Vertex>> &dist1 = s.new_element<Distance<std::shared_ptr<Vertex>>>(vr1, vr0, pd * dmax);
 
     // Solve
     s.solve();

@@ -2,7 +2,7 @@
 
 void Pattern::register_elements(Sketch *s) {
     for (auto v : Verticies) {
-        s->add_element(*v);
+        s->add_element(v);
     }
 
     for (auto c : Curves) {

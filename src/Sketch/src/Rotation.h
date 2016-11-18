@@ -3,12 +3,12 @@
 
 class Rotation : public Constraint {
 public:
-    Vertex *V0;
-    Vertex *V1;
-    Vertex *Origin;
+    std::shared_ptr<Vertex> V0;
+    std::shared_ptr<Vertex> V1;
+    std::shared_ptr<Vertex> Origin;
     double Angle;
 
-    Rotation(Vertex &v0, Vertex &v1, Vertex &origin, double a) : V0(&v0), V1(&v1), Origin(&origin), Angle(a) {};
+    Rotation(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> origin, double a) : V0(v0), V1(v1), Origin(origin), Angle(a) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;

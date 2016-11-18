@@ -20,7 +20,7 @@ protected:
     std::vector<const Curve *> Input;
     bool RemoveInternalBoundaries;
 
-    std::vector<Vertex *> Verticies;
+    std::vector<std::shared_ptr<Vertex>> Verticies;
     std::vector<Curve *> Curves;
     std::vector<Constraint *> Constraints;
 };

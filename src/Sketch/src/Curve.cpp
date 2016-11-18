@@ -1,31 +1,21 @@
 #include "Sketch.hpp"
 
-Curve *Curve::split(Vertex *vnew, double s) {
-    Curve *cnew = clone();
-    *(vnew) = point(s);
-
-    End = vnew;
-    cnew->Start = vnew;
-
-    return cnew;
-}
-
-bool Curve::on_segment(const Vertex *v) const {
+bool Curve::on_segment(std::shared_ptr<Vertex> v) const {
     return on_segment(v->x(), v->y());
 }
 
-bool Curve::on_segment(const Vertex *v, const Vertex *origin, const double angle) const {
+bool Curve::on_segment(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> origin, const double angle) const {
     double x, y;
     std::tie(x, y) = v->rotate(origin, angle);
 
     return on_segment(x, y);
 }
 
-bool Curve::on_manifold(const Vertex *v) const {
+bool Curve::on_manifold(std::shared_ptr<Vertex> v) const {
     return on_manifold(v->x(), v->y());
 }
 
-bool Curve::on_manifold(const Vertex *v, const Vertex *origin, const double angle) const {
+bool Curve::on_manifold(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> origin, const double angle) const {
     double x, y;
     std::tie(x, y) = v->rotate(origin, angle);
 

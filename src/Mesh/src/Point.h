@@ -10,9 +10,11 @@ public:
 
     Point(double x, double y) : X{x}, Y{y} {};
 
-    Point(Vertex const &v) : X{v.x()}, Y{v.y()} {};
+    //Point(Vertex const &v) : X{v.x()}, Y{v.y()} {};
 
-    Point(Vertex const *v) : X{v->x()}, Y{v->y()} {};
+    Point(std::shared_ptr<Vertex>v) : X{v->x()}, Y{v->y()} {};
+
+    Point(sPoint const pp) : X{pp.x()}, Y{pp.y()} {};
 
     //double W; // Nurbs weight?
     double X;

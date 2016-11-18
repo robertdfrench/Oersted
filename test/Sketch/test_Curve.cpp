@@ -3,11 +3,11 @@
 TEST(Curve, supremum) {
     Sketch s;
 
-    Vertex &origin = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(4.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(M_SQRT2, M_SQRT2);
-    Vertex &v3 = s.new_element<Vertex>(M_SQRT1_2, M_SQRT1_2);
+    auto origin = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(4.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, M_SQRT2);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(M_SQRT1_2, M_SQRT1_2);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v3, v2);

@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-Star::Star(const Vertex *v, const Sketch *s) {
+Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
     StarVertex = v;
 
     // Extract Curves
@@ -53,7 +53,7 @@ Star::Star(const Vertex *v, const Sketch *s) {
     double x = StarVertex->x();
     double y = StarVertex->y();
     for (size_t i = 0; i != curves.size(); ++i) {
-        const Vertex *v;
+        std::shared_ptr<Vertex> v;
         if (orientation[i]) {
             v = curves[i]->end();
         } else {

@@ -11,7 +11,7 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
     // Clone input curves and create a list of unique input verticies
     Curves.reserve(Input.size());
 
-    std::list<Vertex *> input_vlist;
+    std::list<std::shared_ptr<Vertex>> input_vlist;
     for (auto c : Input) {
         if (l->is_coincident(c)) {
             const_cast<Curve *>(c)->ForConstruction = RemoveInternalBoundaries; // TODO: const_cast is ugly
@@ -48,7 +48,9 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
             px = x - 2.0 * px;
             py = y - 2.0 * py;
 
-            Verticies.push_back(new Vertex(px, py));
+            //Verticies.push_back(new Vertex(px, py));
+            Verticies.push_back(std::make_shared<Vertex>(px, py));
+
 
             ++v;
         } else {
@@ -57,7 +59,7 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
     }
 
     // Replace verticies in mirror curves
-    std::vector<Vertex *> input_vvector{input_vlist.begin(), input_vlist.end()};
+    std::vector<std::shared_ptr<Vertex>> input_vvector{input_vlist.begin(), input_vlist.end()};
     for (auto c : Curves) {
         c->replace_verticies(input_vvector, Verticies);
         c->reverse();
@@ -66,6 +68,6 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
     // Constrain mirrored verticies to be symmetric about the SymmetryLine
     Constraints.reserve(Verticies.size());
     for (size_t i = 0; i != Verticies.size(); ++i) {
-        Constraints.push_back(new Symmetry(*input_vvector[i], *Verticies[i], *SymmetryLine));
+        Constraints.push_back(new Symmetry(input_vvector[i], Verticies[i], *SymmetryLine));
     }
 }

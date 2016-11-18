@@ -5,24 +5,22 @@
 
 class Vertex : public SketchElement {
 public:
-    Variable *X, *Y;
+    std::shared_ptr<Variable> X;
+    std::shared_ptr<Variable> Y;
 
     // Double Constructors
-    Vertex() : X(new Variable(0.0)), Y(new Variable(0.0)) {};
+    Vertex() : X(std::make_shared<Variable>(0.0)), Y(std::make_shared<Variable>(0.0)) {};
 
-    Vertex(double x, double y) : X(new Variable(x)), Y(new Variable(y)) {};
+    Vertex(double x, double y) : X(std::make_shared<Variable>(x)), Y(std::make_shared<Variable>(y)) {};
 
     Vertex(std::pair<double, double> &xy) : Vertex(xy.first, xy.second) {};
 
     // Variable Constructors
-    Vertex(Variable *xin, Variable *yin) : X(xin), Y(yin) {};
+    Vertex(std::shared_ptr<Variable> x, std::shared_ptr<Variable> y) : X(x), Y(y) {};
 
-    Vertex(const Vertex &v) {
-        X = v.X;
-        Y = v.Y;
-    };
+    Vertex(std::shared_ptr<Vertex> &v) : X(v->X), Y(v->Y) {};
 
-    Vertex(Variable &x, Variable &y) : X(&x), Y(&y) {};
+    //Vertex(Variable &x, Variable &y) : X(&x), Y(&y) {};
 
     //Member Functions
     size_t set_equation_index(size_t i) override {
@@ -37,7 +35,7 @@ public:
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
 
-    inline bool operator==(const Vertex &v) { return (v.X == X) && (v.Y == Y); };
+    inline bool operator==(Vertex const &v) { return (v.X == X) && (v.Y == Y); };
 
     const double x() const { return X->value(); };
 
@@ -47,7 +45,7 @@ public:
 
     double atan() const { return std::atan2(y(), x()); };
 
-    std::pair<double, double> rotate(const Vertex *origin, const double angle) const;
+    std::pair<double, double> rotate(std::shared_ptr<Vertex> const &origin, const double angle) const;
 };
 
 #endif //OERSTED_VERTEX_H

@@ -13,14 +13,14 @@ TEST(Stator, 0) {
     double dt{ri * sin(as)};
     double rb{ro - 4.0 * dt};
 
-    Vertex &origin = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = sketch.new_element<Vertex>(ri, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(ro, 0.0);
-    Vertex &v2 = sketch.new_element<Vertex>(ro * cos(at), ro * sin(at));
-    Vertex &v3 = sketch.new_element<Vertex>(rb * cos(at), rb * sin(at));
-    Vertex &v4 = sketch.new_element<Vertex>(ri * cos(at), ri * sin(at));
-    Vertex &v5 = sketch.new_element<Vertex>(ri * cos(as), ri * sin(as));
-    Vertex &v6 = sketch.new_element<Vertex>(rb * cos(as), rb * sin(as));
+    auto origin = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(ri, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(ro, 0.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(ro * cos(at), ro * sin(at));
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(rb * cos(at), rb * sin(at));
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(ri * cos(at), ri * sin(at));
+    auto v5 = sketch.new_element_SHARED_PTR<Vertex>(ri * cos(as), ri * sin(as));
+    auto v6 = sketch.new_element_SHARED_PTR<Vertex>(rb * cos(as), rb * sin(as));
 
     LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
     CircularArc &c0 = sketch.new_element<CircularArc>(v1, v2, origin, ro);
@@ -35,7 +35,7 @@ TEST(Stator, 0) {
     MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1, true);
 
     auto rvec = sketch.curves();
-    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, &origin, 360.0 / Nt, 1, true);
+    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, origin, 360.0 / Nt, 1, true);
 
     sketch.solve();
 

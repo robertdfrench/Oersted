@@ -3,9 +3,9 @@
 TEST(Mesh, create__triangle_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(0.0, sqrt(3.0));
-    Vertex &v2 = s.new_element<Vertex>(-1.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, sqrt(3.0));
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -30,14 +30,14 @@ TEST(Mesh, create__triangle_domain) {
         EXPECT_TRUE(m.num_edges() == 3);
         EXPECT_TRUE(m.num_triangles() == 1);
 
-        EXPECT_TRUE(v0.x() == m.point(vmap[0]).X);
-        EXPECT_TRUE(v0.y() == m.point(vmap[0]).Y);
+        EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
+        EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1.x() == m.point(vmap[1]).X);
-        EXPECT_TRUE(v1.y() == m.point(vmap[1]).Y);
+        EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
+        EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2.x() == m.point(vmap[2]).X);
-        EXPECT_TRUE(v2.y() == m.point(vmap[2]).Y);
+        EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
+        EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
     }
 
     { // Test validity, optimality
@@ -50,18 +50,18 @@ TEST(Mesh, create__triangle_domain) {
         const Edge e1 = m.edge(vmap[1]);
         const Edge e2 = m.edge(vmap[2]);
 
-        EXPECT_TRUE(v0.x() == m.point(e0.node()).X);
-        EXPECT_TRUE(v0.y() == m.point(e0.node()).Y);
+        EXPECT_TRUE(v0->x() == m.point(e0.node()).X);
+        EXPECT_TRUE(v0->y() == m.point(e0.node()).Y);
         EXPECT_TRUE(e1.self() == e0.next());
         EXPECT_TRUE(e2.self() == e0.prev());
 
-        EXPECT_TRUE(v1.x() == m.point(e1.node()).X);
-        EXPECT_TRUE(v1.y() == m.point(e1.node()).Y);
+        EXPECT_TRUE(v1->x() == m.point(e1.node()).X);
+        EXPECT_TRUE(v1->y() == m.point(e1.node()).Y);
         EXPECT_TRUE(e2.self() == e1.next());
         EXPECT_TRUE(e0.self() == e1.prev());
 
-        EXPECT_TRUE(v2.x() == m.point(e2.node()).X);
-        EXPECT_TRUE(v2.y() == m.point(e2.node()).Y);
+        EXPECT_TRUE(v2->x() == m.point(e2.node()).X);
+        EXPECT_TRUE(v2->y() == m.point(e2.node()).Y);
         EXPECT_TRUE(e0.self() == e2.next());
         EXPECT_TRUE(e1.self() == e2.prev());
     }
@@ -86,10 +86,10 @@ TEST(Mesh, create__triangle_domain) {
 TEST(Mesh, create__square_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v3 = s.new_element<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -116,17 +116,17 @@ TEST(Mesh, create__square_domain) {
         EXPECT_TRUE(m.num_edges() == 5);
         EXPECT_TRUE(m.num_triangles() == 2);
 
-        EXPECT_TRUE(v0.x() == m.point(vmap[0]).X);
-        EXPECT_TRUE(v0.y() == m.point(vmap[0]).Y);
+        EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
+        EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1.x() == m.point(vmap[1]).X);
-        EXPECT_TRUE(v1.y() == m.point(vmap[1]).Y);
+        EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
+        EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2.x() == m.point(vmap[2]).X);
-        EXPECT_TRUE(v2.y() == m.point(vmap[2]).Y);
+        EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
+        EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
 
-        EXPECT_TRUE(v3.x() == m.point(vmap[3]).X);
-        EXPECT_TRUE(v3.y() == m.point(vmap[3]).Y);
+        EXPECT_TRUE(v3->x() == m.point(vmap[3]).X);
+        EXPECT_TRUE(v3->y() == m.point(vmap[3]).Y);
     }
 
     // Test validity, optimality
@@ -169,10 +169,10 @@ TEST(Mesh, create__square_domain) {
 TEST(Mesh, create__narrow_diamond_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(0.0, 2.0);
-    Vertex &v2 = s.new_element<Vertex>(-1.0, 0.0);
-    Vertex &v3 = s.new_element<Vertex>(0.0, -2.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, -2.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -244,11 +244,11 @@ TEST(Mesh, create__narrow_diamond_domain) {
 TEST(Mesh, create__narrow_rectangle_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(5.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(5.0, 1.0);
-    Vertex &v2 = s.new_element<Vertex>(0.0, 2.0);
-    Vertex &v3 = s.new_element<Vertex>(-5.0, 1.0);
-    Vertex &v4 = s.new_element<Vertex>(-5.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(5.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(5.0, 1.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(-5.0, 1.0);
+    auto v4 = s.new_element_SHARED_PTR<Vertex>(-5.0, 0.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -309,9 +309,9 @@ TEST(Mesh, create__narrow_rectangle_domain) {
 TEST(Mesh, create__half_circle_domain) {
     Sketch s;
 
-    Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(-1.0, 0.0);
+    auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     CircularArc &arc = s.new_element<CircularArc>(v0, v1, vc, 1.0);
     LineSegment &line = s.new_element<LineSegment>(v1, v0);
@@ -350,11 +350,11 @@ TEST(Mesh, create__half_circle_domain) {
 TEST(Mesh, create__horseshoe_domain) {
     Sketch s;
 
-    Vertex &vc = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = s.new_element<Vertex>(2.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(-2.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(-1.9, 0.0);
-    Vertex &v3 = s.new_element<Vertex>(1.9, 0.0);
+    auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(-2.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.9, 0.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.9, 0.0);
 
     CircularArc &arc0 = s.new_element<CircularArc>(v0, v1, vc, 2.0);
     LineSegment &line0 = s.new_element<LineSegment>(v1, v2);
@@ -399,18 +399,18 @@ TEST(Mesh, create__horseshoe_domain) {
 TEST(Mesh, create__I_shaped_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(3.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(3.0, 1.0);
-    Vertex &v3 = s.new_element<Vertex>(2.0, 1.0);
-    Vertex &v4 = s.new_element<Vertex>(2.0, 2.0);
-    Vertex &v5 = s.new_element<Vertex>(3.0, 2.0);
-    Vertex &v6 = s.new_element<Vertex>(3.0, 3.0);
-    Vertex &v7 = s.new_element<Vertex>(0.0, 3.0);
-    Vertex &v8 = s.new_element<Vertex>(0.0, 2.0);
-    Vertex &v9 = s.new_element<Vertex>(1.0, 2.0);
-    Vertex &v10 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v11 = s.new_element<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(3.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(3.0, 1.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
+    auto v4 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
+    auto v5 = s.new_element_SHARED_PTR<Vertex>(3.0, 2.0);
+    auto v6 = s.new_element_SHARED_PTR<Vertex>(3.0, 3.0);
+    auto v7 = s.new_element_SHARED_PTR<Vertex>(0.0, 3.0);
+    auto v8 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
+    auto v9 = s.new_element_SHARED_PTR<Vertex>(1.0, 2.0);
+    auto v10 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -454,13 +454,13 @@ TEST(Mesh, create__I_shaped_domain) {
 TEST(Mesh, create__corner_square_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(0.5, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v3 = s.new_element<Vertex>(1.0, 0.5);
-    Vertex &v4 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v5 = s.new_element<Vertex>(0.0, 1.0);
-    Vertex &v6 = s.new_element<Vertex>(0.5, 0.5);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.5);
+    auto v4 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v5 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v6 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v6);
@@ -505,15 +505,15 @@ TEST(Mesh, create__corner_square_domain) {
 TEST(Mesh, create__square_in_square_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(2.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(2.0, 2.0);
-    Vertex &v3 = s.new_element<Vertex>(0.0, 2.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
 
-    Vertex &v4 = s.new_element<Vertex>(0.9, 0.9);
-    Vertex &v5 = s.new_element<Vertex>(1.9, 0.9);
-    Vertex &v6 = s.new_element<Vertex>(1.9, 1.9);
-    Vertex &v7 = s.new_element<Vertex>(0.9, 1.9);
+    auto v4 = s.new_element_SHARED_PTR<Vertex>(0.9, 0.9);
+    auto v5 = s.new_element_SHARED_PTR<Vertex>(1.9, 0.9);
+    auto v6 = s.new_element_SHARED_PTR<Vertex>(1.9, 1.9);
+    auto v7 = s.new_element_SHARED_PTR<Vertex>(0.9, 1.9);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -694,9 +694,9 @@ TEST(Edge, are_intersecting__colinear_false_shared_vertex) {
 TEST(Mesh, locate_triangle__triangular_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(2.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(1.0, sqrt(3.0));
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, sqrt(3.0));
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
@@ -780,10 +780,10 @@ TEST(Mesh, locate_triangle__triangular_domain) {
 TEST(Mesh, locate_triange__square_domain) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v3 = s.new_element<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
     LineSegment &l2 = s.new_element<LineSegment>(v2, v3);

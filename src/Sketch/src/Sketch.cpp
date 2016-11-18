@@ -6,6 +6,34 @@ Sketch::Sketch() {
     Boundary = new Contour();
 }
 
+void Sketch::delete_me() {
+    delete Boundary;
+
+    Variables.clear();
+
+    Verticies.clear();
+
+    for (auto x : Curves) {
+        delete x;
+    }
+    Curves.clear();
+
+    for (auto x : Constraints) {
+        delete x;
+    }
+    Constraints.clear();
+
+    for (auto x : Patterns) {
+        delete x;
+    }
+    Patterns.clear();
+
+    for (auto x : Contours) {
+        delete x;
+    }
+    Contours.clear();
+};
+
 void Sketch::solve() {
     // #TODO: Tolerance based iteration convergence monitoring
     // #TODO: Use sparse matrix representation for Jacobian
@@ -59,7 +87,7 @@ bool Sketch::build() {
     return success;
 }
 
-void Sketch::add_element(Vertex &v) {
+void Sketch::add_element(std::shared_ptr<Vertex> v) {
     add_element(Verticies, v);
 }
 
@@ -92,7 +120,7 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
     for (size_t i = 0; i < Curves.size(); ++i) {
         if (!Curves[i]->ForConstruction) {
             for (size_t j = 0; j <= 10; ++j) {
-                Vertex v = Curves[i]->point(j / 10.0);
+                sPoint v = Curves[i]->point(j / 10.0);
                 fs << v.x() << ',' << v.y() << '\n';
             }
             fs << "NaN" << ',' << "NaN" << '\n';

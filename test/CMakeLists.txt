@@ -15,7 +15,8 @@ set(SOURCE_FILES
         Sketch/test_Sketch.cpp
 
         Sketch/test_Constraint.cpp
-        Sketch/test_Pattern.cpp
+        Sketch/test_MirrorCopy.cpp
+        Sketch/test_RotateCopy.cpp
 
         Mesh/test_Mesh.hpp
         Mesh/test_Mesh.cpp

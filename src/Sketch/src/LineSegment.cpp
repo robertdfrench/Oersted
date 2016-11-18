@@ -1,12 +1,12 @@
 #include "Sketch.hpp"
 
-Vertex LineSegment::point(double s) const {
+sPoint LineSegment::point(double s) const {
     const double x0 = start()->x();
     const double y0 = start()->y();
     const double x1 = end()->x();
     const double y1 = end()->y();
 
-    return Vertex{x0 * (1.0 - s) + x1 * s, y0 * (1.0 - s) + y1 * s};
+    return sPoint{x0 * (1.0 - s) + x1 * s, y0 * (1.0 - s) + y1 * s};
 }
 
 Vertex LineSegment::tangent(double s, bool orientation) const {
@@ -115,7 +115,7 @@ bool LineSegment::is_identical(const Curve *c) const {
     }
 }
 
-bool LineSegment::is_identical(const Curve *c, const Vertex *origin, const double angle) const {
+bool LineSegment::is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const {
     const LineSegment *l = dynamic_cast<const LineSegment *>(c);
 
     if (l == nullptr) {
@@ -162,7 +162,7 @@ bool LineSegment::is_coincident(const Curve *c) const {
 
 double LineSegment::length() const { return hypot(end()->x() - start()->x(), end()->y() - start()->y()); };
 
-void LineSegment::replace_verticies(std::vector<Vertex *> oldv, std::vector<Vertex *> newv) {
+void LineSegment::replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) {
     auto i = std::find(oldv.begin(), oldv.end(), Start);
     if (i != oldv.end()) {
         size_t j = i - oldv.begin();

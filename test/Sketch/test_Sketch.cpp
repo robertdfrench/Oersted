@@ -1,5 +1,12 @@
 #include "test_Sketch.hpp"
 
+void test_sketch_size(Sketch &s, size_t nverts, size_t ncurves, size_t nconstraints, size_t ncontours) {
+    EXPECT_EQ(nverts, s.size_verticies());
+    EXPECT_EQ(ncurves, s.size_curves());
+    EXPECT_EQ(nconstraints, s.size_constraints());
+    EXPECT_EQ(ncontours, s.size_contours());
+}
+
 TEST(Sketch, constructor) {
     Sketch s;
 }
@@ -8,18 +15,18 @@ TEST(Sketch, new_element) {
     { // Case 0: Vertex
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>();
+        auto v0 = s.new_element_SHARED_PTR<Vertex>();
         EXPECT_TRUE(s.size() == 1);
-        EXPECT_TRUE(v0.get_equation_index() == 0);
-        EXPECT_TRUE(v0.X->get_index() == 0);
-        EXPECT_TRUE(v0.Y->get_index() == 1);
+        EXPECT_TRUE(v0->get_equation_index() == 0);
+        EXPECT_TRUE(v0->X->get_index() == 0);
+        EXPECT_TRUE(v0->Y->get_index() == 1);
 
-        Vertex &v1 = s.new_element<Vertex>();
+        auto v1 = s.new_element_SHARED_PTR<Vertex>();
 
         EXPECT_TRUE(s.size() == 2);
-        EXPECT_TRUE(v1.get_equation_index() == 0);
-        EXPECT_TRUE(v1.X->get_index() == 2);
-        EXPECT_TRUE(v1.Y->get_index() == 3);
+        EXPECT_TRUE(v1->get_equation_index() == 0);
+        EXPECT_TRUE(v1->X->get_index() == 2);
+        EXPECT_TRUE(v1->Y->get_index() == 3);
     }
 
     { // Case 1: LineSegment
@@ -39,8 +46,8 @@ TEST(Sketch, new_element) {
     { // Case 3: Length
         Sketch s;
 
-        Vertex &v0 = s.new_element<Vertex>(3.14159, 2.7183);
-        Vertex &v1 = s.new_element<Vertex>(6.14159, 6.7183);
+        auto v0 = s.new_element_SHARED_PTR<Vertex>(3.14159, 2.7183);
+        auto v1 = s.new_element_SHARED_PTR<Vertex>(6.14159, 6.7183);
 
         LineSegment &line = s.new_element<LineSegment>(v0, v1);
 

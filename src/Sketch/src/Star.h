@@ -8,9 +8,9 @@ public:
     // Constructors
     Star() {};
 
-    Star(const Vertex *v, const Sketch *s);
+    Star(std::shared_ptr<Vertex> v, Sketch const *s);
 
-    const Vertex *vertex() const { return StarVertex; };
+    std::shared_ptr<Vertex> const vertex() const { return StarVertex; };
 
     const size_t size() const { return Branches.size(); };
 
@@ -47,7 +47,7 @@ public:
     void pop(const Curve *c);
 
 private:
-    const Vertex *StarVertex;
+    std::shared_ptr<Vertex> StarVertex;
     std::list<Branch> Branches;
 };
 

@@ -94,10 +94,10 @@ double CircularArc::arc_angle() const {
     return (a1 - a0);
 }
 
-Vertex CircularArc::point(double s) const {
+sPoint CircularArc::point(double s) const {
     double a = s_to_a(s);
 
-    return Vertex{center()->x() + radius() * cos(a), center()->y() + radius() * sin(a)};
+    return sPoint{center()->x() + radius() * cos(a), center()->y() + radius() * sin(a)};
 }
 
 Vertex CircularArc::tangent(double s, bool orientation) const {
@@ -167,7 +167,7 @@ std::pair<double, double> CircularArc::supremum() const {
 
     double s = a_to_s(center()->atan());
     if (s > 0.0 && s < 1.0) {
-        Vertex v = point(s);
+        sPoint v = point(s);
         xx = v.x();
         yy = v.y();
         val = sqrt(xx * xx + yy * yy);
@@ -216,7 +216,7 @@ bool CircularArc::is_identical(const Curve *c) const {
     }
 }
 
-bool CircularArc::is_identical(const Curve *c, const Vertex *origin, const double angle) const {
+bool CircularArc::is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const {
     const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
 
     if (cc == nullptr) {
@@ -302,7 +302,7 @@ bool CircularArc::on_segment(const double x, const double y) const {
     }
 }
 
-void CircularArc::replace_verticies(std::vector<Vertex *> oldv, std::vector<Vertex *> newv) {
+void CircularArc::replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) {
     auto i = std::find(oldv.begin(), oldv.end(), Start);
     if (i != oldv.end()) {
         size_t j = i - oldv.begin();

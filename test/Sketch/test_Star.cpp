@@ -14,11 +14,11 @@ bool star_angle_sum_equals_2pi(std::vector<Star> &stars) {
 
 TEST(Star, Suite_0) {
     Sketch sketch;
-    Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(1.0, 1.0);
-    Vertex &v2 = sketch.new_element<Vertex>(1.0, -1.0);
-    Vertex &v3 = sketch.new_element<Vertex>(-1.0, 1.0);
-    Vertex &v4 = sketch.new_element<Vertex>(-1.0, -1.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(1.0, -1.0);
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 1.0);
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, -1.0);
 
     LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = sketch.new_element<LineSegment>(v2, v0);
@@ -29,9 +29,9 @@ TEST(Star, Suite_0) {
     LineSegment &l6 = sketch.new_element<LineSegment>(v3, v4);
     LineSegment &l7 = sketch.new_element<LineSegment>(v4, v1);
 
-    Star star{&v0, &sketch};
+    Star star{v0, &sketch};
 
-    EXPECT_TRUE(star.vertex() == &v0);
+    EXPECT_TRUE(star.vertex() == v0);
     EXPECT_TRUE(star.size() == 4);
 
     auto b = star.begin();
@@ -69,20 +69,20 @@ TEST(Star, Suite_0) {
 TEST(Star, Suite_1) {
     Sketch sketch;
 
-    Vertex &vs = sketch.new_element<Vertex>(0.0, 1.0);
-    Vertex &vc = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(0.0, 2.0);
-    Vertex &v2 = sketch.new_element<Vertex>(-1.0, 0.0);
+    auto vs = sketch.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto vc = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     CircularArc &c0 = sketch.new_element<CircularArc>(v0, vs, vc, 1.0);
     CircularArc &c1 = sketch.new_element<CircularArc>(vs, v2, vc, 1.0);
     LineSegment &l0 = sketch.new_element<LineSegment>(vs, v1);
     LineSegment &l1 = sketch.new_element<LineSegment>(vc, vs);
 
-    Star star{&vs, &sketch};
+    Star star{vs, &sketch};
 
-    EXPECT_TRUE(star.vertex() == &vs);
+    EXPECT_TRUE(star.vertex() == vs);
     EXPECT_TRUE(star.size() == 4);
 
     auto b = star.begin();
@@ -117,13 +117,13 @@ TEST(Star, Suite_1) {
 TEST(Star, Suite_2) {
     Sketch sketch;
 
-    Vertex &vs = sketch.new_element<Vertex>(M_SQRT1_2, M_SQRT1_2);
-    Vertex &vc = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(0.0, 1.0);
-    Vertex &v2 = sketch.new_element<Vertex>(M_SQRT2, 0.0);
-    Vertex &v3 = sketch.new_element<Vertex>(0.0, M_SQRT2);
-    Vertex &v4 = sketch.new_element<Vertex>(M_SQRT2, M_SQRT2);
+    auto vs = sketch.new_element_SHARED_PTR<Vertex>(M_SQRT1_2, M_SQRT1_2);
+    auto vc = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(0.0, M_SQRT2);
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(M_SQRT2, M_SQRT2);
 
     CircularArc &c0 = sketch.new_element<CircularArc>(v0, vs, vc, 1.0);
     CircularArc &c1 = sketch.new_element<CircularArc>(vs, v1, vc, 1.0);
@@ -132,9 +132,9 @@ TEST(Star, Suite_2) {
     LineSegment &l2 = sketch.new_element<LineSegment>(vc, vs);
     LineSegment &l3 = sketch.new_element<LineSegment>(vs, v4);
 
-    Star star{&vs, &sketch};
+    Star star{vs, &sketch};
 
-    EXPECT_TRUE(star.vertex() == &vs);
+    EXPECT_TRUE(star.vertex() == vs);
     EXPECT_TRUE(star.size() == 6);
 
     auto b = star.begin();
@@ -174,15 +174,15 @@ TEST(Star, Suite_2) {
 
 TEST(Star, find_closed_contour_0) {
     Sketch sketch;
-    Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = sketch.new_element<Vertex>(2.0, 0.0);
-    Vertex &v3 = sketch.new_element<Vertex>(1.0, -1.0);
-    Vertex &v4 = sketch.new_element<Vertex>(1.0, 1.0);
-    Vertex &v5 = sketch.new_element<Vertex>(2.0, 1.0);
-    Vertex &v6 = sketch.new_element<Vertex>(2.0, 2.0);
-    Vertex &v7 = sketch.new_element<Vertex>(0.0, -1.0);
-    Vertex &v8 = sketch.new_element<Vertex>(-1.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(1.0, -1.0);
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v5 = sketch.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
+    auto v6 = sketch.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
+    auto v7 = sketch.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
+    auto v8 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = sketch.new_element<LineSegment>(v0, v7);
@@ -200,9 +200,9 @@ TEST(Star, find_closed_contour_0) {
     {
         std::vector<Star> stars;
 
-        stars.push_back(Star{&v0, &sketch});
-        stars.push_back(Star{&v1, &sketch});
-        stars.push_back(Star{&v4, &sketch});
+        stars.push_back(Star{v0, &sketch});
+        stars.push_back(Star{v1, &sketch});
+        stars.push_back(Star{v4, &sketch});
 
         star_angle_sum_equals_2pi(stars);
     }
@@ -225,11 +225,11 @@ TEST(Star, find_closed_contour_0) {
 TEST(Star, find_closed_contour_1) {
     Sketch sketch;
 
-    Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = sketch.new_element<Vertex>(0.0, 1.0);
-    Vertex &v3 = sketch.new_element<Vertex>(0.0, -1.0);
-    Vertex &v4 = sketch.new_element<Vertex>(-1.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = sketch.new_element<LineSegment>(v0, v2);
@@ -241,9 +241,9 @@ TEST(Star, find_closed_contour_1) {
     // Manual contour construction
     {
         std::vector<Star> stars;
-        stars.push_back(Star{&v0, &sketch});
-        stars.push_back(Star{&v1, &sketch});
-        stars.push_back(Star{&v2, &sketch});
+        stars.push_back(Star{v0, &sketch});
+        stars.push_back(Star{v1, &sketch});
+        stars.push_back(Star{v2, &sketch});
 
         star_angle_sum_equals_2pi(stars);
     }
@@ -266,12 +266,12 @@ TEST(Star, find_closed_contour_1) {
 TEST(Star, find_closed_contour_2) {
     Sketch sketch;
 
-    Vertex &v0 = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = sketch.new_element<Vertex>(0.0, 1.0);
-    Vertex &v3 = sketch.new_element<Vertex>(0.0, -1.0);
-    Vertex &v4 = sketch.new_element<Vertex>(-1.0, 0.0);
-    Vertex &v5 = sketch.new_element<Vertex>(1.0, 1.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v3 = sketch.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
+    auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+    auto v5 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
 
     LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = sketch.new_element<LineSegment>(v0, v2);
@@ -285,10 +285,10 @@ TEST(Star, find_closed_contour_2) {
     // Manual contour construction
     {
         std::vector<Star> stars;
-        stars.push_back(Star{&v0, &sketch});
-        stars.push_back(Star{&v1, &sketch});
-        stars.push_back(Star{&v2, &sketch});
-        stars.push_back(Star{&v5, &sketch});
+        stars.push_back(Star{v0, &sketch});
+        stars.push_back(Star{v1, &sketch});
+        stars.push_back(Star{v2, &sketch});
+        stars.push_back(Star{v5, &sketch});
 
         star_angle_sum_equals_2pi(stars);
     }
@@ -345,9 +345,9 @@ TEST(Star, find_closed_contour_3) {
     */
     Sketch sketch;
 
-    Vertex &vc = sketch.new_element<Vertex>(0.0, 0.0);
-    Vertex &v0 = sketch.new_element<Vertex>(1.0, 0.0);
-    Vertex &v1 = sketch.new_element<Vertex>(-1.0, 0.0);
+    auto vc = sketch.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v1 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
     CircularArc &arc = sketch.new_element<CircularArc>(v0, v1, vc, 1.0);
     LineSegment &line = sketch.new_element<LineSegment>(v1, v0);
@@ -355,8 +355,8 @@ TEST(Star, find_closed_contour_3) {
     // Manual contour construction
     {
         std::vector<Star> stars;
-        stars.push_back(Star{&v0, &sketch});
-        stars.push_back(Star{&v1, &sketch});
+        stars.push_back(Star{v0, &sketch});
+        stars.push_back(Star{v1, &sketch});
 
         star_angle_sum_equals_2pi(stars);
     }
@@ -380,10 +380,10 @@ TEST(Star, find_closed_contour_3) {
 TEST(Star, with_construction_lines) {
     Sketch s;
 
-    Vertex &v0 = s.new_element<Vertex>(0.0, 0.0);
-    Vertex &v1 = s.new_element<Vertex>(1.0, 0.0);
-    Vertex &v2 = s.new_element<Vertex>(1.0, 1.0);
-    Vertex &v3 = s.new_element<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
     LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
     LineSegment &l1 = s.new_element<LineSegment>(v1, v2);

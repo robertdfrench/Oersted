@@ -13,7 +13,7 @@ public:
     Contour(const std::vector<const Curve *> &c, const std::vector<bool> &dir);
 
     //Public Member Functions
-    const Vertex *vertex(size_t i) const { return (Orientation[i] ? Curves[i]->start() : Curves[i]->end()); };
+    std::shared_ptr<Vertex> vertex(size_t i) const { return (Orientation[i] ? Curves[i]->start() : Curves[i]->end()); };
 
     const Curve *curve(size_t i) const { return Curves[i]; };
 

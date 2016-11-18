@@ -3,11 +3,11 @@
 
 class Fixation : public Constraint {
 public:
-    Vertex *Point;
-    Vertex *Dim;
+    std::shared_ptr<Vertex> Point;
+    sPoint Dim;
 
     // Constructors
-    Fixation(Vertex &v);
+    Fixation(std::shared_ptr<Vertex> v);
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {
