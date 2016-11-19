@@ -6,22 +6,22 @@
 class Contour {
 public:
     // Constructors
-    Contour() : Curves(std::vector<const Curve *>()), Orientation(std::vector<bool>()) {};
+    Contour() : Curves(std::vector<std::shared_ptr<Curve>>()), Orientation(std::vector<bool>()) {};
 
-    Contour(const std::vector<const Curve *> &c);
+    Contour(std::vector<std::shared_ptr<Curve>> const &c);
 
-    Contour(const std::vector<const Curve *> &c, const std::vector<bool> &dir);
+    Contour(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir);
 
     //Public Member Functions
     std::shared_ptr<Vertex> vertex(size_t i) const { return (Orientation[i] ? Curves[i]->start() : Curves[i]->end()); };
 
-    const Curve *curve(size_t i) const { return Curves[i]; };
+    std::shared_ptr<Curve> curve(size_t i) const { return Curves[i]; };
 
     const bool orientation(size_t i) const { return Orientation[i]; };
 
     const size_t size() const { return Curves.size(); };
 
-    bool initialize(const std::vector<const Curve *> &c, const std::vector<bool> &dir);
+    bool initialize(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir);
 
     auto begin() { return Curves.begin(); };
 
@@ -36,7 +36,7 @@ public:
     double area() const;
 
 private:
-    std::vector<const Curve *> Curves;
+    std::vector<std::shared_ptr<Curve>> Curves;
     std::vector<bool> Orientation;
 };
 

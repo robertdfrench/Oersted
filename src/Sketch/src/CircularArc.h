@@ -13,10 +13,9 @@ public:
 
     friend class Tangency;
 
-    // Constructors
     CircularArc() : Curve(), Radius(std::make_shared<Variable>(0.0)) {};
 
-    CircularArc(const CircularArc *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
+    CircularArc(CircularArc const *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
 
     CircularArc(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {};
 
@@ -24,12 +23,10 @@ public:
 
     CircularArc(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> c, std::shared_ptr<Variable> r, Sketch &s, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(r) {};
 
-    // Accessors
     std::shared_ptr<Vertex> center() const { return Center; };
 
     double radius() const { return Radius->value(); };
 
-    // Virtual Function Implementation
     void get_verticies(std::list<std::shared_ptr<Vertex>> &v) const override {
         v.push_back(Start);
         v.push_back(End);
@@ -45,7 +42,6 @@ public:
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
 
-    // Calculation
     sPoint point(double s) const override;
 
     Vertex tangent(double s, bool orientation) const override;
@@ -60,20 +56,17 @@ public:
 
     std::pair<double, double> supremum() const override;
 
-    // Curve-Vertex Comparison
     using Curve::on_manifold;
 
     using Curve::on_segment;
 
-    // Curve-Curve Comparison
-    bool is_identical(const Curve *c) const override;
+    bool is_identical(std::shared_ptr<Curve> c) const override;
 
-    bool is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const override;
+    bool is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const override;
 
-    bool is_coincident(const Curve *c) const override;
+    bool is_coincident(std::shared_ptr<Curve> c) const override;
 
-    // Modification
-    Curve *clone() const override { return new CircularArc(this); };
+    std::shared_ptr<Curve> clone() const override { return std::make_shared<CircularArc>(this); };
 
     void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
 

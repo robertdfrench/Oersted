@@ -3,10 +3,10 @@
 
 class Vertical : public Constraint {
 public:
-    LineSegment *Line;
+    std::shared_ptr<LineSegment> Line;
 
     // Constructors
-    Vertical(LineSegment &l) : Line(&l) {};
+    Vertical(std::shared_ptr<LineSegment> l) : Line(l) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {

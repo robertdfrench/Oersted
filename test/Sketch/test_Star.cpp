@@ -20,14 +20,14 @@ TEST(Star, Suite_0) {
     auto v3 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 1.0);
     auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, -1.0);
 
-    LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v2, v0);
-    LineSegment &l2 = sketch.new_element<LineSegment>(v3, v0);
-    LineSegment &l3 = sketch.new_element<LineSegment>(v0, v4);
-    LineSegment &l4 = sketch.new_element<LineSegment>(v1, v2);
-    LineSegment &l5 = sketch.new_element<LineSegment>(v2, v3);
-    LineSegment &l6 = sketch.new_element<LineSegment>(v3, v4);
-    LineSegment &l7 = sketch.new_element<LineSegment>(v4, v1);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v2, v0);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l3 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v4);
+    auto l4 = sketch.new_element_SHARED_PTR<LineSegment>(v1, v2);
+    auto l5 = sketch.new_element_SHARED_PTR<LineSegment>(v2, v3);
+    auto l6 = sketch.new_element_SHARED_PTR<LineSegment>(v3, v4);
+    auto l7 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v1);
 
     Star star{v0, &sketch};
 
@@ -36,16 +36,16 @@ TEST(Star, Suite_0) {
 
     auto b = star.begin();
 
-    EXPECT_TRUE((b->Path == &l2));
+    EXPECT_TRUE((b->Path == l2));
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &l0);
+    EXPECT_TRUE((++b)->Path == l0);
     EXPECT_TRUE(b->Orientation == true);
 
-    EXPECT_TRUE((++b)->Path == &l1);
+    EXPECT_TRUE((++b)->Path == l1);
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &l3);
+    EXPECT_TRUE((++b)->Path == l3);
     EXPECT_TRUE(b->Orientation == true);
 
     for (auto b = star.begin(); b != star.end(); ++b) {
@@ -54,10 +54,10 @@ TEST(Star, Suite_0) {
         EXPECT_TRUE(star.next(b->Path) == c->Path);
     }
 
-    EXPECT_TRUE(star.next(&l4) == nullptr);
-    EXPECT_TRUE(star.next(&l5) == nullptr);
-    EXPECT_TRUE(star.next(&l6) == nullptr);
-    EXPECT_TRUE(star.next(&l7) == nullptr);
+    EXPECT_TRUE(star.next(l4) == nullptr);
+    EXPECT_TRUE(star.next(l5) == nullptr);
+    EXPECT_TRUE(star.next(l6) == nullptr);
+    EXPECT_TRUE(star.next(l7) == nullptr);
 
     double angle = 0.0;
     for (auto b = star.begin(); b != star.end(); ++b) {
@@ -75,10 +75,10 @@ TEST(Star, Suite_1) {
     auto v1 = sketch.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
     auto v2 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
-    CircularArc &c0 = sketch.new_element<CircularArc>(v0, vs, vc, 1.0);
-    CircularArc &c1 = sketch.new_element<CircularArc>(vs, v2, vc, 1.0);
-    LineSegment &l0 = sketch.new_element<LineSegment>(vs, v1);
-    LineSegment &l1 = sketch.new_element<LineSegment>(vc, vs);
+    auto c0 = sketch.new_element_SHARED_PTR<CircularArc>(v0, vs, vc, 1.0);
+    auto c1 = sketch.new_element_SHARED_PTR<CircularArc>(vs, v2, vc, 1.0);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(vs, v1);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(vc, vs);
 
     Star star{vs, &sketch};
 
@@ -87,16 +87,16 @@ TEST(Star, Suite_1) {
 
     auto b = star.begin();
 
-    EXPECT_TRUE(b->Path == &l0);
+    EXPECT_TRUE(b->Path == l0);
     EXPECT_TRUE(b->Orientation == true);
 
-    EXPECT_TRUE((++b)->Path == &c0);
+    EXPECT_TRUE((++b)->Path == c0);
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &l1);
+    EXPECT_TRUE((++b)->Path == l1);
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &c1);
+    EXPECT_TRUE((++b)->Path == c1);
     EXPECT_TRUE(b->Orientation == true);
 
     for (auto b = star.begin(); b != star.end(); ++b) {
@@ -125,12 +125,12 @@ TEST(Star, Suite_2) {
     auto v3 = sketch.new_element_SHARED_PTR<Vertex>(0.0, M_SQRT2);
     auto v4 = sketch.new_element_SHARED_PTR<Vertex>(M_SQRT2, M_SQRT2);
 
-    CircularArc &c0 = sketch.new_element<CircularArc>(v0, vs, vc, 1.0);
-    CircularArc &c1 = sketch.new_element<CircularArc>(vs, v1, vc, 1.0);
-    LineSegment &l0 = sketch.new_element<LineSegment>(vs, v2);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v3, vs);
-    LineSegment &l2 = sketch.new_element<LineSegment>(vc, vs);
-    LineSegment &l3 = sketch.new_element<LineSegment>(vs, v4);
+    auto c0 = sketch.new_element_SHARED_PTR<CircularArc>(v0, vs, vc, 1.0);
+    auto c1 = sketch.new_element_SHARED_PTR<CircularArc>(vs, v1, vc, 1.0);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(vs, v2);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v3, vs);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(vc, vs);
+    auto l3 = sketch.new_element_SHARED_PTR<LineSegment>(vs, v4);
 
     Star star{vs, &sketch};
 
@@ -139,22 +139,22 @@ TEST(Star, Suite_2) {
 
     auto b = star.begin();
 
-    EXPECT_TRUE(b->Path == &c1);
+    EXPECT_TRUE(b->Path == c1);
     EXPECT_TRUE(b->Orientation == true);
 
-    EXPECT_TRUE((++b)->Path == &l1);
+    EXPECT_TRUE((++b)->Path == l1);
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &l3);
+    EXPECT_TRUE((++b)->Path == l3);
     EXPECT_TRUE(b->Orientation == true);
 
-    EXPECT_TRUE((++b)->Path == &l0);
+    EXPECT_TRUE((++b)->Path == l0);
     EXPECT_TRUE(b->Orientation == true);
 
-    EXPECT_TRUE((++b)->Path == &c0);
+    EXPECT_TRUE((++b)->Path == c0);
     EXPECT_TRUE(b->Orientation == false);
 
-    EXPECT_TRUE((++b)->Path == &l2);
+    EXPECT_TRUE((++b)->Path == l2);
     EXPECT_TRUE(b->Orientation == false);
 
     for (auto b = star.begin(); b != star.end(); ++b) {
@@ -184,17 +184,17 @@ TEST(Star, find_closed_contour_0) {
     auto v7 = sketch.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
     auto v8 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
-    LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v0, v7);
-    LineSegment &l2 = sketch.new_element<LineSegment>(v0, v8);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v7);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v8);
 
-    LineSegment &l3 = sketch.new_element<LineSegment>(v1, v2);
-    LineSegment &l4 = sketch.new_element<LineSegment>(v1, v3);
-    LineSegment &l5 = sketch.new_element<LineSegment>(v1, v4);
+    auto l3 = sketch.new_element_SHARED_PTR<LineSegment>(v1, v2);
+    auto l4 = sketch.new_element_SHARED_PTR<LineSegment>(v1, v3);
+    auto l5 = sketch.new_element_SHARED_PTR<LineSegment>(v1, v4);
 
-    LineSegment &l6 = sketch.new_element<LineSegment>(v4, v5);
-    LineSegment &l7 = sketch.new_element<LineSegment>(v4, v6);
-    LineSegment &l8 = sketch.new_element<LineSegment>(v4, v0);
+    auto l6 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v5);
+    auto l7 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v6);
+    auto l8 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v0);
 
     // Manual contour creation
     {
@@ -216,9 +216,9 @@ TEST(Star, find_closed_contour_0) {
 
         auto contour = sketch.contour(0);
         EXPECT_TRUE(contour->size() == 3);
-        EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
-        EXPECT_TRUE(&l5 == contour->curve(0) || &l5 == contour->curve(1) || &l5 == contour->curve(2));
-        EXPECT_TRUE(&l8 == contour->curve(0) || &l8 == contour->curve(1) || &l8 == contour->curve(2));
+        EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
+        EXPECT_TRUE(l5 == contour->curve(0) || l5 == contour->curve(1) || l5 == contour->curve(2));
+        EXPECT_TRUE(l8 == contour->curve(0) || l8 == contour->curve(1) || l8 == contour->curve(2));
     }
 }
 
@@ -231,12 +231,12 @@ TEST(Star, find_closed_contour_1) {
     auto v3 = sketch.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
     auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
-    LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v0, v2);
-    LineSegment &l2 = sketch.new_element<LineSegment>(v4, v0);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v2);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v0);
 
-    CircularArc &c0 = sketch.new_element<CircularArc>(v1, v2, v0, 1.0);
-    CircularArc &c1 = sketch.new_element<CircularArc>(v3, v1, v0, 1.0);
+    auto c0 = sketch.new_element_SHARED_PTR<CircularArc>(v1, v2, v0, 1.0);
+    auto c1 = sketch.new_element_SHARED_PTR<CircularArc>(v3, v1, v0, 1.0);
 
     // Manual contour construction
     {
@@ -257,9 +257,9 @@ TEST(Star, find_closed_contour_1) {
 
         auto contour = sketch.contour(0);
         EXPECT_TRUE(contour->size() == 3);
-        EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
-        EXPECT_TRUE(&l1 == contour->curve(0) || &l1 == contour->curve(1) || &l1 == contour->curve(2));
-        EXPECT_TRUE(&c0 == contour->curve(0) || &c0 == contour->curve(1) || &c0 == contour->curve(2));
+        EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
+        EXPECT_TRUE(l1 == contour->curve(0) || l1 == contour->curve(1) || l1 == contour->curve(2));
+        EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
     }
 }
 
@@ -273,14 +273,14 @@ TEST(Star, find_closed_contour_2) {
     auto v4 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
     auto v5 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
 
-    LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v0, v2);
-    LineSegment &l2 = sketch.new_element<LineSegment>(v4, v0);
-    LineSegment &l3 = sketch.new_element<LineSegment>(v1, v5);
-    LineSegment &l4 = sketch.new_element<LineSegment>(v5, v2);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v2);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(v4, v0);
+    auto l3 = sketch.new_element_SHARED_PTR<LineSegment>(v1, v5);
+    auto l4 = sketch.new_element_SHARED_PTR<LineSegment>(v5, v2);
 
-    CircularArc &c0 = sketch.new_element<CircularArc>(v1, v2, v0, 1.0);
-    CircularArc &c1 = sketch.new_element<CircularArc>(v3, v1, v0, 1.0);
+    auto c0 = sketch.new_element_SHARED_PTR<CircularArc>(v1, v2, v0, 1.0);
+    auto c1 = sketch.new_element_SHARED_PTR<CircularArc>(v3, v1, v0, 1.0);
 
     // Manual contour construction
     {
@@ -305,16 +305,16 @@ TEST(Star, find_closed_contour_2) {
         auto contour = sketch.contour(1);
 
         EXPECT_EQ(contour->size(), 3);
-        EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
-        EXPECT_TRUE(&l1 == contour->curve(0) || &l1 == contour->curve(1) || &l1 == contour->curve(2));
-        EXPECT_TRUE(&c0 == contour->curve(0) || &c0 == contour->curve(1) || &c0 == contour->curve(2));
+        EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
+        EXPECT_TRUE(l1 == contour->curve(0) || l1 == contour->curve(1) || l1 == contour->curve(2));
+        EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
 
         contour = sketch.contour(0);
 
         EXPECT_EQ(contour->size(), 3);
-        EXPECT_TRUE(&l3 == contour->curve(0) || &l3 == contour->curve(1) || &l3 == contour->curve(2));
-        EXPECT_TRUE(&l4 == contour->curve(0) || &l4 == contour->curve(1) || &l4 == contour->curve(2));
-        EXPECT_TRUE(&c0 == contour->curve(0) || &c0 == contour->curve(1) || &c0 == contour->curve(2));
+        EXPECT_TRUE(l3 == contour->curve(0) || l3 == contour->curve(1) || l3 == contour->curve(2));
+        EXPECT_TRUE(l4 == contour->curve(0) || l4 == contour->curve(1) || l4 == contour->curve(2));
+        EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
 
         auto c0 = sketch.contour(0);
         auto c1 = sketch.contour(1);
@@ -332,10 +332,10 @@ TEST(Star, find_closed_contour_2) {
         auto boundary = sketch.boundary();
 
         EXPECT_EQ(boundary->size(), 4);
-        EXPECT_TRUE(&l0 == boundary->curve(0) || &l0 == boundary->curve(1) || &l0 == boundary->curve(2) || &l0 == boundary->curve(3));
-        EXPECT_TRUE(&l1 == boundary->curve(0) || &l1 == boundary->curve(1) || &l1 == boundary->curve(2) || &l1 == boundary->curve(3));
-        EXPECT_TRUE(&l3 == boundary->curve(0) || &l3 == boundary->curve(1) || &l3 == boundary->curve(2) || &l3 == boundary->curve(3));
-        EXPECT_TRUE(&l4 == boundary->curve(0) || &l4 == boundary->curve(1) || &l4 == boundary->curve(2) || &l4 == boundary->curve(3));
+        EXPECT_TRUE(l0 == boundary->curve(0) || l0 == boundary->curve(1) || l0 == boundary->curve(2) || l0 == boundary->curve(3));
+        EXPECT_TRUE(l1 == boundary->curve(0) || l1 == boundary->curve(1) || l1 == boundary->curve(2) || l1 == boundary->curve(3));
+        EXPECT_TRUE(l3 == boundary->curve(0) || l3 == boundary->curve(1) || l3 == boundary->curve(2) || l3 == boundary->curve(3));
+        EXPECT_TRUE(l4 == boundary->curve(0) || l4 == boundary->curve(1) || l4 == boundary->curve(2) || l4 == boundary->curve(3));
     }
 }
 
@@ -349,8 +349,8 @@ TEST(Star, find_closed_contour_3) {
     auto v0 = sketch.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
     auto v1 = sketch.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
 
-    CircularArc &arc = sketch.new_element<CircularArc>(v0, v1, vc, 1.0);
-    LineSegment &line = sketch.new_element<LineSegment>(v1, v0);
+    auto arc = sketch.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 1.0);
+    auto line = sketch.new_element_SHARED_PTR<LineSegment>(v1, v0);
 
     // Manual contour construction
     {
@@ -372,8 +372,8 @@ TEST(Star, find_closed_contour_3) {
         auto contour = sketch.contour(0);
 
         EXPECT_TRUE(contour->size() == 2);
-        EXPECT_TRUE(&arc == contour->curve(0) || &arc == contour->curve(1));
-        EXPECT_TRUE(&line == contour->curve(0) || &line == contour->curve(1));
+        EXPECT_TRUE(arc == contour->curve(0) || arc == contour->curve(1));
+        EXPECT_TRUE(line == contour->curve(0) || line == contour->curve(1));
     }
 }
 
@@ -385,12 +385,12 @@ TEST(Star, with_construction_lines) {
     auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
     auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v1);
-    LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
-    LineSegment &l2 = s.new_element<LineSegment>(v2, v3);
-    LineSegment &l3 = s.new_element<LineSegment>(v3, v0);
-    LineSegment &l4 = s.new_element<LineSegment>(v0, v2);
-    l4.ForConstruction = true;
+    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
+    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
+    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v0, v2);
+    l4->ForConstruction = true;
 
     s.solve();
     s.build();

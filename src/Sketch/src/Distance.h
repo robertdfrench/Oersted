@@ -4,15 +4,13 @@
 template<class T>
 class Distance : public Constraint {
 public:
-    T *Element0;
-    T *Element1;
+    std::shared_ptr<T> Element0;
+    std::shared_ptr<T> Element1;
 
     double Dim;
 
-    // Constructors
-    Distance(T &e0, T &e1, double d) : Element0(&e0), Element1(&e1), Dim(d) {};
+    Distance(std::shared_ptr<T> e0, std::shared_ptr<T> e1, double d) : Element0(e0), Element1(e1), Dim(d) {};
 
-    // Public Member Functions
     size_t set_equation_index(size_t i) override;
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;

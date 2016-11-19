@@ -199,10 +199,12 @@ bool CircularArc::on_manifold(const double x, const double y) const {
     }
 }
 
-bool CircularArc::is_identical(const Curve *c) const {
-    const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
+bool CircularArc::is_identical(std::shared_ptr<Curve> c) const {
+    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
 
-    if (cc == nullptr) {
+    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+
+    if (cc.get() == nullptr) {
         return false;
     } else {
         return is_identical(
@@ -216,10 +218,12 @@ bool CircularArc::is_identical(const Curve *c) const {
     }
 }
 
-bool CircularArc::is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const {
-    const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
+bool CircularArc::is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const {
+    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
 
-    if (cc == nullptr) {
+    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+
+    if (cc.get() == nullptr) {
         return false;
     } else {
         double xc, yc, xs, ys, xe, ye;
@@ -245,10 +249,12 @@ bool CircularArc::is_identical(const double r, const double xc, const double yc,
            && abs(end()->y() - ye) < tol;
 }
 
-bool CircularArc::is_coincident(const Curve *c) const {
-    const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
+bool CircularArc::is_coincident(std::shared_ptr<Curve> c) const {
+    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
 
-    if (cc == nullptr) {
+    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+
+    if (cc.get() == nullptr) {
         return false;
     } else {
         // #TODO: Extract input curve center, put the rest of the method in subroutine

@@ -62,14 +62,14 @@ public:
     using Curve::on_segment;
 
     // Curve-Curve Comparison
-    bool is_identical(const Curve *c) const override;
+    bool is_identical(std::shared_ptr<Curve> c) const override;
 
-    bool is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const override;
+    bool is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const override;
 
-    bool is_coincident(const Curve *c) const override;
+    bool is_coincident(std::shared_ptr<Curve> c) const override;
 
     // Modification
-    Curve *clone() const override { return new LineSegment(this); };
+    std::shared_ptr<Curve> clone() const override { return std::make_shared<LineSegment>(this); };
 
     void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
 

@@ -11,14 +11,8 @@ void Sketch::delete_me() {
 
     Verticies.clear();
 
-    for (auto x : Curves) {
-        delete x;
-    }
     Curves.clear();
 
-    for (auto x : Constraints) {
-        delete x;
-    }
     Constraints.clear();
 
     Patterns.clear();
@@ -82,11 +76,11 @@ void Sketch::add_element(std::shared_ptr<Vertex> v) {
     add_element(Verticies, v);
 }
 
-void Sketch::add_element(Curve &c) {
+void Sketch::add_element(std::shared_ptr<Curve> c) {
     add_element(Curves, c);
 }
 
-void Sketch::add_element(Constraint &c) {
+void Sketch::add_element(std::shared_ptr<Constraint> c) {
     add_element(Constraints, c);
 }
 

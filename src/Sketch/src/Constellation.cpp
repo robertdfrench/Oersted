@@ -8,7 +8,7 @@ Constellation::Constellation(const Sketch *s) {
 }
 
 bool Constellation::twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out) {
-    const Curve *c = b_out->Path; // #TODO: Local variable 'c' is only assigned but never accessed
+    std::shared_ptr<Curve> c = b_out->Path; // #TODO: Local variable 'c' is only assigned but never accessed
 
     for (auto s = Stars.begin(); s != Stars.end(); ++s) {
         if (s != s_out) {
@@ -44,7 +44,7 @@ void Constellation::supremum(std::list<Star>::iterator &s_out, std::list<Branch>
     }
 }
 
-void Constellation::pop(const Curve *c) {
+void Constellation::pop(std::shared_ptr<Curve> c) {
     bool iterate = true;
 
     while (iterate) {
@@ -76,7 +76,7 @@ void Constellation::pop(const Curve *c) {
 }
 
 bool Constellation::boundary(std::shared_ptr<Contour> c) {
-    std::vector<const Curve *> curves;
+    std::vector<std::shared_ptr<Curve>> curves;
     std::vector<bool> orientation;
 
     // Base of induction
@@ -122,7 +122,7 @@ bool Constellation::boundary(std::shared_ptr<Contour> c) {
 }
 
 bool Constellation::contours(std::vector<std::shared_ptr<Contour>> &contours) {
-    std::vector<const Curve *> contour_curves;
+    std::vector<std::shared_ptr<Curve>> contour_curves;
     std::vector<bool> orientation;
 
     while (size() > 0) {
@@ -137,7 +137,7 @@ bool Constellation::contours(std::vector<std::shared_ptr<Contour>> &contours) {
     return true;
 }
 
-bool Constellation::find_closed_contour(std::vector<const Curve *> &curves, std::vector<bool> &orientation) {
+bool Constellation::find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation) {
     curves.resize(0);
     orientation.resize(0);
 

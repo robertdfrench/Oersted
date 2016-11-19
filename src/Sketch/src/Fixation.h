@@ -6,10 +6,8 @@ public:
     std::shared_ptr<Vertex> Point;
     sPoint Dim;
 
-    // Constructors
     Fixation(std::shared_ptr<Vertex> v);
 
-    // Public Member Functions
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 2;

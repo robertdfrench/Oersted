@@ -22,17 +22,17 @@ TEST(Stator, 0) {
     auto v5 = sketch.new_element_SHARED_PTR<Vertex>(ri * cos(as), ri * sin(as));
     auto v6 = sketch.new_element_SHARED_PTR<Vertex>(rb * cos(as), rb * sin(as));
 
-    LineSegment &l0 = sketch.new_element<LineSegment>(v0, v1);
-    CircularArc &c0 = sketch.new_element<CircularArc>(v1, v2, origin, ro);
-    LineSegment &l1 = sketch.new_element<LineSegment>(v2, v3);
-    LineSegment &l2 = sketch.new_element<LineSegment>(v3, v4);
-    CircularArc &c1 = sketch.new_element<CircularArc>(v5, v4, origin, ri);
-    CircularArc &c2 = sketch.new_element<CircularArc>(v0, v5, origin, ri);
-    LineSegment &l3 = sketch.new_element<LineSegment>(v5, v6);
-    CircularArc &c3 = sketch.new_element<CircularArc>(v6, v3, origin, rb);
+    auto l0 = sketch.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto c0 = sketch.new_element_SHARED_PTR<CircularArc>(v1, v2, origin, ro);
+    auto l1 = sketch.new_element_SHARED_PTR<LineSegment>(v2, v3);
+    auto l2 = sketch.new_element_SHARED_PTR<LineSegment>(v3, v4);
+    auto c1 = sketch.new_element_SHARED_PTR<CircularArc>(v5, v4, origin, ri);
+    auto c2 = sketch.new_element_SHARED_PTR<CircularArc>(v0, v5, origin, ri);
+    auto l3 = sketch.new_element_SHARED_PTR<LineSegment>(v5, v6);
+    auto c3 = sketch.new_element_SHARED_PTR<CircularArc>(v6, v3, origin, rb);
 
     auto mvec = sketch.curves();
-    auto m0 = sketch.new_element_SHARED_PTR<MirrorCopy>(mvec, &l1, true);
+    auto m0 = sketch.new_element_SHARED_PTR<MirrorCopy>(mvec, l1, true);
 
     auto rvec = sketch.curves();
     auto rcopy = sketch.new_element_SHARED_PTR<RotateCopy>(rvec, origin, 360.0 / Nt, 1, true);
@@ -44,23 +44,23 @@ TEST(Stator, 0) {
     EXPECT_TRUE(sketch.build());
     EXPECT_EQ(sketch.boundary()->size(), 14);
 
-    Fixation &f = sketch.new_element<Fixation>(origin);
+    auto f = sketch.new_element_SHARED_PTR<Fixation>(origin);
 
-    Coincident<LineSegment> &coin0 = sketch.new_element<Coincident<LineSegment>>(origin, l0);
-    Coincident<LineSegment> &coin1 = sketch.new_element<Coincident<LineSegment>>(origin, l1);
-    Coincident<LineSegment> &coin2 = sketch.new_element<Coincident<LineSegment>>(origin, l2);
+    auto coin0 = sketch.new_element_SHARED_PTR<Coincident<LineSegment>>(origin, l0);
+    auto coin1 = sketch.new_element_SHARED_PTR<Coincident<LineSegment>>(origin, l1);
+    auto coin2 = sketch.new_element_SHARED_PTR<Coincident<LineSegment>>(origin, l2);
 
-    Horizontal &horz0 = sketch.new_element<Horizontal>(l0);
+    auto horz0 = sketch.new_element_SHARED_PTR<Horizontal>(l0);
 
-    Radius &rad0 = sketch.new_element<Radius>(c0, ro);
-    Radius &rad1 = sketch.new_element<Radius>(c1, ri);
-    Radius &rad2 = sketch.new_element<Radius>(c2, ri);
-    Radius &rad3 = sketch.new_element<Radius>(c3, rb);
+    auto rad0 = sketch.new_element_SHARED_PTR<Radius>(c0, ro);
+    auto rad1 = sketch.new_element_SHARED_PTR<Radius>(c1, ri);
+    auto rad2 = sketch.new_element_SHARED_PTR<Radius>(c2, ri);
+    auto rad3 = sketch.new_element_SHARED_PTR<Radius>(c3, rb);
 
-    Angle &ang0 = sketch.new_element<Angle>(l1, l0, (at * 180.0 / M_PI));
-    Angle &ang1 = sketch.new_element<Angle>(l2, l0, (at * 180.0 / M_PI));
+    auto ang0 = sketch.new_element_SHARED_PTR<Angle>(l1, l0, (at * 180.0 / M_PI));
+    auto ang1 = sketch.new_element_SHARED_PTR<Angle>(l2, l0, (at * 180.0 / M_PI));
 
-    Distance<LineSegment> &dist0 = sketch.new_element<Distance<LineSegment>>(l0, l3, dt);
+    auto dist0 = sketch.new_element_SHARED_PTR<Distance<LineSegment>>(l0, l3, dt);
 
     sketch.solve();
 

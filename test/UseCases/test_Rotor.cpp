@@ -26,15 +26,15 @@ TEST(Rotor, 0) {
     auto v6 = s.new_element_SHARED_PTR<Vertex>(xm, ym);
     auto v7 = s.new_element_SHARED_PTR<Vertex>(xm, -ym);
 
-    LineSegment &l0 = s.new_element<LineSegment>(v0, v3);
-    LineSegment &l1 = s.new_element<LineSegment>(v1, v2);
-    CircularArc &c0 = s.new_element<CircularArc>(v1, v0, origin, ri);
-    CircularArc &c1 = s.new_element<CircularArc>(v2, v3, origin, ro);
+    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v3);
+    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
+    auto c0 = s.new_element_SHARED_PTR<CircularArc>(v1, v0, origin, ri);
+    auto c1 = s.new_element_SHARED_PTR<CircularArc>(v2, v3, origin, ro);
 
-    s.new_element<LineSegment>(v4, v5);
-    s.new_element<LineSegment>(v5, v6);
-    s.new_element<LineSegment>(v6, v7);
-    s.new_element<LineSegment>(v7, v4);
+    s.new_element_SHARED_PTR<LineSegment>(v4, v5);
+    s.new_element_SHARED_PTR<LineSegment>(v5, v6);
+    s.new_element_SHARED_PTR<LineSegment>(v6, v7);
+    s.new_element_SHARED_PTR<LineSegment>(v7, v4);
 
     s.solve();
 
@@ -86,45 +86,45 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     auto vr1 = s.new_element_SHARED_PTR<Vertex>(ro * cos(arad * (1.0 - 2.0 * pd)), ro * sin(arad * (1.0 - 2.0 * pd)));
 
     // LineSegment
-    LineSegment &l0 = s.new_element<LineSegment>(vi0, vo0);
+    auto l0 = s.new_element_SHARED_PTR<LineSegment>(vi0, vo0);
 
-    LineSegment &l1 = s.new_element<LineSegment>(vi1, vm1);
-    LineSegment &l2 = s.new_element<LineSegment>(vm1, vm0);
-    LineSegment &l3 = s.new_element<LineSegment>(vm0, vo1);
+    auto l1 = s.new_element_SHARED_PTR<LineSegment>(vi1, vm1);
+    auto l2 = s.new_element_SHARED_PTR<LineSegment>(vm1, vm0);
+    auto l3 = s.new_element_SHARED_PTR<LineSegment>(vm0, vo1);
 
     // CircularArc
-    CircularArc &c0 = s.new_element<CircularArc>(vi0, vi1, origin, ri);
+    auto c0 = s.new_element_SHARED_PTR<CircularArc>(vi0, vi1, origin, ri);
 
-    CircularArc &c1 = s.new_element<CircularArc>(vo0, vr1, origin, ro);
-    CircularArc &c2 = s.new_element<CircularArc>(vr1, vr0, origin, ro);
-    CircularArc &c3 = s.new_element<CircularArc>(vr0, vo1, origin, ro);
+    auto c1 = s.new_element_SHARED_PTR<CircularArc>(vo0, vr1, origin, ro);
+    auto c2 = s.new_element_SHARED_PTR<CircularArc>(vr1, vr0, origin, ro);
+    auto c3 = s.new_element_SHARED_PTR<CircularArc>(vr0, vo1, origin, ro);
 
-    CircularArc &c4 = s.new_element<CircularArc>(vm0, vr0, vc0, pd * dmax);
-    CircularArc &c5 = s.new_element<CircularArc>(vm1, vr1, vc0, 2.0 * pd * dmax);
+    auto c4 = s.new_element_SHARED_PTR<CircularArc>(vm0, vr0, vc0, pd * dmax);
+    auto c5 = s.new_element_SHARED_PTR<CircularArc>(vm1, vr1, vc0, 2.0 * pd * dmax);
 
     // Fixation
-    Fixation &fo = s.new_element<Fixation>(origin);
+    auto fo = s.new_element_SHARED_PTR<Fixation>(origin);
 
     // Horizontal
-    Horizontal &ho = s.new_element<Horizontal>(l0);
+    auto ho = s.new_element_SHARED_PTR<Horizontal>(l0);
 
     // Angles
-    Angle &ao = s.new_element<Angle>(l0, l1, adeg);
-    Angle &a1 = s.new_element<Angle>(l0, l2, adeg);
-    Angle &a2 = s.new_element<Angle>(l0, l3, adeg);
+    auto ao = s.new_element_SHARED_PTR<Angle>(l0, l1, adeg);
+    auto a1 = s.new_element_SHARED_PTR<Angle>(l0, l2, adeg);
+    auto a2 = s.new_element_SHARED_PTR<Angle>(l0, l3, adeg);
 
     // Coincident
-    Coincident<LineSegment> &coinc0 = s.new_element<Coincident<LineSegment>>(vc0, l1);
+    auto coinc0 = s.new_element_SHARED_PTR<Coincident<LineSegment>>(vc0, l1);
 
     // Radius
-    Radius &rad0 = s.new_element<Radius>(c0, ri);
-    Radius &rad1 = s.new_element<Radius>(c1, ro);
-    Radius &rad2 = s.new_element<Radius>(c2, ro);
-    Radius &rad3 = s.new_element<Radius>(c3, ro);
+    auto rad0 = s.new_element_SHARED_PTR<Radius>(c0, ri);
+    auto rad1 = s.new_element_SHARED_PTR<Radius>(c1, ro);
+    auto rad2 = s.new_element_SHARED_PTR<Radius>(c2, ro);
+    auto rad3 = s.new_element_SHARED_PTR<Radius>(c3, ro);
 
     // Distance
-    Distance<std::shared_ptr<Vertex>> &dist0 = s.new_element<Distance<std::shared_ptr<Vertex>>>(vr0, vo1, pd * dmax);
-    Distance<std::shared_ptr<Vertex>> &dist1 = s.new_element<Distance<std::shared_ptr<Vertex>>>(vr1, vr0, pd * dmax);
+    auto dist0 = s.new_element_SHARED_PTR<Distance<Vertex>>(vr0, vo1, pd * dmax);
+    auto dist1 = s.new_element_SHARED_PTR<Distance<Vertex>>(vr1, vr0, pd * dmax); // TODO: Fix distance with shared_ptr
 
     // Solve
     s.solve();

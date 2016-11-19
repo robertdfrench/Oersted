@@ -1,16 +1,14 @@
 #ifndef OERSTED_LENGTH_H
 #define OERSTED_LENGTH_H
 
-class Length : public Constraint {
+class Length : public Constraint { // TODO: Public member variables?
 public:
-    LineSegment *Line;
+    std::shared_ptr<LineSegment> Line;
 
     double Dim;
 
-    // Constructors
-    Length(LineSegment &c, double length) : Line(&c), Dim(length) {};
+    Length(std::shared_ptr<LineSegment> c, double length) : Line(c), Dim(length) {};
 
-    // Public Member Functions
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 1;

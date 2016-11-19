@@ -3,11 +3,11 @@
 
 class Tangency : public Constraint {
 public:
-    CircularArc *Arc;
-    LineSegment *Line;
+    std::shared_ptr<CircularArc> Arc;
+    std::shared_ptr<LineSegment>Line;
 
     // Constructors
-    Tangency(CircularArc &ca, LineSegment &ls) : Arc(&ca), Line(&ls) {};
+    Tangency(std::shared_ptr<CircularArc> ca, std::shared_ptr<LineSegment> ls) : Arc(ca), Line(ls) {};
 
     // Public Member Functions
     size_t set_equation_index(size_t i) override {

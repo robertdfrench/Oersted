@@ -5,10 +5,10 @@
 
 class MirrorCopy : public Pattern {
 public:
-    MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool remove_internal = false);
+    MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal = false);
 
 private:
-    LineSegment *SymmetryLine;
+    std::shared_ptr<LineSegment> SymmetryLine;
 };
 
 #endif //OERSTED_MIRRORCOPY_H

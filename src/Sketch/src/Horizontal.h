@@ -3,12 +3,10 @@
 
 class Horizontal : public Constraint {
 public:
-    LineSegment *Line;
+    std::shared_ptr<LineSegment> Line;
 
-    // Constructors
-    Horizontal(LineSegment &l) : Line(&l) {};
+    Horizontal(std::shared_ptr<LineSegment> l) : Line(l) {};
 
-    // Public Member Functions
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 1;

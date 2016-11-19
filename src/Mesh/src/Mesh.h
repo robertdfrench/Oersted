@@ -21,11 +21,11 @@ class DartConstraint {
 public:
     DartConstraint() : S0(DBL_MAX), S1(DBL_MAX), ConstraintCurve(nullptr) {};
 
-    DartConstraint(double s0, double s1, Curve const *cc) : S0(s0), S1(s1), ConstraintCurve(cc) {};
+    DartConstraint(double s0, double s1, std::shared_ptr<Curve> cc) : S0(s0), S1(s1), ConstraintCurve(cc) {};
 
     double S0;
     double S1;
-    Curve const *ConstraintCurve;
+    std::shared_ptr<Curve> ConstraintCurve;
 };
 
 class Mesh {
@@ -92,7 +92,7 @@ public:
 
     DartConstraint const constraint(size_t ei) const { return Constraints[Edges[ei].Constraint]; };
 
-    Curve const *constraint_curve(size_t ei) const { return Constraints[Edges[ei].Constraint].ConstraintCurve; };
+    std::shared_ptr<Curve> constraint_curve(size_t ei) const { return Constraints[Edges[ei].Constraint].ConstraintCurve; };
 
     Point circumcenter(size_t ei) const;
 
@@ -129,7 +129,7 @@ public:
 
 protected:
     std::shared_ptr<Contour> Boundary;
-    std::vector<Curve const *> Curves;
+    std::vector<std::shared_ptr<Curve>> Curves;
     std::vector<std::shared_ptr<Contour>> Contours;
 
     std::vector<Point> Points;

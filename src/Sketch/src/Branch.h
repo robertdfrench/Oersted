@@ -2,7 +2,7 @@
 #define OERSTED_BRANCH_H
 
 struct Branch {
-    const Curve *Path;
+    std::shared_ptr<Curve> Path;
     bool Orientation;
     double Angle;
 };

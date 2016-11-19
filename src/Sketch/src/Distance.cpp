@@ -204,17 +204,17 @@ template
 class Distance<LineSegment>;
 
 template<>
-size_t Distance<std::shared_ptr<Vertex>>::set_equation_index(size_t i) {
+size_t Distance<Vertex>::set_equation_index(size_t i) {
     EquationIndex = i;
     return 1;
 }
 
 template<>
-void Distance<std::shared_ptr<Vertex>>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    const double x0 = (*Element0)->x();
-    const double y0 = (*Element0)->y();
-    const double x1 = (*Element1)->x();
-    const double y1 = (*Element1)->y();
+void Distance<Vertex>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+    const double x0 = Element0->x();
+    const double y0 = Element0->y();
+    const double x1 = Element1->x();
+    const double y1 = Element1->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;
@@ -224,11 +224,11 @@ void Distance<std::shared_ptr<Vertex>>::update(Eigen::MatrixXd &J, Eigen::Vector
 
     r(EquationIndex) = dr - Dim;
 
-    J(EquationIndex, (*Element0)->X->get_index()) -= dx;
-    J(EquationIndex, (*Element0)->Y->get_index()) -= dy;
-    J(EquationIndex, (*Element1)->X->get_index()) += dx;
-    J(EquationIndex, (*Element1)->Y->get_index()) += dy;
+    J(EquationIndex, Element0->X->get_index()) -= dx;
+    J(EquationIndex, Element0->Y->get_index()) -= dy;
+    J(EquationIndex, Element1->X->get_index()) += dx;
+    J(EquationIndex, Element1->Y->get_index()) += dy;
 }
 
 template
-class Distance<std::shared_ptr<Vertex>>;
+class Distance<Vertex>;

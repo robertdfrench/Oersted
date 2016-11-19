@@ -149,11 +149,11 @@ public:
 
     std::shared_ptr<Vertex> vertex(size_t i) const { return Verticies[i]; };
 
-    const Curve *curve(size_t i) const { return Curves[i]; };
+    std::shared_ptr<Curve> curve(size_t i) const { return Curves[i]; };
 
-    std::vector<const Curve *> const curves() {return std::vector<const Curve *>(Curves.begin(),Curves.end());};
+    std::vector<std::shared_ptr<Curve>> const curves() {return std::vector<std::shared_ptr<Curve>>(Curves.begin(),Curves.end());};
 
-    const Constraint *constraint(size_t i) const { return Constraints[i]; };
+    std::shared_ptr<Constraint> constraint(size_t i) const { return Constraints[i]; };
 
     std::shared_ptr<Contour> contour(size_t i) const { return Contours[i]; };
 
@@ -180,9 +180,9 @@ public:
 
     void add_element(std::shared_ptr<Vertex> v);
 
-    void add_element(Curve &c);
+    void add_element(std::shared_ptr<Curve> c);
 
-    void add_element(Constraint &c);
+    void add_element(std::shared_ptr<Constraint> c);
 
     void add_element(std::shared_ptr<Pattern> p);
 
@@ -212,8 +212,8 @@ private:
 
     std::vector<std::shared_ptr<Variable>> Variables;
     std::vector<std::shared_ptr<Vertex>> Verticies;
-    std::vector<Curve *> Curves;
-    std::vector<Constraint *> Constraints;
+    std::vector<std::shared_ptr<Curve>> Curves;
+    std::vector<std::shared_ptr<Constraint>> Constraints;
     std::vector<std::shared_ptr<Pattern>> Patterns;
 
     std::vector<std::shared_ptr<Contour>> Contours;

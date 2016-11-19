@@ -542,7 +542,7 @@ void Mesh::create_boundary_polygon() {
     Edges.reserve(Boundary->size());
     Points.reserve(Boundary->size());
     for (size_t i = 0; i != Boundary->size(); ++i) {
-        Curve const *cc = Boundary->curve(i); //clone() to prevent alteration of input Contour when Edge is split
+        std::shared_ptr<Curve> cc = Boundary->curve(i);
         bool dir = Boundary->orientation(i);
         Edge &e = new_edge(Points.size(), Constraints.size(), dir); // TODO: change to new_edge(Edge)
         e.Twin = e.Self;
@@ -629,7 +629,7 @@ void Mesh::insert_internal_boundaries() {
     */
 
     // Find interior curves
-    std::vector<Curve const *> interior;
+    std::vector<std::shared_ptr<Curve>> interior;
     for (auto c : Curves) {
         bool on_exterior = false;
         for (size_t i = 0; i != Boundary->size(); ++i) {
@@ -691,7 +691,7 @@ void Mesh::insert_internal_boundaries() {
             } else {
                 double s0 = dc.S0;
                 double s1 = dc.S1;
-                Curve const *cc = dc.ConstraintCurve;
+                std::shared_ptr<Curve> cc = dc.ConstraintCurve;
 
                 double sn = (s0 + s1) / 2.0;
                 Point const p = cc->point(sn);
@@ -778,7 +778,7 @@ void Mesh::split_edge(size_t ei) {
         DartConstraint &dc = Constraints[Edges[ei].Constraint];
         double s0 = dc.S0;
         double s1 = dc.S1;
-        Curve const *cc = dc.ConstraintCurve;
+        std::shared_ptr<Curve> cc = dc.ConstraintCurve;
 
         double sn = (s0 + s1) / 2.0;
         dc.S1 = sn;
@@ -1069,7 +1069,7 @@ InsertPointResult Mesh::insert_midpoint(size_t ei) {
         DartConstraint &dc = Constraints[Edges[ei].Constraint];
         double s0 = dc.S0;
         double s1 = dc.S1;
-        Curve const *cc = dc.ConstraintCurve;
+        std::shared_ptr<Curve> cc = dc.ConstraintCurve;
 
         double sn = (s0 + s1) / 2.0;
         dc.S1 = sn;

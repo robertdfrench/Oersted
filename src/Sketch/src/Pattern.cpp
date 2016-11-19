@@ -6,10 +6,10 @@ void Pattern::register_elements(Sketch *s) {
     }
 
     for (auto c : Curves) {
-        s->add_element(*c);
+        s->add_element(c);
     }
 
     for (auto c : Constraints) {
-        s->add_element(*c);
+        s->add_element(c);
     }
 }

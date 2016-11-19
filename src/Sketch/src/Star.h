@@ -40,11 +40,11 @@ public:
     };
 
     // Curve pointer methods
-    const Curve *next(const Curve *c) const;
+    std::shared_ptr<Curve> next(std::shared_ptr<Curve> c) const;
 
-    const Curve *prev(const Curve *c) const;
+    std::shared_ptr<Curve> prev(std::shared_ptr<Curve> c) const;
 
-    void pop(const Curve *c);
+    void pop(std::shared_ptr<Curve> c);
 
 private:
     std::shared_ptr<Vertex> StarVertex;

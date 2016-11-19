@@ -4,10 +4,10 @@ Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
     StarVertex = v;
 
     // Extract Curves
-    std::vector<const Curve *> curves;
+    std::vector<std::shared_ptr<Curve>> curves;
     std::vector<bool> orientation;
     for (size_t i = 0; i < s->size_curves(); ++i) {
-        const Curve *c = s->curve(i);
+        std::shared_ptr<Curve> c = s->curve(i);
         if (!c->ForConstruction) {
             if (StarVertex == c->start()) {
                 curves.push_back(c);
@@ -37,7 +37,7 @@ Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
     index.resize(angle.size());
     std::iota(index.begin(), index.end(), 0);
 
-    double tol = M_PI * sqrt(DBL_EPSILON);
+    double tol = M_PI * FLT_EPSILON;
     std::sort(index.begin(), index.end(),
               [&](size_t i, size_t j) {
                   if (abs(angle[i] - angle[j]) < tol ||
@@ -85,7 +85,7 @@ Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
 
 }
 
-const Curve *Star::next(const Curve *c) const {
+std::shared_ptr<Curve> Star::next(std::shared_ptr<Curve> c) const {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             return next(b)->Path;
@@ -95,7 +95,7 @@ const Curve *Star::next(const Curve *c) const {
     return nullptr;
 }
 
-const Curve *Star::prev(const Curve *c) const {
+std::shared_ptr<Curve> Star::prev(std::shared_ptr<Curve> c) const {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             return prev(b)->Path;
@@ -105,7 +105,7 @@ const Curve *Star::prev(const Curve *c) const {
     return nullptr;
 }
 
-void Star::pop(const Curve *c) {
+void Star::pop(std::shared_ptr<Curve> c) {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             prev(b)->Angle += b->Angle;

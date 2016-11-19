@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool remove_internal) {
+MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal) {
     // Creates mirror copies of the input curves about a line
 
     // Assign Properties
@@ -14,7 +14,8 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
     std::list<std::shared_ptr<Vertex>> input_vlist;
     for (auto c : Input) {
         if (l->is_coincident(c)) {
-            const_cast<Curve *>(c)->ForConstruction = RemoveInternalBoundaries; // TODO: const_cast is ugly
+            //const_cast<Curve *>(c)->ForConstruction = RemoveInternalBoundaries; // TODO: const_cast is ugly
+            c->ForConstruction = RemoveInternalBoundaries;
         } else {
             Curves.push_back(c->clone());
             c->get_verticies(input_vlist);
@@ -68,6 +69,6 @@ MirrorCopy::MirrorCopy(std::vector<const Curve *> &input, LineSegment *l, bool r
     // Constrain mirrored verticies to be symmetric about the SymmetryLine
     Constraints.reserve(Verticies.size());
     for (size_t i = 0; i != Verticies.size(); ++i) {
-        Constraints.push_back(new Symmetry(input_vvector[i], Verticies[i], *SymmetryLine));
+        Constraints.push_back(std::make_shared<Symmetry>(input_vvector[i], Verticies[i], SymmetryLine));
     }
 }

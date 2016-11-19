@@ -105,20 +105,20 @@ bool LineSegment::on_segment(const double x, const double y) const {
     }
 }
 
-bool LineSegment::is_identical(const Curve *c) const {
-    const LineSegment *l = dynamic_cast<const LineSegment *>(c);
+bool LineSegment::is_identical(std::shared_ptr<Curve> c) const {
+    auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
-    if (l == nullptr) {
+    if (l.get() == nullptr) {
         return false;
     } else {
         return is_identical(l->start()->x(), l->start()->y(), l->end()->x(), l->end()->y());
     }
 }
 
-bool LineSegment::is_identical(const Curve *c, std::shared_ptr<Vertex> origin, const double angle) const {
-    const LineSegment *l = dynamic_cast<const LineSegment *>(c);
+bool LineSegment::is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const {
+    auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
-    if (l == nullptr) {
+    if (l.get() == nullptr) {
         return false;
     } else {
         double xs, ys, xe, ye;
@@ -137,17 +137,16 @@ bool LineSegment::is_identical(const double x0, const double y0, const double x1
     double xe = end()->x();
     double ye = end()->y();
 
-    double tol =
-            FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
+    double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
 
     return (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol)
            || (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol);
 }
 
-bool LineSegment::is_coincident(const Curve *c) const {
-    const LineSegment *l = dynamic_cast<const LineSegment *>(c);
+bool LineSegment::is_coincident(std::shared_ptr<Curve> c) const {
+    auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
-    if (l == nullptr) {
+    if (l.get() == nullptr) {
         return false;
     } else {
         if (on_manifold(c->start()) && on_manifold(c->end())) {

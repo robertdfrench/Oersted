@@ -32,14 +32,14 @@ TEST(Sketch, new_element) {
     { // Case 1: LineSegment
         Sketch s;
 
-        LineSegment &line = s.new_element<LineSegment>();
+        auto line = s.new_element_SHARED_PTR<LineSegment>();
         EXPECT_TRUE(s.size() == 1);
     }
 
     { // Case 2: CircularArc
         Sketch s;
 
-        LineSegment &line = s.new_element<LineSegment>();
+        auto line = s.new_element_SHARED_PTR<LineSegment>();
         EXPECT_TRUE(s.size() == 1);
     }
 
@@ -49,9 +49,9 @@ TEST(Sketch, new_element) {
         auto v0 = s.new_element_SHARED_PTR<Vertex>(3.14159, 2.7183);
         auto v1 = s.new_element_SHARED_PTR<Vertex>(6.14159, 6.7183);
 
-        LineSegment &line = s.new_element<LineSegment>(v0, v1);
+        auto line = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
 
-        Length &length = s.new_element<Length>(line, 1.0);
+        auto length = s.new_element_SHARED_PTR<Length>(line, 1.0);
 
         EXPECT_TRUE(s.size() == 4);
 

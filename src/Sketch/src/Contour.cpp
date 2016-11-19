@@ -1,10 +1,10 @@
 #include "Sketch.hpp"
 
-Contour::Contour(const std::vector<const Curve *> &c) {
+Contour::Contour(std::vector<std::shared_ptr<Curve>> const &c) {
     // #TODO: Check for intersecting curves
     // #TODO: Check for ccw orientation of entire contour
 
-    Curves = std::vector<const Curve *>();
+    Curves = std::vector<std::shared_ptr<Curve>>();
     Curves.reserve(c.size());
 
     std::vector<std::shared_ptr<Vertex>> start;
@@ -56,7 +56,7 @@ Contour::Contour(const std::vector<const Curve *> &c) {
     }
 }
 
-Contour::Contour(const std::vector<const Curve *> &c, const std::vector<bool> &dir) {
+Contour::Contour(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir) {
     bool success = initialize(c, dir);
 
     if (!success) {
@@ -64,7 +64,7 @@ Contour::Contour(const std::vector<const Curve *> &c, const std::vector<bool> &d
     }
 }
 
-bool Contour::initialize(const std::vector<const Curve *> &c, const std::vector<bool> &dir) {
+bool Contour::initialize(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir) {
     Curves.resize(0);
     Orientation.resize(0);
 

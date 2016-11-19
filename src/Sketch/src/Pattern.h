@@ -17,12 +17,12 @@ public:
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
 
 protected:
-    std::vector<const Curve *> Input;
+    std::vector<std::shared_ptr<Curve>> Input;
     bool RemoveInternalBoundaries;
 
     std::vector<std::shared_ptr<Vertex>> Verticies;
-    std::vector<Curve *> Curves;
-    std::vector<Constraint *> Constraints;
+    std::vector<std::shared_ptr<Curve>> Curves;
+    std::vector<std::shared_ptr<Constraint>> Constraints;
 };
 
 #include "MirrorCopy.h"

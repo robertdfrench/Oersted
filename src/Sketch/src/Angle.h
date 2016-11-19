@@ -3,14 +3,13 @@
 
 class Angle : public Constraint {
 public:
-    LineSegment *Line0, *Line1;
+    std::shared_ptr<LineSegment> Line0;
+    std::shared_ptr<LineSegment> Line1;
 
     double Dim;
 
-    // Constructors
-    Angle(LineSegment &l0, LineSegment &l1, double angle) : Line0(&l0), Line1(&l1), Dim(angle) {};
+    Angle(std::shared_ptr<LineSegment> l0, std::shared_ptr<LineSegment> l1, double angle) : Line0(l0), Line1(l1), Dim(angle) {};
 
-    // Public Member Functions
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 1;
