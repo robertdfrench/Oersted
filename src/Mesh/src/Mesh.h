@@ -128,9 +128,9 @@ public:
     InsertPointResult insert_point(Point const p) { return insert_point(p, Edges.size() - 1); };
 
 protected:
-    Contour const *Boundary;
+    std::shared_ptr<Contour> Boundary;
     std::vector<Curve const *> Curves;
-    std::vector<Contour const *> Contours;
+    std::vector<std::shared_ptr<Contour>> Contours;
 
     std::vector<Point> Points;
     std::vector<Edge> Edges;

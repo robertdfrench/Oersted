@@ -131,7 +131,7 @@ TEST(RotateCopy, nonoverlapping) {
 
 TEST(RotateCopy, overlapping) {
     for (bool remove_internal : {true, false}) {
-        Sketch s;
+        Sketch s = Sketch();
 
         size_t N = 4;
         double a_deg = 360.0 / N;

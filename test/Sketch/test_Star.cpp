@@ -214,7 +214,7 @@ TEST(Star, find_closed_contour_0) {
         EXPECT_EQ(sketch.size_contours(), 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
-        const Contour *contour = sketch.contour(0);
+        auto contour = sketch.contour(0);
         EXPECT_TRUE(contour->size() == 3);
         EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
         EXPECT_TRUE(&l5 == contour->curve(0) || &l5 == contour->curve(1) || &l5 == contour->curve(2));
@@ -255,7 +255,7 @@ TEST(Star, find_closed_contour_1) {
         EXPECT_TRUE(sketch.size_contours() == 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
-        const Contour *contour = sketch.contour(0);
+        auto contour = sketch.contour(0);
         EXPECT_TRUE(contour->size() == 3);
         EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
         EXPECT_TRUE(&l1 == contour->curve(0) || &l1 == contour->curve(1) || &l1 == contour->curve(2));
@@ -302,7 +302,7 @@ TEST(Star, find_closed_contour_2) {
         EXPECT_FALSE(sketch.contour(0) == sketch.boundary());
         EXPECT_FALSE(sketch.contour(1) == sketch.boundary());
 
-        const Contour *contour = sketch.contour(1);
+        auto contour = sketch.contour(1);
 
         EXPECT_EQ(contour->size(), 3);
         EXPECT_TRUE(&l0 == contour->curve(0) || &l0 == contour->curve(1) || &l0 == contour->curve(2));
@@ -316,8 +316,8 @@ TEST(Star, find_closed_contour_2) {
         EXPECT_TRUE(&l4 == contour->curve(0) || &l4 == contour->curve(1) || &l4 == contour->curve(2));
         EXPECT_TRUE(&c0 == contour->curve(0) || &c0 == contour->curve(1) || &c0 == contour->curve(2));
 
-        const Contour *c0 = sketch.contour(0);
-        const Contour *c1 = sketch.contour(1);
+        auto c0 = sketch.contour(0);
+        auto c1 = sketch.contour(1);
         for (size_t i = 0; i < 3; ++i) {
             for (size_t j = 0; j < 3; ++j) {
                 if (c0->curve(i) == c1->curve(j)) {
@@ -329,7 +329,7 @@ TEST(Star, find_closed_contour_2) {
 
     // Test Boundary
     {
-        const Contour *boundary = sketch.boundary();
+        auto boundary = sketch.boundary();
 
         EXPECT_EQ(boundary->size(), 4);
         EXPECT_TRUE(&l0 == boundary->curve(0) || &l0 == boundary->curve(1) || &l0 == boundary->curve(2) || &l0 == boundary->curve(3));
@@ -369,7 +369,7 @@ TEST(Star, find_closed_contour_3) {
         EXPECT_TRUE(sketch.size_contours() == 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
-        const Contour *contour = sketch.contour(0);
+        auto contour = sketch.contour(0);
 
         EXPECT_TRUE(contour->size() == 2);
         EXPECT_TRUE(&arc == contour->curve(0) || &arc == contour->curve(1));

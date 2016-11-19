@@ -12,9 +12,9 @@ public:
 
     size_t size() { return Stars.size(); };
 
-    bool contours(std::vector<Contour *> &contours);
+    bool contours(std::vector<std::shared_ptr<Contour>> &contours);
 
-    bool boundary(Contour *c);
+    bool boundary(std::shared_ptr<Contour>);
 
 private:
     std::list<Star> Stars;

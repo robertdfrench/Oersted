@@ -3,12 +3,10 @@
 Sketch::Sketch() {
     NumEquations = 0;
     NumVariables = 0;
-    Boundary = new Contour();
+    Boundary = std::make_shared<Contour>();
 }
 
 void Sketch::delete_me() {
-    delete Boundary;
-
     Variables.clear();
 
     Verticies.clear();
@@ -28,9 +26,6 @@ void Sketch::delete_me() {
     }
     Patterns.clear();
 
-    for (auto x : Contours) {
-        delete x;
-    }
     Contours.clear();
 };
 
@@ -77,7 +72,6 @@ void Sketch::solve() {
 
 bool Sketch::build() {
     Constellation c = Constellation(this);
-
 
     bool success = c.boundary(Boundary);
 

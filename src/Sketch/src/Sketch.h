@@ -155,9 +155,9 @@ public:
 
     const Constraint *constraint(size_t i) const { return Constraints[i]; };
 
-    const Contour *contour(size_t i) const { return Contours[i]; };
+    std::shared_ptr<Contour> contour(size_t i) const { return Contours[i]; };
 
-    const Contour *boundary() const { return Boundary; };
+    std::shared_ptr<Contour> boundary() const { return Boundary; };
 
     size_t size() const { return (Verticies.size() + Curves.size() + Constraints.size()); };
 
@@ -178,7 +178,6 @@ public:
     template<class T, class...ArgT>
     std::shared_ptr<T> new_element_SHARED_PTR(ArgT &&... args);
 
-    //#TODO: Add elements by pointer
     void add_element(std::shared_ptr<Vertex> v);
 
     void add_element(Curve &c);
@@ -217,9 +216,9 @@ private:
     std::vector<Constraint *> Constraints;
     std::vector<Pattern *> Patterns;
 
-    std::vector<Contour *> Contours;
+    std::vector<std::shared_ptr<Contour>> Contours;
 
-    Contour *Boundary;
+    std::shared_ptr<Contour> Boundary;
 
     size_t NumVariables;
     size_t NumEquations;

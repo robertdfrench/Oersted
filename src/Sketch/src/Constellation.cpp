@@ -75,7 +75,7 @@ void Constellation::pop(const Curve *c) {
     }
 }
 
-bool Constellation::boundary(Contour *c) {
+bool Constellation::boundary(std::shared_ptr<Contour> c) {
     std::vector<const Curve *> curves;
     std::vector<bool> orientation;
 
@@ -121,14 +121,14 @@ bool Constellation::boundary(Contour *c) {
     }
 }
 
-bool Constellation::contours(std::vector<Contour *> &contours) {
+bool Constellation::contours(std::vector<std::shared_ptr<Contour>> &contours) {
     std::vector<const Curve *> contour_curves;
     std::vector<bool> orientation;
 
     while (size() > 0) {
         bool success = find_closed_contour(contour_curves, orientation);
         if (success) {
-            contours.push_back(new Contour(contour_curves, orientation));
+            contours.push_back(std::make_shared<Contour>(contour_curves, orientation));
         } else {
             return false;
         }
