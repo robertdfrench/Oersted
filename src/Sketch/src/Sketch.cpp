@@ -21,9 +21,6 @@ void Sketch::delete_me() {
     }
     Constraints.clear();
 
-    for (auto x : Patterns) {
-        delete x;
-    }
     Patterns.clear();
 
     Contours.clear();
@@ -93,9 +90,9 @@ void Sketch::add_element(Constraint &c) {
     add_element(Constraints, c);
 }
 
-void Sketch::add_element(Pattern &p) {
+void Sketch::add_element(std::shared_ptr<Pattern> p) {
     add_element(Patterns, p);
-    p.register_elements(this);
+    p->register_elements(this);
 }
 
 template<>

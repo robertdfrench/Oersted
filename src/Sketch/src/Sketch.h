@@ -184,7 +184,7 @@ public:
 
     void add_element(Constraint &c);
 
-    void add_element(Pattern &p);
+    void add_element(std::shared_ptr<Pattern> p);
 
     void solve();
 
@@ -214,7 +214,7 @@ private:
     std::vector<std::shared_ptr<Vertex>> Verticies;
     std::vector<Curve *> Curves;
     std::vector<Constraint *> Constraints;
-    std::vector<Pattern *> Patterns;
+    std::vector<std::shared_ptr<Pattern>> Patterns;
 
     std::vector<std::shared_ptr<Contour>> Contours;
 

@@ -95,7 +95,7 @@ TEST(RotateCopy, nonoverlapping) {
     Angle &a0 = s.new_element<Angle>(l0, l1, a_deg);
 
     std::vector<const Curve *> vec{&l0, &l1, &c0, &c1};
-    RotateCopy &r0 = s.new_element<RotateCopy>(vec, v0, 360.0 / (N - 1), N - 2);
+    auto r0 = s.new_element_SHARED_PTR<RotateCopy>(vec, v0, 360.0 / (N - 1), N - 2);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__non_overlapping_0");
 
@@ -172,7 +172,7 @@ TEST(RotateCopy, overlapping) {
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_") + std::to_string(remove_internal));
 
         std::vector<const Curve *> rvec = {&l0, &l1, &c0, &c1};
-        RotateCopy &r0 = s.new_element<RotateCopy>(rvec, v0, 360.0 / N, N - 2, remove_internal);
+        auto r0 = s.new_element_SHARED_PTR<RotateCopy>(rvec, v0, 360.0 / N, N - 2, remove_internal);
 
         s.solve();
         s.build();

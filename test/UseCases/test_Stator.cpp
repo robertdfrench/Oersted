@@ -32,10 +32,10 @@ TEST(Stator, 0) {
     CircularArc &c3 = sketch.new_element<CircularArc>(v6, v3, origin, rb);
 
     auto mvec = sketch.curves();
-    MirrorCopy &m0 = sketch.new_element<MirrorCopy>(mvec, &l1, true);
+    auto m0 = sketch.new_element_SHARED_PTR<MirrorCopy>(mvec, &l1, true);
 
     auto rvec = sketch.curves();
-    RotateCopy &rcopy = sketch.new_element<RotateCopy>(rvec, origin, 360.0 / Nt, 1, true);
+    auto rcopy = sketch.new_element_SHARED_PTR<RotateCopy>(rvec, origin, 360.0 / Nt, 1, true);
 
     sketch.solve();
 

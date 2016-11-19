@@ -74,7 +74,7 @@ TEST(MirrorCopy, nonoverlapping) {
 
     std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
 
-    MirrorCopy &mc0 = s.new_element<MirrorCopy>(vec, &l4);
+    auto mc0 = s.new_element_SHARED_PTR<MirrorCopy>(vec, &l4);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_square");
 
@@ -127,7 +127,7 @@ TEST(MirrorCopy, overlapping) {
 
         // std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
         auto mvec = s.curves();
-        MirrorCopy &mc0 = s.new_element<MirrorCopy>(mvec, &l3, remove_internal);
+        auto mc0 = s.new_element_SHARED_PTR<MirrorCopy>(mvec, &l3, remove_internal);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram")+std::to_string(remove_internal));
 
@@ -185,7 +185,7 @@ TEST(MirrorCopy, multiple_overlapping) {
 
         //std::vector<const Curve *> vec{&l0, &l1, &l2, &l3, &l4, &l5, &l6};
         auto mvec = s.curves();
-        s.new_element<MirrorCopy>(mvec, &l3, remove_internal);
+        s.new_element_SHARED_PTR<MirrorCopy>(mvec, &l3, remove_internal);
 
         s.solve();
         s.build();
