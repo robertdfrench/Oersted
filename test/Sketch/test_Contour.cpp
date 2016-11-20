@@ -3,13 +3,13 @@
 TEST(Contour, Triangle_CCW) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0,1.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0,v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1,v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2,v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v0);
 
     std::vector<std::shared_ptr<Curve>> vc{l0,l1,l2};
 
@@ -24,18 +24,20 @@ TEST(Contour, Triangle_CCW) {
     EXPECT_TRUE(cont.vertex(2) == v2);
 
     EXPECT_TRUE(cont == cont);
+
+    s.delete_me();
 }
 
 TEST(Contour, Triangle_CW) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0,1.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v1,v0);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v2,v1);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v0,v2);
+    auto l0 = s.new_element<LineSegment>(v1, v0);
+    auto l1 = s.new_element<LineSegment>(v2, v1);
+    auto l2 = s.new_element<LineSegment>(v0, v2);
 
     std::vector<std::shared_ptr<Curve>> vc{l0,l1,l2};
 
@@ -50,18 +52,20 @@ TEST(Contour, Triangle_CW) {
     EXPECT_TRUE(cont.vertex(2) == v2);
 
     EXPECT_TRUE(cont == cont);
+
+    s.delete_me();
 }
 
 TEST(Contour, Triangle) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0,0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0,1.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v1,v0);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1,v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2,v0);
+    auto l0 = s.new_element<LineSegment>(v1, v0);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v0);
 
     std::vector<std::shared_ptr<Curve>> vc{l2,l0,l1};
 
@@ -76,59 +80,67 @@ TEST(Contour, Triangle) {
     EXPECT_TRUE(cont.vertex(2) == v1);
 
     EXPECT_TRUE(cont == cont);
+
+    s.delete_me();
 }
 
 TEST(Contour, Nonclosed_Failure) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0,0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0,1.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0,v1);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
 
     std::vector<std::shared_ptr<Curve>> c{l0};
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since the contour is not closed
+
+    s.delete_me();
 }
 
 TEST(Contour, Disjoint_Failure) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0,0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0,1.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0,1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(2.0,2.0);
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(3.0,3.0);
-    auto v5 = s.new_element_SHARED_PTR<Vertex>(2.0,3.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 1.0);
+    auto v2 = s.new_element<Vertex>(0.0, 1.0);
+    auto v3 = s.new_element<Vertex>(2.0, 2.0);
+    auto v4 = s.new_element<Vertex>(3.0, 3.0);
+    auto v5 = s.new_element<Vertex>(2.0, 3.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0,v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1,v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2,v0);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3,v4);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4,v5);
-    auto l5 = s.new_element_SHARED_PTR<LineSegment>(v5,v3);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v0);
+    auto l3 = s.new_element<LineSegment>(v3, v4);
+    auto l4 = s.new_element<LineSegment>(v4, v5);
+    auto l5 = s.new_element<LineSegment>(v5, v3);
 
     std::vector<std::shared_ptr<Curve>> c{l0,l1,l2,l3,l4,l5};
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since contour is not simple
+
+    s.delete_me();
 }
 
 TEST(Contour, Implicit_Self_Intersection_Failure) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0,1.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(-1.0,-1.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0,1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0,-1.0);
+    auto v0 = s.new_element<Vertex>(1.0, 1.0);
+    auto v1 = s.new_element<Vertex>(-1.0, -1.0);
+    auto v2 = s.new_element<Vertex>(-1.0, 1.0);
+    auto v3 = s.new_element<Vertex>(1.0, -1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0,v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1,v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2,v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3,v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
     std::vector<std::shared_ptr<Curve>> c{l0,l1,l2,l3};
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since contour is self intersecting
+
+    s.delete_me();
 
     /*
         TODO: Use nurbs representation to approximate potential intersection point.
@@ -139,20 +151,22 @@ TEST(Contour, Implicit_Self_Intersection_Failure) {
 TEST(Contour, Explicit_Self_Intersection_Failure) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0,1.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(-1.0,-1.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0,1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0,-1.0);
-    auto vc = s.new_element_SHARED_PTR<Vertex>(0.0,0.0);
+    auto v0 = s.new_element<Vertex>(1.0, 1.0);
+    auto v1 = s.new_element<Vertex>(-1.0, -1.0);
+    auto v2 = s.new_element<Vertex>(-1.0, 1.0);
+    auto v3 = s.new_element<Vertex>(1.0, -1.0);
+    auto vc = s.new_element<Vertex>(0.0, 0.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0,vc);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(vc,v1);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v1,v2);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v2,vc);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(vc,v3);
-    auto l5 = s.new_element_SHARED_PTR<LineSegment>(v3,v0);
+    auto l0 = s.new_element<LineSegment>(v0, vc);
+    auto l1 = s.new_element<LineSegment>(vc, v1);
+    auto l2 = s.new_element<LineSegment>(v1, v2);
+    auto l3 = s.new_element<LineSegment>(v2, vc);
+    auto l4 = s.new_element<LineSegment>(vc, v3);
+    auto l5 = s.new_element<LineSegment>(v3, v0);
 
     std::vector<std::shared_ptr<Curve>> c{l0,l1,l2,l3,l4,l5};
 
     EXPECT_ANY_THROW(Contour cont{c}); // Construction should fail since contour is self intersecting
+
+    s.delete_me();
 }

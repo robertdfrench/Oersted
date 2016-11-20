@@ -3,26 +3,28 @@
 TEST(Constraint, Vertex) {
     Sketch s;
 
-    auto v = s.new_element_SHARED_PTR<Vertex>(M_E, M_PI);
+    auto v = s.new_element<Vertex>(M_E, M_PI);
 
-    auto f = s.new_element_SHARED_PTR<Fixation>(v);
+    auto f = s.new_element<Fixation>(v);
 
     s.solve();
 
     EXPECT_NEAR(M_E, v->x(), TOL);
     EXPECT_NEAR(M_PI, v->y(), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Fixation_Length) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    auto line = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto line = s.new_element<LineSegment>(v0, v1);
 
-    auto fix = s.new_element_SHARED_PTR<Fixation>(v0);
-    auto len = s.new_element_SHARED_PTR<Length>(line, M_LN2);
+    auto fix = s.new_element<Fixation>(v0);
+    auto len = s.new_element<Length>(line, M_LN2);
 
     s.solve();
 
@@ -31,67 +33,75 @@ TEST(Constraint, Fixation_Length) {
     EXPECT_NEAR(M_1_PI, v0->x(), TOL);
     EXPECT_NEAR(M_2_SQRTPI, v0->y(), TOL);
     EXPECT_NEAR(M_LN2, line->length(), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Horizontal) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    auto line = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto horz = s.new_element_SHARED_PTR<Horizontal>(line);
+    auto line = s.new_element<LineSegment>(v0, v1);
+    auto horz = s.new_element<Horizontal>(line);
 
     s.solve();
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Horizontal");
 
     EXPECT_NEAR(v0->y(), v1->y(), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Vertical) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    auto line = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto line = s.new_element<LineSegment>(v0, v1);
 
-    auto vert = s.new_element_SHARED_PTR<Vertical>(line);
+    auto vert = s.new_element<Vertical>(line);
 
     s.solve();
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical");
 
     EXPECT_NEAR(v0->x(), v1->x(), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Length) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(3.14159, 2.7183);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(6.14159, 6.7183);
+    auto v0 = s.new_element<Vertex>(3.14159, 2.7183);
+    auto v1 = s.new_element<Vertex>(6.14159, 6.7183);
 
-    auto line = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+    auto line = s.new_element<LineSegment>(v0, v1);
 
-    auto length = s.new_element_SHARED_PTR<Length>(line, 1.0);
+    auto length = s.new_element<Length>(line, 1.0);
 
     s.solve();
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Length");
 
     EXPECT_NEAR(1.0, line->length(), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, CircularArc) {
     // Internal constraints
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.9);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
-    auto vc = s.new_element_SHARED_PTR<Vertex>(0.4, 0.5);
+    auto v0 = s.new_element<Vertex>(0.1, 0.9);
+    auto v1 = s.new_element<Vertex>(0.8, 0.2);
+    auto vc = s.new_element<Vertex>(0.4, 0.5);
 
-    auto c = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 2.1);
+    auto c = s.new_element<CircularArc>(v0, v1, vc, 2.1);
 
     s.solve();
 
@@ -99,18 +109,20 @@ TEST(Constraint, CircularArc) {
 
     EXPECT_NEAR(c->radius(), hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
     EXPECT_NEAR(c->radius(), hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Radius) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.9); // TODO: change new_element to new_vertex, new_curve, new_constraint, new_pattern
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
-    auto vc = s.new_element_SHARED_PTR<Vertex>(0.4, 0.5);
+    auto v0 = s.new_element<Vertex>(0.1, 0.9); // TODO: change new_element to new_vertex, new_curve, new_constraint, new_pattern
+    auto v1 = s.new_element<Vertex>(0.8, 0.2);
+    auto vc = s.new_element<Vertex>(0.4, 0.5);
 
-    auto c = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 2.1);
+    auto c = s.new_element<CircularArc>(v0, v1, vc, 2.1);
 
-    auto r = s.new_element_SHARED_PTR<Radius>(c, 3.14);
+    auto r = s.new_element<Radius>(c, 3.14);
 
     s.solve();
 
@@ -121,47 +133,49 @@ TEST(Constraint, Radius) {
     EXPECT_NEAR(3.14, c->radius(), TOL);
     EXPECT_NEAR(3.14, hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
     EXPECT_NEAR(3.14, hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Tangency_CircularArc_LineSegment) {
     {// Case 0: Test when CircularArc and LineSegment have no shared endpoints
         Sketch s;
 
-        auto vc0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-        auto vcc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto vc0 = s.new_element<Vertex>(1.0, 0.0);
+        auto vc1 = s.new_element<Vertex>(0.0, 1.0);
+        auto vcc = s.new_element<Vertex>(0.0, 0.0);
 
-        auto c = s.new_element_SHARED_PTR<CircularArc>(vc0, vc1, vcc, 1.0);
+        auto c = s.new_element<CircularArc>(vc0, vc1, vcc, 1.0);
 
-        auto fix = s.new_element_SHARED_PTR<Fixation>(vcc);
-        auto rad = s.new_element_SHARED_PTR<Radius>(c, 1.0);
+        auto fix = s.new_element<Fixation>(vcc);
+        auto rad = s.new_element<Radius>(c, 1.0);
 
-        auto vv0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-        auto vv1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+        auto vv0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+        auto vv1 = s.new_element<Vertex>(M_E, M_LN10);
 
-        auto lv = s.new_element_SHARED_PTR<LineSegment>(vv0, vv1);
+        auto lv = s.new_element<LineSegment>(vv0, vv1);
 
-        auto vert = s.new_element_SHARED_PTR<Vertical>(lv);
-        auto tanv = s.new_element_SHARED_PTR<Tangency>(c, lv);
+        auto vert = s.new_element<Vertical>(lv);
+        auto tanv = s.new_element<Tangency>(c, lv);
 
-        auto vh0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-        auto vh1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+        auto vh0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+        auto vh1 = s.new_element<Vertex>(M_E, M_LN10);
 
-        auto lh = s.new_element_SHARED_PTR<LineSegment>(vh0, vh1);
+        auto lh = s.new_element<LineSegment>(vh0, vh1);
 
-        auto horz = s.new_element_SHARED_PTR<Horizontal>(lh);
-        auto tanh = s.new_element_SHARED_PTR<Tangency>(c, lh);
+        auto horz = s.new_element<Horizontal>(lh);
+        auto tanh = s.new_element<Tangency>(c, lh);
 
-        auto v450 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
-        auto v451 = s.new_element_SHARED_PTR<Vertex>(-M_1_PI, M_SQRT2);
+        auto v450 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        auto v451 = s.new_element<Vertex>(-M_1_PI, M_SQRT2);
 
-        auto fix45 = s.new_element_SHARED_PTR<Fixation>(v450);
+        auto fix45 = s.new_element<Fixation>(v450);
 
-        auto l45 = s.new_element_SHARED_PTR<LineSegment>(v450, v451);
-        auto l45v = s.new_element_SHARED_PTR<LineSegment>(vcc, v451);
+        auto l45 = s.new_element<LineSegment>(v450, v451);
+        auto l45v = s.new_element<LineSegment>(vcc, v451);
 
-        auto tan45 = s.new_element_SHARED_PTR<Tangency>(c, l45);
-        auto vert45 = s.new_element_SHARED_PTR<Vertical>(l45v);
+        auto tan45 = s.new_element<Tangency>(c, l45);
+        auto vert45 = s.new_element<Vertical>(l45v);
 
         s.solve();
 
@@ -185,23 +199,25 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         EXPECT_NEAR((M_SQRT2 - v451->x()), v451->y(), TOL);
         EXPECT_NEAR(0.0, v451->x(), TOL);
         EXPECT_NEAR(M_SQRT2, v451->y(), TOL);
+
+        s.delete_me();
     }
 
     { // Case 1: Test when CircularArc and LineSegment have shared endpoints
         Sketch s;
 
-        auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
+        auto vc = s.new_element<Vertex>(0.0, 0.0);
+        auto v0 = s.new_element<Vertex>(1.0, 0.0);
+        auto v1 = s.new_element<Vertex>(0.0, 1.0);
+        auto v2 = s.new_element<Vertex>(M_SQRT2, 0.0);
 
-        auto c = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 1.0);
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
+        auto c = s.new_element<CircularArc>(v0, v1, vc, 1.0);
+        auto l = s.new_element<LineSegment>(v1, v2);
 
-        auto fc = s.new_element_SHARED_PTR<Fixation>(vc);
-        auto f0 = s.new_element_SHARED_PTR<Fixation>(v2);
-        auto t = s.new_element_SHARED_PTR<Tangency>(c, l);
-        auto r = s.new_element_SHARED_PTR<Radius>(c, 1.0);
+        auto fc = s.new_element<Fixation>(vc);
+        auto f0 = s.new_element<Fixation>(v2);
+        auto t = s.new_element<Tangency>(c, l);
+        auto r = s.new_element<Radius>(c, 1.0);
 
         s.solve();
 
@@ -211,23 +227,25 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         EXPECT_NEAR(M_PI_2, (atan2(v1->y() - vc->y(), v1->x() - vc->x()) - atan2(v2->y() - v1->y(), v2->x() - v1->x())), TOL * M_PI_2);
         EXPECT_NEAR(M_SQRT1_2, v1->x(), TOL);
         EXPECT_NEAR(M_SQRT1_2, v1->y(), TOL);
+
+        s.delete_me();
     }
 }
 
 TEST(Constraint, Angle) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v01 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v00 = s.new_element<Vertex>(1.0, 0.0);
+    auto v01 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto line0 = s.new_element_SHARED_PTR<LineSegment>(v0, v00);
-    auto line1 = s.new_element_SHARED_PTR<LineSegment>(v0, v01);
+    auto line0 = s.new_element<LineSegment>(v0, v00);
+    auto line1 = s.new_element<LineSegment>(v0, v01);
 
-    auto fix = s.new_element_SHARED_PTR<Fixation>(v0);
-    auto horz = s.new_element_SHARED_PTR<Horizontal>(line0);
-    auto ang = s.new_element_SHARED_PTR<Angle>(line0, line1, 30.0);
-    auto len = s.new_element_SHARED_PTR<Length>(line1, 1.0);
+    auto fix = s.new_element<Fixation>(v0);
+    auto horz = s.new_element<Horizontal>(line0);
+    auto ang = s.new_element<Angle>(line0, line1, 30.0);
+    auto len = s.new_element<Length>(line1, 1.0);
 
     for (size_t i = 0; i < 16; i++) {
         double a = 22.5 * i;
@@ -247,27 +265,29 @@ TEST(Constraint, Angle) {
         EXPECT_NEAR(cos(M_PI * i / 8.0), v01->x(), TOL);
         EXPECT_NEAR(sin(M_PI * i / 8.0), v01->y(), TOL);
     }
+
+    s.delete_me();
 }
 
 TEST(Constraint, Angle_Coincident) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
 
-    auto v00 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.0);
-    auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v10 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
-    auto v11 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+    auto v00 = s.new_element<Vertex>(0.5, 0.0);
+    auto v01 = s.new_element<Vertex>(1.0, 0.0);
+    auto v10 = s.new_element<Vertex>(0.5, 0.5);
+    auto v11 = s.new_element<Vertex>(1.0, 1.0);
 
-    auto line0 = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
-    auto line1 = s.new_element_SHARED_PTR<LineSegment>(v10, v11);
+    auto line0 = s.new_element<LineSegment>(v00, v01);
+    auto line1 = s.new_element<LineSegment>(v10, v11);
 
-    auto fix = s.new_element_SHARED_PTR<Fixation>(v0);
-    auto horz = s.new_element_SHARED_PTR<Horizontal>(line0);
-    auto ang = s.new_element_SHARED_PTR<Angle>(line0, line1, 0.0);
-    auto len = s.new_element_SHARED_PTR<Length>(line1, 0.5);
-    auto coin0 = s.new_element_SHARED_PTR<Coincident<LineSegment>>(v0, line0);
-    auto coin1 = s.new_element_SHARED_PTR<Coincident<LineSegment>>(v0, line1);
+    auto fix = s.new_element<Fixation>(v0);
+    auto horz = s.new_element<Horizontal>(line0);
+    auto ang = s.new_element<Angle>(line0, line1, 0.0);
+    auto len = s.new_element<Length>(line1, 0.5);
+    auto coin0 = s.new_element<Coincident<LineSegment>>(v0, line0);
+    auto coin1 = s.new_element<Coincident<LineSegment>>(v0, line1);
 
     size_t N = 15;
     double dar = 2.0 * M_PI / N;
@@ -290,35 +310,39 @@ TEST(Constraint, Angle_Coincident) {
         EXPECT_NEAR(0.0, tan(dar * i) * v11->x() - v11->y(), TOL);
         EXPECT_NEAR(0.0, tan(dar * i) * v10->x() - v10->y(), TOL);
     }
+
+    s.delete_me();
 }
 
 TEST(Constraint, Distance_Vertex_Vertex) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+    auto v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v1 = s.new_element<Vertex>(M_E, M_LN10);
 
-    auto d = s.new_element_SHARED_PTR<Distance<Vertex>>(v0, v1, M_LN2);
+    auto d = s.new_element<Distance<Vertex>>(v0, v1, M_LN2);
 
     s.solve();
 
     //s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
 
     EXPECT_NEAR(M_LN2, hypot(v0->x() - v1->x(), v0->y() - v1->y()), TOL * M_LN2);
+
+    s.delete_me();
 }
 
 TEST(Constraint, Distance_LineSegment) {
     { // Case 0: The standard case
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_LOG10E);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(M_2_SQRTPI, M_LOG10E);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(M_E, M_LOG2E);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(M_LN2, M_LOG2E);
+        auto v00 = s.new_element<Vertex>(M_1_PI, M_LOG10E);
+        auto v01 = s.new_element<Vertex>(M_2_SQRTPI, M_LOG10E);
+        auto v10 = s.new_element<Vertex>(M_E, M_LOG2E);
+        auto v11 = s.new_element<Vertex>(M_LN2, M_LOG2E);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v10, v11);
-        auto d = s.new_element_SHARED_PTR<Distance<LineSegment>>(l0, l1, M_PI);
+        auto l0 = s.new_element<LineSegment>(v00, v01);
+        auto l1 = s.new_element<LineSegment>(v10, v11);
+        auto d = s.new_element<Distance<LineSegment>>(l0, l1, M_PI);
 
         s.solve();
 
@@ -348,19 +372,21 @@ TEST(Constraint, Distance_LineSegment) {
         EXPECT_NEAR(1.0, dot, TOL);
         EXPECT_NEAR(0.0, cross, TOL);
         EXPECT_NEAR(M_PI, len, TOL * M_PI);
+
+        s.delete_me();
     }
 
     { // Case 1: Corner case when LineSegments are initially perpendicular
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto v00 = s.new_element<Vertex>(-1.0, 0.0);
+        auto v01 = s.new_element<Vertex>(1.0, 0.0);
+        auto v10 = s.new_element<Vertex>(1.0, 0.0);
+        auto v11 = s.new_element<Vertex>(1.0, 1.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v10, v11);
-        auto d = s.new_element_SHARED_PTR<Distance<LineSegment>>(l0, l1, 1.0);
+        auto l0 = s.new_element<LineSegment>(v00, v01);
+        auto l1 = s.new_element<LineSegment>(v10, v11);
+        auto d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
 
         s.solve();
 
@@ -404,19 +430,21 @@ TEST(Constraint, Distance_LineSegment) {
 
         l = abs(dx0 * dy1 - dy0 * dx1) / dr0;
         EXPECT_NEAR(1.0, l, TOL);
+
+        s.delete_me();
     }
 
     { // Case 2: Corner case when two LineSegments initially intersect at their midpoint
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.0, -1.0);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+        auto v00 = s.new_element<Vertex>(-1.0, 0.0);
+        auto v01 = s.new_element<Vertex>(1.0, 0.0);
+        auto v10 = s.new_element<Vertex>(0.0, -1.0);
+        auto v11 = s.new_element<Vertex>(0.0, 1.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v10, v11);
-        auto d = s.new_element_SHARED_PTR<Distance<LineSegment>>(l0, l1, 1.0);
+        auto l0 = s.new_element<LineSegment>(v00, v01);
+        auto l1 = s.new_element<LineSegment>(v10, v11);
+        auto d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
 
         s.solve();
 
@@ -437,6 +465,8 @@ TEST(Constraint, Distance_LineSegment) {
         double dot = abs(dx0 * dx1 + dy0 * dy1);
 
         EXPECT_NEAR(1.0, dot, TOL); // TODO: Fails because lines intersect at midpoint
+
+        s.delete_me();
     }
 }
 
@@ -444,91 +474,97 @@ TEST(Constraint, Distance_CircularArc) {
     { // Case 0: Distance between two circular arcs having defining manifolds which do not intersect and have non-intersecting bounding boxes
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(-0.2, 0.0);
-        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element<Vertex>(0.2, 0.0);
+        auto v01 = s.new_element<Vertex>(-0.2, 0.0);
+        auto vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-        auto vc1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.8, 1.0);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(1.2, 1.0);
+        auto vc1 = s.new_element<Vertex>(1.0, 1.0);
+        auto v10 = s.new_element<Vertex>(0.8, 1.0);
+        auto v11 = s.new_element<Vertex>(1.2, 1.0);
 
-        auto c0 = s.new_element_SHARED_PTR<CircularArc>(v00, v01, vc0, 0.2);
-        auto c1 = s.new_element_SHARED_PTR<CircularArc>(v10, v11, vc1, 0.2);
+        auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 0.2);
+        auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
         s.solve();
 
-        auto d = s.new_element_SHARED_PTR<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
+        auto d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
 
         s.solve();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior");
 
         EXPECT_NEAR(1.0 / 3.0, hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c0->radius() - c1->radius(), TOL / 3.0);
+
+        s.delete_me();
     }
 
     { // Case 1: Distance between two circular arcs, the second being contained within the defining circular of the first
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
-        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element<Vertex>(1.0, 0.0);
+        auto v01 = s.new_element<Vertex>(-1.0, 0.0);
+        auto vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.2);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.4, 0.2);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.2);
+        auto vc1 = s.new_element<Vertex>(0.2, 0.2);
+        auto v10 = s.new_element<Vertex>(0.4, 0.2);
+        auto v11 = s.new_element<Vertex>(0.0, 0.2);
 
-        auto c0 = s.new_element_SHARED_PTR<CircularArc>(v00, v01, vc0, 1.0);
-        auto c1 = s.new_element_SHARED_PTR<CircularArc>(v10, v11, vc1, 0.2);
+        auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
+        auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
         s.solve();
 
-        auto d = s.new_element_SHARED_PTR<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
+        auto d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
 
         s.solve();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0");
 
         EXPECT_NEAR(1.0 / 3.0, c0->radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1->radius(), TOL / 3.0);
+
+        s.delete_me();
     }
 
     { // Case 2: Distance between two circular arcs, the second being contained within the defining circular of the first
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
-        auto vc0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
+        auto v00 = s.new_element<Vertex>(1.0, 0.0);
+        auto v01 = s.new_element<Vertex>(-1.0, 0.0);
+        auto vc0 = s.new_element<Vertex>(0.0, 0.0);
 
-        auto vc1 = s.new_element_SHARED_PTR<Vertex>(0.2, 0.2);
-        auto v10 = s.new_element_SHARED_PTR<Vertex>(0.4, 0.2);
-        auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.2);
+        auto vc1 = s.new_element<Vertex>(0.2, 0.2);
+        auto v10 = s.new_element<Vertex>(0.4, 0.2);
+        auto v11 = s.new_element<Vertex>(0.0, 0.2);
 
-        auto c0 = s.new_element_SHARED_PTR<CircularArc>(v00, v01, vc0, 1.0);
-        auto c1 = s.new_element_SHARED_PTR<CircularArc>(v10, v11, vc1, 0.2);
+        auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
+        auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
         s.solve();
 
-        auto d = s.new_element_SHARED_PTR<Distance<CircularArc>>(c1, c0, 1.0 / 3.0);
+        auto d = s.new_element<Distance<CircularArc>>(c1, c0, 1.0 / 3.0);
 
         s.solve();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1");
 
         EXPECT_NEAR(1.0 / 3.0, c0->radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1->radius(), TOL / 3.0);
+
+        s.delete_me();
     }
 }
 
 TEST(Constraint, Coincident_CircularArc) {
     Sketch s;
 
-    auto vc = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI);
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI + M_LN2);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(M_1_PI, M_2_SQRTPI - M_LN2);
+    auto vc = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI);
+    auto v0 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI + M_LN2);
+    auto v1 = s.new_element<Vertex>(M_1_PI, M_2_SQRTPI - M_LN2);
 
-    auto ca = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, M_LN2);
+    auto ca = s.new_element<CircularArc>(v0, v1, vc, M_LN2);
 
-    auto vp = s.new_element_SHARED_PTR<Vertex>(M_E, M_LN10);
+    auto vp = s.new_element<Vertex>(M_E, M_LN10);
 
-    auto co = s.new_element_SHARED_PTR<Coincident<CircularArc>>(vp, ca);
+    auto co = s.new_element<Coincident<CircularArc>>(vp, ca);
 
     s.solve();
 
@@ -538,19 +574,21 @@ TEST(Constraint, Coincident_CircularArc) {
     double dy = vc->y() - vp->y();
     double d = sqrt(dx * dx + dy * dy);
     EXPECT_NEAR(0.0, d - ca->radius(), TOL * ca->radius());
+
+    s.delete_me();
 }
 
 TEST(Constraint, Coincident_LineSegment) {
     { // Case 0: Standard case (no corner cases)
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto vp = s.new_element_SHARED_PTR<Vertex>(1.1, 0.9);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto vp = s.new_element<Vertex>(1.1, 0.9);
 
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto l = s.new_element<LineSegment>(v0, v1);
 
-        auto c = s.new_element_SHARED_PTR<Coincident<LineSegment>>(vp, l);
+        auto c = s.new_element<Coincident<LineSegment>>(vp, l);
 
         s.solve();
 
@@ -568,18 +606,20 @@ TEST(Constraint, Coincident_LineSegment) {
         dy1 /= dr1;
 
         EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
+
+        s.delete_me();
     }
 
     { // Case 1: Corner case where midpoint of LineSegment is
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto vp = s.new_element_SHARED_PTR<Vertex>(0.25, 0.75);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto vp = s.new_element<Vertex>(0.25, 0.75);
 
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto l = s.new_element<LineSegment>(v0, v1);
 
-        auto c = s.new_element_SHARED_PTR<Coincident<LineSegment>>(vp, l);
+        auto c = s.new_element<Coincident<LineSegment>>(vp, l);
 
         s.solve();
 
@@ -597,6 +637,8 @@ TEST(Constraint, Coincident_LineSegment) {
         dy1 /= dr1;
 
         EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
+
+        s.delete_me();
     }
 }
 
@@ -620,16 +662,16 @@ TEST(Constraint, Symmetry) {
     { // Case 0: Horizontal
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(0.41, -0.62);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.63, 0.44);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 0.0);
+        auto v2 = s.new_element<Vertex>(0.41, -0.62);
+        auto v3 = s.new_element<Vertex>(0.63, 0.44);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
 
-        s.new_element_SHARED_PTR<Fixation>(v0);
-        s.new_element_SHARED_PTR<Horizontal>(l0);
-        s.new_element_SHARED_PTR<Length>(l0, 1.0);
+        s.new_element<Fixation>(v0);
+        s.new_element<Horizontal>(l0);
+        s.new_element<Length>(l0, 1.0);
 
         s.solve();
 
@@ -639,26 +681,28 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, l0->length(), TOL);
         EXPECT_NEAR(1.0, v1->x(), TOL);
 
-        s.new_element_SHARED_PTR<Symmetry>(v2, v3, l0);
+        s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
         EXPECT_NEAR(v2->x(), v3->x(), TOL);
         EXPECT_NEAR(v2->y(), -v3->y(), TOL);
+
+        s.delete_me();
     }
 
     { // Case 1: Vertical
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(-0.62, 0.41);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.44, 0.63);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(0.0, 1.0);
+        auto v2 = s.new_element<Vertex>(-0.62, 0.41);
+        auto v3 = s.new_element<Vertex>(0.44, 0.63);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
 
-        s.new_element_SHARED_PTR<Fixation>(v0);
-        s.new_element_SHARED_PTR<Vertical>(l0);
-        s.new_element_SHARED_PTR<Length>(l0, 1.0);
+        s.new_element<Fixation>(v0);
+        s.new_element<Vertical>(l0);
+        s.new_element<Length>(l0, 1.0);
 
         s.solve();
 
@@ -668,24 +712,26 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, l0->length(), TOL);
         EXPECT_NEAR(1.0, v1->y(), TOL);
 
-        s.new_element_SHARED_PTR<Symmetry>(v2, v3, l0);
+        s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
         EXPECT_NEAR(v2->x(), -v3->x(), TOL);
         EXPECT_NEAR(v2->y(), v3->y(), TOL);
+
+        s.delete_me();
     }
 
     { // Case 2: 45 degrees
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(0.1, 0.7);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.8, 0.2);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto v2 = s.new_element<Vertex>(0.1, 0.7);
+        auto v3 = s.new_element<Vertex>(0.8, 0.2);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        s.new_element_SHARED_PTR<Fixation>(v0);
-        s.new_element_SHARED_PTR<Fixation>(v1);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        s.new_element<Fixation>(v0);
+        s.new_element<Fixation>(v1);
 
         s.solve();
 
@@ -695,26 +741,28 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, v1->y(), TOL);
         EXPECT_NEAR(M_SQRT2, l0->length(), TOL);
 
-        s.new_element_SHARED_PTR<Symmetry>(v2, v3, l0);
+        s.new_element<Symmetry>(v2, v3, l0);
         s.solve();
 
         EXPECT_NEAR(v3->y(), v2->x(), TOL);
         EXPECT_NEAR(v3->x(), v2->y(), TOL);
+
+        s.delete_me();
     }
 }
 
 TEST(Constraint, Rotation) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 3.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(3.0, 4.0);
+    auto v0 = s.new_element<Vertex>(0.0, 1.0);
+    auto v1 = s.new_element<Vertex>(2.0, 3.0);
+    auto v2 = s.new_element<Vertex>(3.0, 4.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v0, v2);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v0, v2);
 
     double a = 60.0;
-    auto r = s.new_element_SHARED_PTR<Rotation>(v1, v2, v0, a);
+    auto r = s.new_element<Rotation>(v1, v2, v0, a);
     a *= M_PI / 180.0;
 
     s.solve();
@@ -730,4 +778,6 @@ TEST(Constraint, Rotation) {
     EXPECT_NEAR(r1, r2, TOL);
     EXPECT_NEAR(v2->x(), dx1 * cos(a) - dy1 * sin(a) + v0->x(), TOL);
     EXPECT_NEAR(v2->y(), dx1 * sin(a) + dy1 * cos(a) + v0->y(), TOL);
+
+    s.delete_me();
 }

@@ -90,15 +90,15 @@ TEST(LineSegment, on_manifold) {
     {   //ARGS::(Vertex)
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(1.1, 1.1);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(0.0, M_SQRT2);
-        auto v5 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
-        auto v6 = s.new_element_SHARED_PTR<Vertex>(0.5, sqrt(2.0 - 0.25));
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto v2 = s.new_element<Vertex>(1.1, 1.1);
+        auto v3 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        auto v4 = s.new_element<Vertex>(0.0, M_SQRT2);
+        auto v5 = s.new_element<Vertex>(0.5, 0.5);
+        auto v6 = s.new_element<Vertex>(0.5, sqrt(2.0 - 0.25));
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
 
         EXPECT_TRUE(l0->on_manifold(v0));
         EXPECT_TRUE(l0->on_manifold(v1));
@@ -107,22 +107,24 @@ TEST(LineSegment, on_manifold) {
         EXPECT_FALSE(l0->on_manifold(v4));
         EXPECT_TRUE(l0->on_manifold(v5));
         EXPECT_FALSE(l0->on_manifold(v6));
+
+        s.delete_me();
     }
 
     {   //ARGS::(Vertex,Vertex,double)
         Sketch s;
 
-        auto vl0 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto vl1 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
+        auto vl0 = s.new_element<Vertex>(1.0, 1.0);
+        auto vl1 = s.new_element<Vertex>(2.0, 2.0);
 
-        auto l = s.new_element_SHARED_PTR<LineSegment>(vl0, vl1);
+        auto l = s.new_element<LineSegment>(vl0, vl1);
 
-        auto origin = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.5 + M_SQRT1_2, 0.5);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.5);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.5);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.5 + 3.0 * M_SQRT1_2, 0.5);
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(0.5 + 3.0, 0.5);
+        auto origin = s.new_element<Vertex>(0.5, 0.5);
+        auto v0 = s.new_element<Vertex>(0.5 + M_SQRT1_2, 0.5);
+        auto v1 = s.new_element<Vertex>(1.0, 0.5);
+        auto v2 = s.new_element<Vertex>(2.0, 0.5);
+        auto v3 = s.new_element<Vertex>(0.5 + 3.0 * M_SQRT1_2, 0.5);
+        auto v4 = s.new_element<Vertex>(0.5 + 3.0, 0.5);
 
         double a = 44.0;
         EXPECT_FALSE(l->on_manifold(v0, origin, a));
@@ -144,6 +146,8 @@ TEST(LineSegment, on_manifold) {
         EXPECT_FALSE(l->on_manifold(v2, origin, a));
         EXPECT_FALSE(l->on_manifold(v3, origin, a));
         EXPECT_FALSE(l->on_manifold(v4, origin, a));
+
+        s.delete_me();
     }
 }
 
@@ -151,17 +155,17 @@ TEST(LineSegment, on_segment) {
     {   // ARGS::(Vertex)
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto l = s.new_element<LineSegment>(v0, v1);
 
-        auto von0 = s.new_element_SHARED_PTR<Vertex>(0.3, 0.3);
-        auto von1 = s.new_element_SHARED_PTR<Vertex>(0.6, 0.6);
+        auto von0 = s.new_element<Vertex>(0.3, 0.3);
+        auto von1 = s.new_element<Vertex>(0.6, 0.6);
 
-        auto voff0 = s.new_element_SHARED_PTR<Vertex>(-0.3, -0.3);
-        auto voff1 = s.new_element_SHARED_PTR<Vertex>(1.3, 1.3);
-        auto voff2 = s.new_element_SHARED_PTR<Vertex>(0.6, 0.3);
-        auto voff3 = s.new_element_SHARED_PTR<Vertex>(-0.6, 0.3);
+        auto voff0 = s.new_element<Vertex>(-0.3, -0.3);
+        auto voff1 = s.new_element<Vertex>(1.3, 1.3);
+        auto voff2 = s.new_element<Vertex>(0.6, 0.3);
+        auto voff3 = s.new_element<Vertex>(-0.6, 0.3);
 
         EXPECT_TRUE(l->on_segment(von0));
         EXPECT_TRUE(l->on_segment(von1));
@@ -170,6 +174,8 @@ TEST(LineSegment, on_segment) {
         EXPECT_FALSE(l->on_segment(voff1));
         EXPECT_FALSE(l->on_segment(voff2));
         EXPECT_FALSE(l->on_segment(voff3));
+
+        s.delete_me();
     }
 
     { // ARGS::(Vertex,Vertex,double)
@@ -177,19 +183,19 @@ TEST(LineSegment, on_segment) {
 
         double angle = 45.0;
 
-        auto origin = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto origin = s.new_element<Vertex>(1.0, 1.0);
 
-        auto vl0 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
-        auto vl1 = s.new_element_SHARED_PTR<Vertex>(3.0, 3.0);
+        auto vl0 = s.new_element<Vertex>(2.0, 2.0);
+        auto vl1 = s.new_element<Vertex>(3.0, 3.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(vl0, vl1);
+        auto l0 = s.new_element<LineSegment>(vl0, vl1);
 
-        auto vt0 = s.new_element_SHARED_PTR<Vertex>(1.0 + M_SQRT2, 1.0);
-        auto vt1 = s.new_element_SHARED_PTR<Vertex>(1.0 + 1.5 * M_SQRT2, 1.0);
-        auto vt2 = s.new_element_SHARED_PTR<Vertex>(1.0 + 2.0 * M_SQRT2, 1.0);
+        auto vt0 = s.new_element<Vertex>(1.0 + M_SQRT2, 1.0);
+        auto vt1 = s.new_element<Vertex>(1.0 + 1.5 * M_SQRT2, 1.0);
+        auto vt2 = s.new_element<Vertex>(1.0 + 2.0 * M_SQRT2, 1.0);
 
-        auto vf0 = s.new_element_SHARED_PTR<Vertex>(1.0 + 0.5 * M_SQRT2, 1.0);
-        auto vf1 = s.new_element_SHARED_PTR<Vertex>(1.0 + 2.5 * M_SQRT2, 1.0);
+        auto vf0 = s.new_element<Vertex>(1.0 + 0.5 * M_SQRT2, 1.0);
+        auto vf1 = s.new_element<Vertex>(1.0 + 2.5 * M_SQRT2, 1.0);
 
         EXPECT_TRUE(l0->on_segment(vt0, origin, angle));
         EXPECT_TRUE(l0->on_segment(vt1, origin, angle));
@@ -197,6 +203,8 @@ TEST(LineSegment, on_segment) {
 
         EXPECT_FALSE(l0->on_segment(vf0, origin, angle));
         EXPECT_FALSE(l0->on_segment(vf1, origin, angle));
+
+        s.delete_me();
     }
 }
 
@@ -204,31 +212,31 @@ TEST(LineSegment, is_identical) {
     {   // ARGS::(LineSegment)
         Sketch s;
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
-        auto lr = s.new_element_SHARED_PTR<LineSegment>(v01, v00);
+        auto v00 = s.new_element<Vertex>(0.0, 0.0);
+        auto v01 = s.new_element<Vertex>(1.0, 1.0);
+        auto l = s.new_element<LineSegment>(v00, v01);
+        auto lr = s.new_element<LineSegment>(v01, v00);
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto v2 = s.new_element<Vertex>(1.0, 0.0);
+        auto v3 = s.new_element<Vertex>(0.0, 1.0);
+        auto v4 = s.new_element<Vertex>(0.5, 0.5);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v0);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        auto l1 = s.new_element<LineSegment>(v1, v0);
 
         EXPECT_TRUE(l->is_identical(l));
         EXPECT_TRUE(l->is_identical(lr));
         EXPECT_TRUE(l->is_identical(l0));
         EXPECT_TRUE(l->is_identical(l1));
 
-        auto l2 = s.new_element_SHARED_PTR<LineSegment>(v0, v2);
-        auto l3 = s.new_element_SHARED_PTR<LineSegment>(v0, v3);
-        auto l4 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-        auto l5 = s.new_element_SHARED_PTR<LineSegment>(v1, v3);
-        auto l6 = s.new_element_SHARED_PTR<LineSegment>(v0, v4);
-        auto l7 = s.new_element_SHARED_PTR<LineSegment>(v1, v4);
+        auto l2 = s.new_element<LineSegment>(v0, v2);
+        auto l3 = s.new_element<LineSegment>(v0, v3);
+        auto l4 = s.new_element<LineSegment>(v1, v2);
+        auto l5 = s.new_element<LineSegment>(v1, v3);
+        auto l6 = s.new_element<LineSegment>(v0, v4);
+        auto l7 = s.new_element<LineSegment>(v1, v4);
 
         EXPECT_FALSE(l->is_identical(l2));
         EXPECT_FALSE(l->is_identical(l3));
@@ -236,26 +244,28 @@ TEST(LineSegment, is_identical) {
         EXPECT_FALSE(l->is_identical(l5));
         EXPECT_FALSE(l->is_identical(l6));
         EXPECT_FALSE(l->is_identical(l7));
+
+        s.delete_me();
     }
 
     {   // ARGS::(LineSegment,Vertex,double)
         Sketch s;
 
-        auto origin = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto origin = s.new_element<Vertex>(1.0, 1.0);
 
-        auto v00 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2 + 1.0, M_SQRT2 + 1.0);
-        auto v01 = s.new_element_SHARED_PTR<Vertex>(1.5 * M_SQRT2 + 1.0, 1.5 * M_SQRT2 + 1.0);
-        auto l = s.new_element_SHARED_PTR<LineSegment>(v00, v01);
+        auto v00 = s.new_element<Vertex>(M_SQRT2 + 1.0, M_SQRT2 + 1.0);
+        auto v01 = s.new_element<Vertex>(1.5 * M_SQRT2 + 1.0, 1.5 * M_SQRT2 + 1.0);
+        auto l = s.new_element<LineSegment>(v00, v01);
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(2.0 + 1.0, 0.0 + 1.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(3.0 + 1.0, 0.0 + 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0 + 1.0, 2.0 + 1.0);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0 + 1.0, 3.0 + 1.0);
+        auto v0 = s.new_element<Vertex>(2.0 + 1.0, 0.0 + 1.0);
+        auto v1 = s.new_element<Vertex>(3.0 + 1.0, 0.0 + 1.0);
+        auto v2 = s.new_element<Vertex>(0.0 + 1.0, 2.0 + 1.0);
+        auto v3 = s.new_element<Vertex>(0.0 + 1.0, 3.0 + 1.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v0);
-        auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-        auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v2);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        auto l1 = s.new_element<LineSegment>(v1, v0);
+        auto l2 = s.new_element<LineSegment>(v2, v3);
+        auto l3 = s.new_element<LineSegment>(v3, v2);
 
         EXPECT_TRUE(l->is_identical(l0, origin, +45.0));
         EXPECT_TRUE(l->is_identical(l1, origin, +45.0));
@@ -267,17 +277,17 @@ TEST(LineSegment, is_identical) {
         EXPECT_FALSE(l->is_identical(l2, origin, +45.0));
         EXPECT_FALSE(l->is_identical(l3, origin, +45.0));
 
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(2.5 + 1.0, 0.0 + 1.0);
-        auto v5 = s.new_element_SHARED_PTR<Vertex>(0.0 + 1.0, 2.5 + 1.0);
+        auto v4 = s.new_element<Vertex>(2.5 + 1.0, 0.0 + 1.0);
+        auto v5 = s.new_element<Vertex>(0.0 + 1.0, 2.5 + 1.0);
 
-        auto l4 = s.new_element_SHARED_PTR<LineSegment>(v0, v4);
-        auto l5 = s.new_element_SHARED_PTR<LineSegment>(v4, v0);
-        auto l6 = s.new_element_SHARED_PTR<LineSegment>(v1, v4);
-        auto l7 = s.new_element_SHARED_PTR<LineSegment>(v4, v1);
-        auto l8 = s.new_element_SHARED_PTR<LineSegment>(v2, v5);
-        auto l9 = s.new_element_SHARED_PTR<LineSegment>(v5, v2);
-        auto l10 = s.new_element_SHARED_PTR<LineSegment>(v3, v5);
-        auto l11 = s.new_element_SHARED_PTR<LineSegment>(v5, v3);
+        auto l4 = s.new_element<LineSegment>(v0, v4);
+        auto l5 = s.new_element<LineSegment>(v4, v0);
+        auto l6 = s.new_element<LineSegment>(v1, v4);
+        auto l7 = s.new_element<LineSegment>(v4, v1);
+        auto l8 = s.new_element<LineSegment>(v2, v5);
+        auto l9 = s.new_element<LineSegment>(v5, v2);
+        auto l10 = s.new_element<LineSegment>(v3, v5);
+        auto l11 = s.new_element<LineSegment>(v5, v3);
 
         EXPECT_FALSE(l->is_identical(l4, origin, +45.0));
         EXPECT_FALSE(l->is_identical(l5, origin, +45.0));
@@ -288,6 +298,8 @@ TEST(LineSegment, is_identical) {
         EXPECT_FALSE(l->is_identical(l9, origin, -45.0));
         EXPECT_FALSE(l->is_identical(l10, origin, -45.0));
         EXPECT_FALSE(l->is_identical(l11, origin, -45.0));
+
+        s.delete_me();
     }
 }
 
@@ -295,23 +307,23 @@ TEST(LineSegment, s_coincident) {
     {   // ARGS::(LineSegment)
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(1.1, 1.1);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(3.1, 0.9);
-        auto v5 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2, 0.0);
-        auto v6 = s.new_element_SHARED_PTR<Vertex>(0.0, M_SQRT2);
-        auto v7 = s.new_element_SHARED_PTR<Vertex>(2.0 * M_SQRT2, 0.0);
-        auto v8 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0 - M_SQRT2);
-        auto v9 = s.new_element_SHARED_PTR<Vertex>(M_SQRT2 + 1.0, 1.0);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 1.0);
+        auto v2 = s.new_element<Vertex>(1.1, 1.1);
+        auto v3 = s.new_element<Vertex>(2.0, 2.0);
+        auto v4 = s.new_element<Vertex>(3.1, 0.9);
+        auto v5 = s.new_element<Vertex>(M_SQRT2, 0.0);
+        auto v6 = s.new_element<Vertex>(0.0, M_SQRT2);
+        auto v7 = s.new_element<Vertex>(2.0 * M_SQRT2, 0.0);
+        auto v8 = s.new_element<Vertex>(1.0, 1.0 - M_SQRT2);
+        auto v9 = s.new_element<Vertex>(M_SQRT2 + 1.0, 1.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-        auto l2 = s.new_element_SHARED_PTR<LineSegment>(v3, v2);
-        auto l3 = s.new_element_SHARED_PTR<LineSegment>(v2, v4);
-        auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v2);
-        auto l5 = s.new_element_SHARED_PTR<LineSegment>(v5, v9);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        auto l1 = s.new_element<LineSegment>(v2, v3);
+        auto l2 = s.new_element<LineSegment>(v3, v2);
+        auto l3 = s.new_element<LineSegment>(v2, v4);
+        auto l4 = s.new_element<LineSegment>(v4, v2);
+        auto l5 = s.new_element<LineSegment>(v5, v9);
 
         EXPECT_TRUE(l0->is_coincident(l0));
         EXPECT_TRUE(l0->is_coincident(l1));
@@ -319,6 +331,8 @@ TEST(LineSegment, s_coincident) {
         EXPECT_FALSE(l0->is_coincident(l3));
         EXPECT_FALSE(l0->is_coincident(l4));
         EXPECT_FALSE(l0->is_coincident(l5));
+
+        s.delete_me();
     }
 
     {   // ARGS::(CircularArc)

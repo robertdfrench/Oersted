@@ -100,7 +100,13 @@ public:
 
     Point const base(size_t ei) const { return Points[node(ei)]; };
 
-    Point const point(size_t i) const { return Points[i]; };
+    Point const point(size_t i) const {
+        if (i >= Points.size()) {
+            throw;
+        } else {
+            return Points[i];
+        }
+    }; //return Points[i]; };
 
     Point const point(Edge const e) const { return Points[e.Node]; };
 

@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<Vertex> center, double angle, size_t copies, bool remove_internal) {
+RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_ptr<Vertex> center, double angle, size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
     // #TODO: Need to rearrange code and reserve vector sizes in a way that makes more sense (much code copied from MirrorCopy constructor)
     // #TODO: Restructure to obviate the need for local_curves and local_verticies

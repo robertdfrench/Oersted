@@ -8,9 +8,9 @@ public:
     friend class MirrorCopy;
 
     // Constructors
-    Curve() : Start(nullptr), End(nullptr) {};
+    Curve() : Start(std::make_shared<Vertex>()), End(std::make_shared<Vertex>()), ForConstruction(false) {};
 
-    Curve(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex>v1, bool fc = false) : Start(v0), End(v1), ForConstruction(fc) {};
+    Curve(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, bool fc = false) : Start(v0), End(v1), ForConstruction(fc) {};
 
     //Curve(Vertex *v0, Vertex *v1, bool fc = false) : Start(v0), End(v1), ForConstruction(fc) {};
 
@@ -39,20 +39,20 @@ public:
     virtual std::pair<double, double> supremum() const = 0;     // maximum length of vector between origin and point on curve
 
     // Curve-Vertex Comparison
-    virtual bool on_manifold(std::shared_ptr<Vertex> v) const final; // true if vertex is on manifold defined by curve
-    virtual bool on_manifold(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> origin, const double angle) const final;
+    virtual bool on_manifold(std::shared_ptr<Vertex> const &v) const final; // true if vertex is on manifold defined by curve
+    virtual bool on_manifold(std::shared_ptr<Vertex> const &v, std::shared_ptr<Vertex> const &origin, double const angle) const final;
 
-    virtual bool on_segment(std::shared_ptr<Vertex> v) const final; // true if vertex is on curve segment
-    virtual bool on_segment(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> origin, const double angle) const final;
+    virtual bool on_segment(std::shared_ptr<Vertex> const &v) const final; // true if vertex is on curve segment
+    virtual bool on_segment(std::shared_ptr<Vertex> const &v, std::shared_ptr<Vertex> const &origin, double const angle) const final;
 
     // Curve-Curve Comparison
-    virtual bool is_identical(std::shared_ptr<Curve> c) const = 0; // true if (input curve) XOR (object curve) is a set with measure < tol
-    virtual bool is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const = 0;
+    virtual bool is_identical(std::shared_ptr<Curve> const &c) const = 0; // true if (input curve) XOR (object curve) is a set with measure < tol
+    virtual bool is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const = 0;
 
     // #TODO: virtual bool is_overlapping(const Curve* c) const = 0; // true if (input curve) AND (object curve) is a set with measure > tol
     // #TODO: virtual bool is_overlapping(const Curve* c, const Vertex* origin, const double_t angle) const = 0;
 
-    virtual bool is_coincident(std::shared_ptr<Curve> c) const = 0; // true if (input curve) AND (object curve + parametric extension) is a set with measure > tol
+    virtual bool is_coincident(std::shared_ptr<Curve> const &c) const = 0; // true if (input curve) AND (object curve + parametric extension) is a set with measure > tol
     // #TODO: virtual bool is_coincident(const Curve* c, const Vertex* origin, const double_t angle) const = 0;
 
     // Modification

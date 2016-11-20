@@ -8,18 +8,18 @@ public:
     // Constructors
     Constellation() {};
 
-    Constellation(const Sketch *s);
+    Constellation(Sketch const *s);
 
     size_t size() { return Stars.size(); };
 
-    bool contours(std::vector<std::shared_ptr<Contour>> &contours);
+    std::vector<std::shared_ptr<Contour>> contours();
 
-    bool boundary(std::shared_ptr<Contour>);
+    std::shared_ptr<Contour> boundary();
 
 private:
     std::list<Star> Stars;
 
-    void pop(std::shared_ptr<Curve> c = nullptr);
+    void pop(std::shared_ptr<Curve> c = std::shared_ptr<Curve>());
 
     bool twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 

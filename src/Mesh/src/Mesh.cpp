@@ -363,7 +363,7 @@ bool Mesh::is_protruding(size_t ei) const {
 
         size_t nxt = next(next(ei));
         while (nxt != prev(ei)) {
-            Point const p4 = point(nxt);
+            Point const p4 = base(nxt);
 
             double v2x = p2.X - p4.X;
             double v2y = p2.Y - p4.Y;
@@ -566,7 +566,7 @@ void Mesh::create_boundary_polygon() {
     bool any_split = true;
     while (any_split) {
         any_split = false;
-        for (size_t i = 0; i != Edges.size(); ++i) {
+        for (size_t i = 0; i != Edges.size() - 1; ++i) {
             for (size_t j = i + 1; j != Edges.size(); ++j) {
                 if (are_intersecting(i, j)) {
                     any_split = true;

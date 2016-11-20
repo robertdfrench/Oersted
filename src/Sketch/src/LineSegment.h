@@ -3,7 +3,7 @@
 
 #include "Curve.h"
 
-class LineSegment final : public Curve {
+class LineSegment final : public Curve { // TODO: Use interface instead of friend class
 public:
     friend class Angle;
 
@@ -22,7 +22,7 @@ public:
     //Constructors
     LineSegment() : Curve() {};
 
-    LineSegment(const LineSegment *l) : Curve(l->Start, l->End, l->ForConstruction) {};
+    LineSegment(LineSegment const *l) : Curve(l->Start, l->End, l->ForConstruction) {};
 
     LineSegment(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, bool fc = false) : Curve(v0, v1, fc) {};
 
@@ -62,11 +62,11 @@ public:
     using Curve::on_segment;
 
     // Curve-Curve Comparison
-    bool is_identical(std::shared_ptr<Curve> c) const override;
+    bool is_identical(std::shared_ptr<Curve> const &c) const override;
 
-    bool is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const override;
+    bool is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
 
-    bool is_coincident(std::shared_ptr<Curve> c) const override;
+    bool is_coincident(std::shared_ptr<Curve> const &c) const override;
 
     // Modification
     std::shared_ptr<Curve> clone() const override { return std::make_shared<LineSegment>(this); };

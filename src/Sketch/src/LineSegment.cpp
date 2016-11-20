@@ -105,7 +105,7 @@ bool LineSegment::on_segment(const double x, const double y) const {
     }
 }
 
-bool LineSegment::is_identical(std::shared_ptr<Curve> c) const {
+bool LineSegment::is_identical(std::shared_ptr<Curve> const &c) const {
     auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {
@@ -115,7 +115,7 @@ bool LineSegment::is_identical(std::shared_ptr<Curve> c) const {
     }
 }
 
-bool LineSegment::is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const {
+bool LineSegment::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
     auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {
@@ -143,7 +143,7 @@ bool LineSegment::is_identical(const double x0, const double y0, const double x1
            || (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol);
 }
 
-bool LineSegment::is_coincident(std::shared_ptr<Curve> c) const {
+bool LineSegment::is_coincident(std::shared_ptr<Curve> const &c) const {
     auto l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {

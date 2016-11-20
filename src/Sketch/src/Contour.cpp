@@ -65,10 +65,13 @@ Contour::Contour(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool>
 }
 
 bool Contour::initialize(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir) {
-    Curves.resize(0);
-    Orientation.resize(0);
+    Curves = std::vector<std::shared_ptr<Curve>>();
+    Curves.reserve(c.size());
 
-    for (size_t i = 0; i < c.size(); ++i) {
+    Orientation = std::vector<bool>();
+    Orientation.reserve(c.size());
+
+    for (size_t i = 0; i != c.size(); ++i) {
         Curves.push_back(c[i]);
         Orientation.push_back(dir[i]);
 

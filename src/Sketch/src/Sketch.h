@@ -140,7 +140,7 @@ enum class SaveMethod {
 class Sketch {
 public:
     // Constructors
-    Sketch();
+    Sketch() : NumVariables(0), NumEquations(0), Boundary() {};
 
     void delete_me();
 
@@ -151,7 +151,7 @@ public:
 
     std::shared_ptr<Curve> curve(size_t i) const { return Curves[i]; };
 
-    std::vector<std::shared_ptr<Curve>> const curves() {return std::vector<std::shared_ptr<Curve>>(Curves.begin(),Curves.end());};
+    std::vector<std::shared_ptr<Curve>> const curves() { return std::vector<std::shared_ptr<Curve>>(Curves.begin(),Curves.end());};
 
     std::shared_ptr<Constraint> constraint(size_t i) const { return Constraints[i]; };
 
@@ -169,14 +169,8 @@ public:
 
     size_t size_contours() const { return Contours.size(); };
 
-    template<typename T, typename...Args>
-    T *new_parameter(Args &&... args);
-
-    template<typename T, typename...Args>
-    T &new_element(Args &&... args);
-
     template<class T, class...ArgT>
-    std::shared_ptr<T> new_element_SHARED_PTR(ArgT &&... args);
+    std::shared_ptr<T> new_element(ArgT &&... args);
 
     void add_element(std::shared_ptr<Vertex> v);
 
@@ -186,24 +180,16 @@ public:
 
     void add_element(std::shared_ptr<Pattern> p);
 
-    void solve();
+    double solve();
 
     bool build();
 
     void add_parameter(std::shared_ptr<Variable> v) { add_parameter(Variables, v); };
 
-    // Save Functions
     template<SaveMethod S>
     void save_as(std::string path, std::string file_name) const;
 
 private:
-    // SketchParameter
-    template<class T>
-    void add_parameter(std::vector<T *> &parameters, T *p);
-
-    template<class T>
-    void add_element(std::vector<T *> &elements, T &e);
-
     template<class T>
     void add_element(std::vector<std::shared_ptr<T>> &elements, std::shared_ptr<T> e);
 
@@ -224,22 +210,6 @@ private:
     size_t NumEquations;
 };
 
-// Template Member Functions
-// #TODO: Pass elements by pointer
-template<class T>
-void Sketch::add_element(std::vector<T *> &elements, T &e) {
-    bool unique = true;
-    for (size_t i = 0; i < elements.size() && unique; ++i) {
-        unique = (elements[i] != &e);
-    }
-
-    if (unique) {
-        NumEquations += e.set_equation_index(NumEquations);
-        elements.push_back(&e);
-    }
-
-    e.register_parameters(this);
-}
 
 template<class T>
 void Sketch::add_element(std::vector<std::shared_ptr<T>> &elements, std::shared_ptr<T> e) {
@@ -256,20 +226,6 @@ void Sketch::add_element(std::vector<std::shared_ptr<T>> &elements, std::shared_
     e->register_parameters(this);
 }
 
-
-template<class T>
-void Sketch::add_parameter(std::vector<T *> &parameters, T *p) {
-    bool unique = true;
-    for (size_t i = 0; i < parameters.size() && unique; ++i) {
-        unique = (parameters[i] != p);
-    }
-
-    if (unique) {
-        NumVariables += p->set_index(NumVariables);
-        parameters.push_back(p);
-    }
-}
-
 template<class T>
 void Sketch::add_parameter(std::vector<std::shared_ptr<T>> &parameters, std::shared_ptr<T> p) {
     bool unique = true;
@@ -283,26 +239,12 @@ void Sketch::add_parameter(std::vector<std::shared_ptr<T>> &parameters, std::sha
     }
 }
 
-template<typename T, typename...ArgT>
-T &Sketch::new_element(ArgT &&... args) {
-    T *e = new T(std::forward<ArgT>(args)...);
-    add_element(*e);
-    return *e;
-}
 
 template<class T, class...ArgT>
-std::shared_ptr<T> Sketch::new_element_SHARED_PTR(ArgT &&... args) {
+std::shared_ptr<T> Sketch::new_element(ArgT &&... args) {
     std::shared_ptr<T> e = std::make_shared<T>(std::forward<ArgT>(args)...);
     add_element(e);
     return e;
 };
-
-template<typename T, typename...Args>
-T *Sketch::new_parameter(Args &&... args) {
-    T *p = new T(std::forward<Args>(args)..., this);
-    add_parameter(p);
-
-    return p;
-}
 
 #endif //OERSTED_SKETCH_H

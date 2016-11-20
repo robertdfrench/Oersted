@@ -1,15 +1,15 @@
 #include "test_Mesh.hpp"
 
-TEST(Mesh, create__triangle_domain) {
+TEST(Mesh, create_triangle_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, sqrt(3.0));
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(0.0, sqrt(3.0));
+    auto v2 = s.new_element<Vertex>(-1.0, 0.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v0);
 
     s.solve();
     s.build();
@@ -83,18 +83,18 @@ TEST(Mesh, create__triangle_domain) {
     size_t i = m.num_points();
 }
 
-TEST(Mesh, create__square_domain) {
+TEST(Mesh, create_square_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element<Vertex>(1.0, 1.0);
+    auto v3 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
     s.solve();
     s.build();
@@ -166,18 +166,18 @@ TEST(Mesh, create__square_domain) {
     }
 }
 
-TEST(Mesh, create__narrow_diamond_domain) {
+TEST(Mesh, create_narrow_diamond_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, -2.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(0.0, 2.0);
+    auto v2 = s.new_element<Vertex>(-1.0, 0.0);
+    auto v3 = s.new_element<Vertex>(0.0, -2.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
     s.solve();
     s.build();
@@ -241,20 +241,20 @@ TEST(Mesh, create__narrow_diamond_domain) {
     }
 }
 
-TEST(Mesh, create__narrow_rectangle_domain) {
+TEST(Mesh, create_narrow_rectangle_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(5.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(5.0, 1.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(-5.0, 1.0);
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(-5.0, 0.0);
+    auto v0 = s.new_element<Vertex>(5.0, 0.0);
+    auto v1 = s.new_element<Vertex>(5.0, 1.0);
+    auto v2 = s.new_element<Vertex>(0.0, 2.0);
+    auto v3 = s.new_element<Vertex>(-5.0, 1.0);
+    auto v4 = s.new_element<Vertex>(-5.0, 0.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v4);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v4);
+    auto l4 = s.new_element<LineSegment>(v4, v0);
 
     s.solve();
     s.build();
@@ -306,15 +306,15 @@ TEST(Mesh, create__narrow_rectangle_domain) {
     }
 }
 
-TEST(Mesh, create__half_circle_domain) {
+TEST(Mesh, create_half_circle_domain) {
     Sketch s;
 
-    auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(-1.0, 0.0);
+    auto vc = s.new_element<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element<Vertex>(1.0, 0.0);
+    auto v1 = s.new_element<Vertex>(-1.0, 0.0);
 
-    auto arc = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 1.0);
-    auto line = s.new_element_SHARED_PTR<LineSegment>(v1, v0);
+    auto arc = s.new_element<CircularArc>(v0, v1, vc, 1.0);
+    auto line = s.new_element<LineSegment>(v1, v0);
 
     s.solve();
     s.build();
@@ -347,19 +347,19 @@ TEST(Mesh, create__half_circle_domain) {
     }
 }
 
-TEST(Mesh, create__horseshoe_domain) {
+TEST(Mesh, create_horseshoe_domain) {
     Sketch s;
 
-    auto vc = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(-2.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(-1.9, 0.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.9, 0.0);
+    auto vc = s.new_element<Vertex>(0.0, 0.0);
+    auto v0 = s.new_element<Vertex>(2.0, 0.0);
+    auto v1 = s.new_element<Vertex>(-2.0, 0.0);
+    auto v2 = s.new_element<Vertex>(-1.9, 0.0);
+    auto v3 = s.new_element<Vertex>(1.9, 0.0);
 
-    auto arc0 = s.new_element_SHARED_PTR<CircularArc>(v0, v1, vc, 2.0);
-    auto line0 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto arc1 = s.new_element_SHARED_PTR<CircularArc>(v3, v2, vc, 1.9);
-    auto line1 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto arc0 = s.new_element<CircularArc>(v0, v1, vc, 2.0);
+    auto line0 = s.new_element<LineSegment>(v1, v2);
+    auto arc1 = s.new_element<CircularArc>(v3, v2, vc, 1.9);
+    auto line1 = s.new_element<LineSegment>(v3, v0);
 
     s.solve();
     s.build();
@@ -396,34 +396,34 @@ TEST(Mesh, create__horseshoe_domain) {
     }
 }
 
-TEST(Mesh, create__I_shaped_domain) {
+TEST(Mesh, create_I_shaped_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(3.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(3.0, 1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
-    auto v5 = s.new_element_SHARED_PTR<Vertex>(3.0, 2.0);
-    auto v6 = s.new_element_SHARED_PTR<Vertex>(3.0, 3.0);
-    auto v7 = s.new_element_SHARED_PTR<Vertex>(0.0, 3.0);
-    auto v8 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
-    auto v9 = s.new_element_SHARED_PTR<Vertex>(1.0, 2.0);
-    auto v10 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-    auto v11 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(3.0, 0.0);
+    auto v2 = s.new_element<Vertex>(3.0, 1.0);
+    auto v3 = s.new_element<Vertex>(2.0, 1.0);
+    auto v4 = s.new_element<Vertex>(2.0, 2.0);
+    auto v5 = s.new_element<Vertex>(3.0, 2.0);
+    auto v6 = s.new_element<Vertex>(3.0, 3.0);
+    auto v7 = s.new_element<Vertex>(0.0, 3.0);
+    auto v8 = s.new_element<Vertex>(0.0, 2.0);
+    auto v9 = s.new_element<Vertex>(1.0, 2.0);
+    auto v10 = s.new_element<Vertex>(1.0, 1.0);
+    auto v11 = s.new_element<Vertex>(0.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v4);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v5);
-    auto l5 = s.new_element_SHARED_PTR<LineSegment>(v5, v6);
-    auto l6 = s.new_element_SHARED_PTR<LineSegment>(v6, v7);
-    auto l7 = s.new_element_SHARED_PTR<LineSegment>(v7, v8);
-    auto l8 = s.new_element_SHARED_PTR<LineSegment>(v8, v9);
-    auto l9 = s.new_element_SHARED_PTR<LineSegment>(v9, v10);
-    auto l10 = s.new_element_SHARED_PTR<LineSegment>(v10, v11);
-    auto l11 = s.new_element_SHARED_PTR<LineSegment>(v11, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v4);
+    auto l4 = s.new_element<LineSegment>(v4, v5);
+    auto l5 = s.new_element<LineSegment>(v5, v6);
+    auto l6 = s.new_element<LineSegment>(v6, v7);
+    auto l7 = s.new_element<LineSegment>(v7, v8);
+    auto l8 = s.new_element<LineSegment>(v8, v9);
+    auto l9 = s.new_element<LineSegment>(v9, v10);
+    auto l10 = s.new_element<LineSegment>(v10, v11);
+    auto l11 = s.new_element<LineSegment>(v11, v0);
 
     s.solve();
 
@@ -451,26 +451,26 @@ TEST(Mesh, create__I_shaped_domain) {
     }
 }
 
-TEST(Mesh, create__corner_square_domain) {
+TEST(Mesh, create_corner_square_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.5);
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-    auto v5 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-    auto v6 = s.new_element_SHARED_PTR<Vertex>(0.5, 0.5);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(0.5, 0.0);
+    auto v2 = s.new_element<Vertex>(1.0, 0.0);
+    auto v3 = s.new_element<Vertex>(1.0, 0.5);
+    auto v4 = s.new_element<Vertex>(1.0, 1.0);
+    auto v5 = s.new_element<Vertex>(0.0, 1.0);
+    auto v6 = s.new_element<Vertex>(0.5, 0.5);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v6);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v6, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v4);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v5);
-    auto l5 = s.new_element_SHARED_PTR<LineSegment>(v5, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v6);
+    auto l2 = s.new_element<LineSegment>(v6, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v4);
+    auto l4 = s.new_element<LineSegment>(v4, v5);
+    auto l5 = s.new_element<LineSegment>(v5, v0);
 
-    auto l6 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l7 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
+    auto l6 = s.new_element<LineSegment>(v1, v2);
+    auto l7 = s.new_element<LineSegment>(v2, v3);
 
     s.solve();
     s.build();
@@ -502,28 +502,28 @@ TEST(Mesh, create__corner_square_domain) {
     }
 }
 
-TEST(Mesh, create__square_in_square_domain) {
+TEST(Mesh, create_square_in_square_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 2.0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(2.0, 0.0);
+    auto v2 = s.new_element<Vertex>(2.0, 2.0);
+    auto v3 = s.new_element<Vertex>(0.0, 2.0);
 
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(0.9, 0.9);
-    auto v5 = s.new_element_SHARED_PTR<Vertex>(1.9, 0.9);
-    auto v6 = s.new_element_SHARED_PTR<Vertex>(1.9, 1.9);
-    auto v7 = s.new_element_SHARED_PTR<Vertex>(0.9, 1.9);
+    auto v4 = s.new_element<Vertex>(0.9, 0.9);
+    auto v5 = s.new_element<Vertex>(1.9, 0.9);
+    auto v6 = s.new_element<Vertex>(1.9, 1.9);
+    auto v7 = s.new_element<Vertex>(0.9, 1.9);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v5);
-    auto l5 = s.new_element_SHARED_PTR<LineSegment>(v5, v6);
-    auto l6 = s.new_element_SHARED_PTR<LineSegment>(v6, v7);
-    auto l7 = s.new_element_SHARED_PTR<LineSegment>(v7, v4);
+    auto l4 = s.new_element<LineSegment>(v4, v5);
+    auto l5 = s.new_element<LineSegment>(v5, v6);
+    auto l6 = s.new_element<LineSegment>(v6, v7);
+    auto l7 = s.new_element<LineSegment>(v7, v4);
 
     s.solve();
     s.build();
@@ -694,13 +694,13 @@ TEST(Edge, are_intersecting__colinear_false_shared_vertex) {
 TEST(Mesh, locate_triangle__triangular_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, sqrt(3.0));
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(2.0, 0.0);
+    auto v2 = s.new_element<Vertex>(1.0, sqrt(3.0));
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v0);
 
     s.solve();
     EXPECT_TRUE(s.build());
@@ -780,14 +780,14 @@ TEST(Mesh, locate_triangle__triangular_domain) {
 TEST(Mesh, locate_triange__square_domain) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(0.0, 1.0);
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto v0 = s.new_element<Vertex>(0.0, 0.0);
+    auto v1 = s.new_element<Vertex>(1.0, 0.0);
+    auto v2 = s.new_element<Vertex>(1.0, 1.0);
+    auto v3 = s.new_element<Vertex>(0.0, 1.0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
     s.solve();
     s.build();

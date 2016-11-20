@@ -1,6 +1,6 @@
 #include "Sketch.hpp"
 
-Constellation::Constellation(const Sketch *s) {
+Constellation::Constellation(Sketch const *s) {
     for (size_t i = 0; i != s->size_verticies(); ++i) {
         Stars.push_back(Star{s->vertex(i), s});
     }
@@ -8,8 +8,6 @@ Constellation::Constellation(const Sketch *s) {
 }
 
 bool Constellation::twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out) {
-    std::shared_ptr<Curve> c = b_out->Path; // #TODO: Local variable 'c' is only assigned but never accessed
-
     for (auto s = Stars.begin(); s != Stars.end(); ++s) {
         if (s != s_out) {
             for (auto b = s->begin(); b != s->end(); ++b) {
@@ -75,7 +73,7 @@ void Constellation::pop(std::shared_ptr<Curve> c) {
     }
 }
 
-bool Constellation::boundary(std::shared_ptr<Contour> c) {
+std::shared_ptr<Contour> Constellation::boundary() {
     std::vector<std::shared_ptr<Curve>> curves;
     std::vector<bool> orientation;
 
@@ -95,24 +93,23 @@ bool Constellation::boundary(std::shared_ptr<Contour> c) {
         bool has_twin = twin(s, b);
 
         if (!has_twin) {
-            return false;
+            return std::make_shared<Contour>();
         } else {
             b = s->prev(b);
             angle += 2.0 * M_PI - b->Angle;
         }
 
         if (b->Path == curves.back()) { //excludes self-closed contours
-            return false;
+            return std::make_shared<Contour>();
         } else if (b->Path == curves[0]) {
             double tol = (FLT_EPSILON * M_PI * (curves.size() - 1));
             double expected = (curves.size() - 2) * M_PI;
             double diff = abs(angle - expected);
 
             if (diff <= tol) {
-                c->initialize(curves, orientation);
-                return true;
+                return std::make_shared<Contour>(curves,orientation);
             } else {
-                return false;
+                return std::make_shared<Contour>();
             }
         } else {
             curves.push_back(b->Path);
@@ -121,20 +118,20 @@ bool Constellation::boundary(std::shared_ptr<Contour> c) {
     }
 }
 
-bool Constellation::contours(std::vector<std::shared_ptr<Contour>> &contours) {
+std::vector<std::shared_ptr<Contour>> Constellation::contours() {
+    std::vector<std::shared_ptr<Contour>> contours;
     std::vector<std::shared_ptr<Curve>> contour_curves;
     std::vector<bool> orientation;
 
     while (size() > 0) {
-        bool success = find_closed_contour(contour_curves, orientation);
-        if (success) {
+        if (find_closed_contour(contour_curves, orientation)) {
             contours.push_back(std::make_shared<Contour>(contour_curves, orientation));
         } else {
-            return false;
+            return std::vector<std::shared_ptr<Contour>>(); // TODO: Ugly multiple return points
         }
     }
 
-    return true;
+    return contours;
 }
 
 bool Constellation::find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation) {

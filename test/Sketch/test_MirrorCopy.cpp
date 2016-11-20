@@ -54,27 +54,27 @@ void test_mirror_curves(Sketch &s, std::vector<size_t> index, std::shared_ptr<Li
 TEST(MirrorCopy, nonoverlapping) {
     Sketch s;
 
-    auto v0 = s.new_element_SHARED_PTR<Vertex>(2.0, 0.0);
-    auto v1 = s.new_element_SHARED_PTR<Vertex>(3.0, 0.0);
-    auto v2 = s.new_element_SHARED_PTR<Vertex>(3.0, 1.0);
-    auto v3 = s.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
+    auto v0 = s.new_element<Vertex>(2.0, 0.0);
+    auto v1 = s.new_element<Vertex>(3.0, 0.0);
+    auto v2 = s.new_element<Vertex>(3.0, 1.0);
+    auto v3 = s.new_element<Vertex>(2.0, 1.0);
 
-    auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-    auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-    auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-    auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+    auto l0 = s.new_element<LineSegment>(v0, v1);
+    auto l1 = s.new_element<LineSegment>(v1, v2);
+    auto l2 = s.new_element<LineSegment>(v2, v3);
+    auto l3 = s.new_element<LineSegment>(v3, v0);
 
-    auto v4 = s.new_element_SHARED_PTR<Vertex>(-1.0, -1.0);
-    auto v5 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
-    auto l4 = s.new_element_SHARED_PTR<LineSegment>(v4, v5);
+    auto v4 = s.new_element<Vertex>(-1.0, -1.0);
+    auto v5 = s.new_element<Vertex>(1.0, 1.0);
+    auto l4 = s.new_element<LineSegment>(v4, v5);
     l4->ForConstruction = true;
 
-    s.new_element_SHARED_PTR<Fixation>(v4);
-    s.new_element_SHARED_PTR<Fixation>(v5);
+    s.new_element<Fixation>(v4);
+    s.new_element<Fixation>(v5);
 
     std::vector<std::shared_ptr<Curve>> vec{l0, l1, l2, l3};
 
-    auto mc0 = s.new_element_SHARED_PTR<MirrorCopy>(vec, l4);
+    auto mc0 = s.new_element<MirrorCopy>(vec, l4);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_square");
 
@@ -90,7 +90,7 @@ TEST(MirrorCopy, nonoverlapping) {
 
     // Change elements
     {
-        s.new_element_SHARED_PTR<Length>(l0, 0.5);
+        s.new_element<Length>(l0, 0.5);
         s.solve();
         s.build();
 
@@ -111,23 +111,23 @@ TEST(MirrorCopy, overlapping) {
     for (bool remove_internal : {true, false}) {
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(1.0, 0.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0, 1.0);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(1.0, 0.0);
+        auto v2 = s.new_element<Vertex>(2.0, 1.0);
+        auto v3 = s.new_element<Vertex>(1.0, 1.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-        auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-        auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        auto l1 = s.new_element<LineSegment>(v1, v2);
+        auto l2 = s.new_element<LineSegment>(v2, v3);
+        auto l3 = s.new_element<LineSegment>(v3, v0);
 
         l3->ForConstruction = true;
-        s.new_element_SHARED_PTR<Fixation>(v0);
-        s.new_element_SHARED_PTR<Fixation>(v3);
+        s.new_element<Fixation>(v0);
+        s.new_element<Fixation>(v3);
 
         // std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
         auto mvec = s.curves();
-        auto mc0 = s.new_element_SHARED_PTR<MirrorCopy>(mvec, l3, remove_internal);
+        auto mc0 = s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram")+std::to_string(remove_internal));
 
@@ -143,7 +143,7 @@ TEST(MirrorCopy, overlapping) {
 
         // Change elements
         {
-            s.new_element_SHARED_PTR<Length>(l1, 0.5);
+            s.new_element<Length>(l1, 0.5);
             s.solve();
             s.build();
 
@@ -165,27 +165,27 @@ TEST(MirrorCopy, multiple_overlapping) {
     for (bool remove_internal : {true, false}) {
         Sketch s;
 
-        auto v0 = s.new_element_SHARED_PTR<Vertex>(0.0, 0.0);
-        auto v1 = s.new_element_SHARED_PTR<Vertex>(2.0, 1.0);
-        auto v2 = s.new_element_SHARED_PTR<Vertex>(2.0, 2.0);
-        auto v3 = s.new_element_SHARED_PTR<Vertex>(1.0, 3.0);
-        auto v4 = s.new_element_SHARED_PTR<Vertex>(3.0, 2.0);
-        auto v5 = s.new_element_SHARED_PTR<Vertex>(2.0, 6.0);
+        auto v0 = s.new_element<Vertex>(0.0, 0.0);
+        auto v1 = s.new_element<Vertex>(2.0, 1.0);
+        auto v2 = s.new_element<Vertex>(2.0, 2.0);
+        auto v3 = s.new_element<Vertex>(1.0, 3.0);
+        auto v4 = s.new_element<Vertex>(3.0, 2.0);
+        auto v5 = s.new_element<Vertex>(2.0, 6.0);
 
-        auto l0 = s.new_element_SHARED_PTR<LineSegment>(v0, v1);
-        auto l1 = s.new_element_SHARED_PTR<LineSegment>(v1, v2);
-        auto l2 = s.new_element_SHARED_PTR<LineSegment>(v2, v3);
-        auto l3 = s.new_element_SHARED_PTR<LineSegment>(v3, v0);
-        auto l4 = s.new_element_SHARED_PTR<LineSegment>(v2, v4);
-        auto l5 = s.new_element_SHARED_PTR<LineSegment>(v4, v5);
-        auto l6 = s.new_element_SHARED_PTR<LineSegment>(v5, v3);
+        auto l0 = s.new_element<LineSegment>(v0, v1);
+        auto l1 = s.new_element<LineSegment>(v1, v2);
+        auto l2 = s.new_element<LineSegment>(v2, v3);
+        auto l3 = s.new_element<LineSegment>(v3, v0);
+        auto l4 = s.new_element<LineSegment>(v2, v4);
+        auto l5 = s.new_element<LineSegment>(v4, v5);
+        auto l6 = s.new_element<LineSegment>(v5, v3);
 
         //l3.ForConstruction = true;
-        s.new_element_SHARED_PTR<Coincident<LineSegment>>(v5, l3);
+        s.new_element<Coincident<LineSegment>>(v5, l3);
 
         //std::vector<const Curve *> vec{&l0, &l1, &l2, &l3, &l4, &l5, &l6};
         auto mvec = s.curves();
-        s.new_element_SHARED_PTR<MirrorCopy>(mvec, l3, remove_internal);
+        s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
         s.solve();
         s.build();
@@ -201,7 +201,7 @@ TEST(MirrorCopy, multiple_overlapping) {
 
         // Change elements
         {
-            s.new_element_SHARED_PTR<Length>(l6, 2.0);
+            s.new_element<Length>(l6, 2.0);
             s.solve();
             s.build();
 

@@ -60,11 +60,11 @@ public:
 
     using Curve::on_segment;
 
-    bool is_identical(std::shared_ptr<Curve> c) const override;
+    bool is_identical(std::shared_ptr<Curve> const &c) const override;
 
-    bool is_identical(std::shared_ptr<Curve> c, std::shared_ptr<Vertex> origin, const double angle) const override;
+    bool is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
 
-    bool is_coincident(std::shared_ptr<Curve> c) const override;
+    bool is_coincident(std::shared_ptr<Curve> const &c) const override;
 
     std::shared_ptr<Curve> clone() const override { return std::make_shared<CircularArc>(this); };
 

@@ -1,26 +1,17 @@
 #include "Sketch.hpp"
 
-Sketch::Sketch() {
+/*
+ * Sketch::Sketch() {
     NumEquations = 0;
     NumVariables = 0;
     Boundary = std::make_shared<Contour>();
 }
+*/
 
 void Sketch::delete_me() {
-    Variables.clear();
-
-    Verticies.clear();
-
-    Curves.clear();
-
-    Constraints.clear();
-
-    Patterns.clear();
-
-    Contours.clear();
 };
 
-void Sketch::solve() {
+double Sketch::solve() {
     // #TODO: Tolerance based iteration convergence monitoring
     // #TODO: Use sparse matrix representation for Jacobian
 
@@ -32,22 +23,22 @@ void Sketch::solve() {
     Eigen::FullPivLU<Eigen::MatrixXd> LU;
 
     for (size_t j = 0; j < 32; ++j) {
-        // #TODO: Use QR or LDLT decomposition instead
-        // #TODO: Check for over/underdetermined system
-        // #TODO: Try extracting sub matrix and solving
-        // #TODO: Extract newton_update over Verticies, Curves, and Constraints into a private method
+        // TODO: Use QR or LDLT decomposition instead
+        // TODO: Check for over/underdetermined system
+        // TODO: Try extracting sub matrix and solving
+        // TODO: Extract newton_update over Verticies, Curves, and Constraints into a private method
 
         J.setZero();
 
-        for (size_t i = 0; i < Verticies.size(); ++i) {
+        for (size_t i = 0; i != Verticies.size(); ++i) {
             Verticies[i]->update(J, r);
         }
 
-        for (size_t i = 0; i < Curves.size(); ++i) {
+        for (size_t i = 0; i != Curves.size(); ++i) {
             Curves[i]->update(J, r);
         }
 
-        for (size_t i = 0; i < Constraints.size(); ++i) {
+        for (size_t i = 0; i != Constraints.size(); ++i) {
             Constraints[i]->update(J, r);
         }
 
@@ -59,15 +50,18 @@ void Sketch::solve() {
             Variables[i]->update(delta);
         }
     }
+
+    return r.norm();
 }
 
 bool Sketch::build() {
     Constellation c = Constellation(this);
 
-    bool success = c.boundary(Boundary);
+    Boundary = c.boundary();
+    bool success = (Boundary->size() > 0);
 
-    Contours.resize(0);
-    success = c.contours(Contours) && success;
+    Contours = c.contours();
+    success = success && (Contours.size() > 0);
 
     return success;
 }
