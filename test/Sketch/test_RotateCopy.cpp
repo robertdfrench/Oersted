@@ -101,7 +101,8 @@ TEST(RotateCopy, overlapping) {
         auto a1 = s.new_element<Angle>(l0, l1, a_deg);
 
         double res_norm = s.solve();
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_") + std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_") +
+                                                   std::to_string(remove_internal));
 
         bool result = s.build();
         ASSERT_TRUE(result);
@@ -110,7 +111,8 @@ TEST(RotateCopy, overlapping) {
         auto r0 = s.new_element<RotateCopy>(rvec, v0, 360.0 / N, N - 2, remove_internal);
 
         res_norm = s.solve();
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_0_") + std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR,
+                                         std::string("Rotate__overlapping_0_") + std::to_string(remove_internal));
 
         result = s.build();
         ASSERT_TRUE(result);
@@ -128,7 +130,8 @@ TEST(RotateCopy, overlapping) {
         a0->Dim = 45;
 
         res_norm = s.solve();
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_1_") + std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR,
+                                         std::string("Rotate__overlapping_1_") + std::to_string(remove_internal));
 
         result = s.build();
         ASSERT_TRUE(result);

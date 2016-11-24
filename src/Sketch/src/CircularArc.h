@@ -27,10 +27,16 @@ public:
 
     double radius() const { return Radius->value(); };
 
-    void get_verticies(std::list<std::shared_ptr<Vertex>> &v) const override {
-        v.push_back(Start);
-        v.push_back(End);
-        v.push_back(Center);
+    void get_verticies(std::list<std::shared_ptr<Vertex>> &v, Direction dir = Direction::Forward) const override {
+        if (dir == Direction::Forward) {
+            v.push_back(Start);
+            v.push_back(End);
+            v.push_back(Center);
+        } else if (dir == Direction::Reverse) {
+            v.push_back(End);
+            v.push_back(Start);
+            v.push_back(Center);
+        }
     };
 
     size_t set_equation_index(size_t i) override {
@@ -60,9 +66,9 @@ public:
 
     using Curve::on_segment;
 
-    bool is_identical(std::shared_ptr<Curve> const &c) const override;
+    Direction is_identical(std::shared_ptr<Curve> const &c) const override;
 
-    bool is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
+    Direction is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
 
     bool is_coincident(std::shared_ptr<Curve> const &c) const override;
 
@@ -78,7 +84,7 @@ protected:
 
     bool on_segment(const double x, const double y) const override;
 
-    bool is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
+    Direction is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
 
 private:
     double s_to_a(double s) const;

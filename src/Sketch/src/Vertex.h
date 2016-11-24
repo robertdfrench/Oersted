@@ -35,7 +35,7 @@ public:
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
 
-    inline bool operator==(Vertex const &v) { return (v.X == X) && (v.Y == Y); };
+    bool operator==(Vertex const &v) { return (v.X == X) && (v.Y == Y); };
 
     const double x() const { return X->value(); };
 

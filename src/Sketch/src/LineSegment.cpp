@@ -56,7 +56,7 @@ std::pair<double, double> LineSegment::supremum() const {
         cross = abs(xe * dy - ye * dx) / le;
     }
 
-    return std::pair<double,double>(sup,cross);
+    return std::pair<double, double>(sup, cross);
 };
 
 bool LineSegment::on_manifold(const double x, const double y) const {
@@ -105,21 +105,21 @@ bool LineSegment::on_segment(const double x, const double y) const {
     }
 }
 
-bool LineSegment::is_identical(std::shared_ptr<Curve> const &c) const {
-    auto l = std::dynamic_pointer_cast<LineSegment>(c);
+Direction LineSegment::is_identical(std::shared_ptr<Curve> const &c) const {
+    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {
-        return false;
+        return Direction::None;
     } else {
         return is_identical(l->start()->x(), l->start()->y(), l->end()->x(), l->end()->y());
     }
 }
 
-bool LineSegment::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    auto l = std::dynamic_pointer_cast<LineSegment>(c);
+Direction LineSegment::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
+    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {
-        return false;
+        return Direction::None;
     } else {
         double xs, ys, xe, ye;
 
@@ -130,7 +130,7 @@ bool LineSegment::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<
     }
 }
 
-bool LineSegment::is_identical(const double x0, const double y0, const double x1, const double y1) const {
+Direction LineSegment::is_identical(const double x0, const double y0, const double x1, const double y1) const {
     double xs = start()->x();
     double ys = start()->y();
 
@@ -139,12 +139,17 @@ bool LineSegment::is_identical(const double x0, const double y0, const double x1
 
     double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
 
-    return (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol)
-           || (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol);
+    if (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol) {
+        return Direction::Forward;
+    } else if (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol) {
+        return Direction::Reverse;
+    } else {
+        return Direction::None;
+    }
 }
 
 bool LineSegment::is_coincident(std::shared_ptr<Curve> const &c) const {
-    auto l = std::dynamic_pointer_cast<LineSegment>(c);
+    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
 
     if (l.get() == nullptr) {
         return false;

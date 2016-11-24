@@ -3,7 +3,14 @@
 
 #include "Sketch.h"
 
-class Curve : public SketchElement {
+
+enum class Direction : signed int {
+    None = 0,
+    Forward = 1,
+    Reverse = -1
+};
+
+class Curve : public SketchElement { // TODO: Add bool Direction. Use direction in MirrorCopy and RotateCopy
 public:
     friend class MirrorCopy;
 
@@ -22,7 +29,7 @@ public:
 
     std::shared_ptr<Vertex> end() const { return End; };
 
-    virtual void get_verticies(std::list<std::shared_ptr<Vertex>> &v) const = 0;
+    virtual void get_verticies(std::list<std::shared_ptr<Vertex>> &v, Direction dir = Direction::Forward) const = 0;
 
     // Calculation
     // #TODO: Add const to double_t and bool arguments where appropriate
@@ -46,8 +53,8 @@ public:
     virtual bool on_segment(std::shared_ptr<Vertex> const &v, std::shared_ptr<Vertex> const &origin, double const angle) const final;
 
     // Curve-Curve Comparison
-    virtual bool is_identical(std::shared_ptr<Curve> const &c) const = 0; // true if (input curve) XOR (object curve) is a set with measure < tol
-    virtual bool is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const = 0;
+    virtual Direction is_identical(std::shared_ptr<Curve> const &c) const = 0; // true if (input curve) XOR (object curve) is a set with measure < tol
+    virtual Direction is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const = 0;
 
     // #TODO: virtual bool is_overlapping(const Curve* c) const = 0; // true if (input curve) AND (object curve) is a set with measure > tol
     // #TODO: virtual bool is_overlapping(const Curve* c, const Vertex* origin, const double_t angle) const = 0;

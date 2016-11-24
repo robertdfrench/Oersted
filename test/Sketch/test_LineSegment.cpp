@@ -226,10 +226,10 @@ TEST(LineSegment, is_identical) {
         auto l0 = s.new_element<LineSegment>(v0, v1);
         auto l1 = s.new_element<LineSegment>(v1, v0);
 
-        EXPECT_TRUE(l->is_identical(l));
-        EXPECT_TRUE(l->is_identical(lr));
-        EXPECT_TRUE(l->is_identical(l0));
-        EXPECT_TRUE(l->is_identical(l1));
+        EXPECT_TRUE(l->is_identical(l) == Direction::Forward);
+        EXPECT_TRUE(l->is_identical(lr) == Direction::Reverse);
+        EXPECT_TRUE(l->is_identical(l0) == Direction::Forward);
+        EXPECT_TRUE(l->is_identical(l1) == Direction::Reverse);
 
         auto l2 = s.new_element<LineSegment>(v0, v2);
         auto l3 = s.new_element<LineSegment>(v0, v3);
@@ -238,12 +238,12 @@ TEST(LineSegment, is_identical) {
         auto l6 = s.new_element<LineSegment>(v0, v4);
         auto l7 = s.new_element<LineSegment>(v1, v4);
 
-        EXPECT_FALSE(l->is_identical(l2));
-        EXPECT_FALSE(l->is_identical(l3));
-        EXPECT_FALSE(l->is_identical(l4));
-        EXPECT_FALSE(l->is_identical(l5));
-        EXPECT_FALSE(l->is_identical(l6));
-        EXPECT_FALSE(l->is_identical(l7));
+        EXPECT_TRUE(l->is_identical(l2) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l3) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l4) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l5) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l6) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l7) == Direction::None);
 
         s.delete_me();
     }
@@ -267,15 +267,15 @@ TEST(LineSegment, is_identical) {
         auto l2 = s.new_element<LineSegment>(v2, v3);
         auto l3 = s.new_element<LineSegment>(v3, v2);
 
-        EXPECT_TRUE(l->is_identical(l0, origin, +45.0));
-        EXPECT_TRUE(l->is_identical(l1, origin, +45.0));
-        EXPECT_TRUE(l->is_identical(l2, origin, -45.0));
-        EXPECT_TRUE(l->is_identical(l3, origin, -45.0));
+        EXPECT_TRUE(l->is_identical(l0, origin, +45.0) == Direction::Forward);
+        EXPECT_TRUE(l->is_identical(l1, origin, +45.0) == Direction::Reverse);
+        EXPECT_TRUE(l->is_identical(l2, origin, -45.0) == Direction::Forward);
+        EXPECT_TRUE(l->is_identical(l3, origin, -45.0) == Direction::Reverse);
 
-        EXPECT_FALSE(l->is_identical(l0, origin, -45.0));
-        EXPECT_FALSE(l->is_identical(l1, origin, -45.0));
-        EXPECT_FALSE(l->is_identical(l2, origin, +45.0));
-        EXPECT_FALSE(l->is_identical(l3, origin, +45.0));
+        EXPECT_TRUE(l->is_identical(l0, origin, -45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l1, origin, -45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l2, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l3, origin, +45.0) == Direction::None);
 
         auto v4 = s.new_element<Vertex>(2.5 + 1.0, 0.0 + 1.0);
         auto v5 = s.new_element<Vertex>(0.0 + 1.0, 2.5 + 1.0);
@@ -289,15 +289,15 @@ TEST(LineSegment, is_identical) {
         auto l10 = s.new_element<LineSegment>(v3, v5);
         auto l11 = s.new_element<LineSegment>(v5, v3);
 
-        EXPECT_FALSE(l->is_identical(l4, origin, +45.0));
-        EXPECT_FALSE(l->is_identical(l5, origin, +45.0));
-        EXPECT_FALSE(l->is_identical(l6, origin, +45.0));
-        EXPECT_FALSE(l->is_identical(l7, origin, +45.0));
+        EXPECT_TRUE(l->is_identical(l4, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l5, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l6, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l7, origin, +45.0) == Direction::None);
 
-        EXPECT_FALSE(l->is_identical(l8, origin, -45.0));
-        EXPECT_FALSE(l->is_identical(l9, origin, -45.0));
-        EXPECT_FALSE(l->is_identical(l10, origin, -45.0));
-        EXPECT_FALSE(l->is_identical(l11, origin, -45.0));
+        EXPECT_TRUE(l->is_identical(l8, origin, -45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l9, origin, -45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l10, origin, -45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l11, origin, -45.0) == Direction::None);
 
         s.delete_me();
     }

@@ -139,7 +139,7 @@ double CircularArc::a(double s, bool orientation) const {
 }
 
 double CircularArc::da(double s, bool orientation) const {
-    // #TODO, Maybe should calculate this by taking the derivative of the angle in the gradient direction and projection, present implementation may cause errors in the future
+    // TODO: Maybe should calculate this by taking the derivative of the angle in the gradient direction and projection, present implementation may cause errors in the future
     double sgn = SIGN(arc_angle());
 
     if (orientation) {
@@ -172,7 +172,7 @@ std::pair<double, double> CircularArc::supremum() const {
         yy = v.y();
         val = sqrt(xx * xx + yy * yy);
 
-        if(val > sup) {
+        if (val > sup) {
             x = xx;
             y = yy;
             sup = val;
@@ -183,7 +183,7 @@ std::pair<double, double> CircularArc::supremum() const {
     double ang = s_to_a(par);
     double cross = abs(x * cos(ang) + y * sin(ang)) / sup; // cross product of vector from origin to point and tangent vector
 
-    return std::pair<double,double>(sup, cross);
+    return std::pair<double, double>(sup, cross);
 }
 
 bool CircularArc::on_manifold(const double x, const double y) const {
@@ -199,32 +199,22 @@ bool CircularArc::on_manifold(const double x, const double y) const {
     }
 }
 
-bool CircularArc::is_identical(std::shared_ptr<Curve> const &c) const {
-    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
-
-    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c) const {
+    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
 
     if (cc.get() == nullptr) {
-        return false;
+        return Direction::None;
     } else {
-        return is_identical(
-                cc->radius(),
-                cc->center()->x(),
-                cc->center()->y(),
-                cc->start()->x(),
-                cc->start()->y(),
-                cc->end()->x(),
-                cc->end()->y());
+        return is_identical(cc->radius(), cc->center()->x(), cc->center()->y(), cc->start()->x(), cc->start()->y(),
+                            cc->end()->x(), cc->end()->y());
     }
 }
 
-bool CircularArc::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
-
-    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
+    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
 
     if (cc.get() == nullptr) {
-        return false;
+        return Direction::None;
     } else {
         double xc, yc, xs, ys, xe, ye;
 
@@ -236,23 +226,21 @@ bool CircularArc::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<
     }
 }
 
-bool CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys,
-                               const double xe, const double ye) const {
+Direction CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys,
+                                    const double xe, const double ye) const {
     double tol = FLT_EPSILON * radius();
 
-    return abs(radius() - r) < tol
-           && abs(center()->x() - xc) < tol
-           && abs(center()->y() - yc) < tol
-           && abs(start()->x() - xs) < tol
-           && abs(start()->y() - ys) < tol
-           && abs(end()->x() - xe) < tol
-           && abs(end()->y() - ye) < tol;
+    if (abs(radius() - r) < tol && abs(center()->x() - xc) < tol && abs(center()->y() - yc) < tol &&
+        abs(start()->x() - xs) < tol && abs(start()->y() - ys) < tol && abs(end()->x() - xe) < tol &&
+        abs(end()->y() - ye) < tol) {
+        return Direction::Forward;
+    } else {
+        return Direction::None;
+    }
 }
 
 bool CircularArc::is_coincident(std::shared_ptr<Curve> const &c) const {
-    //const CircularArc *cc = dynamic_cast<const CircularArc *>(c);
-
-    auto cc = std::dynamic_pointer_cast<CircularArc>(c);
+    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
 
     if (cc.get() == nullptr) {
         return false;

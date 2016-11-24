@@ -383,17 +383,17 @@ TEST(CircularArc, is_identical) {
         auto c0 = s.new_element<CircularArc>(v1, v2, v0, 1.0);
 
         // True
-        EXPECT_TRUE(c->is_identical(c));
-        EXPECT_TRUE(c->is_identical(c0));
+        EXPECT_TRUE(c->is_identical(c) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c0) == Direction::Forward);
 
         // #TODO:	Radius does not match distance of endpoints from center
         //			Could be identical depending on other constraints
         //			Behavior is undefined unless Sketch::solve() is called
         auto c1 = s.new_element<CircularArc>(vc0, vc1, vcc, 0.5);
-        EXPECT_FALSE(c->is_identical(c1));
+        EXPECT_TRUE(c->is_identical(c1) == Direction::None);
 
         auto c2 = s.new_element<CircularArc>(v1, v2, v0, 0.5);
-        EXPECT_FALSE(c->is_identical(c2));
+        EXPECT_TRUE(c->is_identical(c2) == Direction::None);
 
         // False
         auto c3 = s.new_element<CircularArc>(vc1, vc0, vcc, 0.5);
@@ -401,10 +401,10 @@ TEST(CircularArc, is_identical) {
         auto c5 = s.new_element<CircularArc>(v1, v2, v3, 1.0);
         auto c6 = s.new_element<CircularArc>(v2, v1, v3, 1.0);
 
-        EXPECT_FALSE(c->is_identical(c3));
-        EXPECT_FALSE(c->is_identical(c4));
-        EXPECT_FALSE(c->is_identical(c5));
-        EXPECT_FALSE(c->is_identical(c6));
+        EXPECT_TRUE(c->is_identical(c3) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c4) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c5) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c6) == Direction::None);
 
         s.delete_me();
     }
@@ -424,10 +424,10 @@ TEST(CircularArc, is_identical) {
 
         auto c0 = s.new_element<CircularArc>(vs0, ve0, vc0, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c0, vc0, 180.0));
-        EXPECT_TRUE(c->is_identical(c0, vc0, -180.0));
-        EXPECT_FALSE(c->is_identical(c0, vc0, 179.0));
-        EXPECT_FALSE(c->is_identical(c0, vc0, 181.0));
+        EXPECT_TRUE(c->is_identical(c0, vc0, 180.0) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c0, vc0, -180.0) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c0, vc0, 179.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c0, vc0, 181.0) == Direction::None);
 
         auto v1origin = s.new_element<Vertex>(2.0, 2.0);
         auto vc1 = s.new_element<Vertex>(1.0, 3.0);
@@ -436,20 +436,20 @@ TEST(CircularArc, is_identical) {
 
         auto c1 = s.new_element<CircularArc>(vs1, ve1, vc1, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c1, v1origin, 90.0));
-        EXPECT_TRUE(c->is_identical(c1, v1origin, -270.0));
-        EXPECT_FALSE(c->is_identical(c1, v1origin, 89.0));
-        EXPECT_FALSE(c->is_identical(c1, v1origin, 91.0));
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 90.0) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, -270.0) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 89.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 91.0) == Direction::None);
 
         auto c2 = s.new_element<CircularArc>(ve0, vs0, vc0, 1.0); // reverse
 
-        EXPECT_FALSE(c->is_identical(c2, vc0, 180.0));
-        EXPECT_FALSE(c->is_identical(c2, vc0, -180.0));
+        EXPECT_TRUE(c->is_identical(c2, vc0, 180.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c2, vc0, -180.0) == Direction::None);
 
         auto c3 = s.new_element<CircularArc>(ve1, vs1, vc1, 1.0);
 
-        EXPECT_FALSE(c->is_identical(c3, v1origin, 90.0));
-        EXPECT_FALSE(c->is_identical(c3, v1origin, -270.0));
+        EXPECT_TRUE(c->is_identical(c3, v1origin, 90.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c3, v1origin, -270.0) == Direction::None);
 
         s.delete_me();
     }

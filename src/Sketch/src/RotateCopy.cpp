@@ -1,11 +1,10 @@
 #include "Sketch.hpp"
 
-RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_ptr<Vertex> center, double angle, size_t copies, bool remove_internal) {
+RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_ptr<Vertex> center, double angle,
+                       size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
-    // #TODO: Need to rearrange code and reserve vector sizes in a way that makes more sense (much code copied from MirrorCopy constructor)
-    // #TODO: Restructure to obviate the need for local_curves and local_verticies
-    // #TODO: Three Groups: Leading Curves, Lagging Curves, Internal Curves
-    // #TODO: Three Groups (?): Leading Verticies, Lagging Verticies, Internal Verticies
+    // TODO: Three Groups (?): Leading Verticies, Lagging Verticies, Internal Verticies
+    // TODO: Check for complete elimination of leading/lagging curves
 
     // Assign properties
     Input = input;
@@ -19,84 +18,82 @@ RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_pt
 
     std::vector<std::shared_ptr<Curve>> leading_curves;
     std::vector<std::shared_ptr<Curve>> lagging_curves;
-    std::vector<bool> is_lead_or_lag(input.size(),false);
+    std::vector<bool> is_lead_or_lag(input.size(), false);
 
-    // Find leading/lagging curve pairs
+    // Find leading/lagging curve and vertex pairs
+    std::list<std::shared_ptr<Vertex>> lead_vlist;
+    std::list<std::shared_ptr<Vertex>> lag_vlist;
     for (size_t i = 0; i != input.size(); ++i) {
         for (size_t j = 0; j != input.size(); ++j) {
-            if (!(i == j || is_lead_or_lag[i] || is_lead_or_lag[j])) { //
-                if (input[i]->is_identical(input[j], center, angle)) {
+            if (!(i == j || is_lead_or_lag[i] || is_lead_or_lag[j])) {
+                Direction dir = input[i]->is_identical(input[j], center, angle);
+                if(dir != Direction::None){
                     leading_curves.push_back(input[i]);
                     is_lead_or_lag[i] = true;
+                    input[i]->get_verticies(lead_vlist);
 
+                    // dir indicates order which lagging curve verticies match the leading curve verticies
                     lagging_curves.push_back(input[j]);
                     is_lead_or_lag[j] = true;
-                    break;
+                    input[j]->get_verticies(lag_vlist, dir);
                 }
             }
         }
     }
 
-    // If not leading/lagging, curve is internal
-    std::vector<std::shared_ptr<Curve>> internal_curves;
-    for (size_t i =0; i != input.size(); ++i) {
-        if(!is_lead_or_lag[i]) {
-            internal_curves.push_back(input[i]);
-        }
-    }
-
-    // TODO: Check for complete elimination of leading/lagging curves
-
-    // Get leading/lagging verticies
+    // Sort leading/lagging verticies
     std::vector<std::shared_ptr<Vertex>> leading_verticies;
-    {
-        std::list<std::shared_ptr<Vertex>> local_verts;
-        for (auto i : leading_curves) {
-            i->get_verticies(local_verts);
-        }
-        local_verts.sort(); // remove duplicates
-        local_verts.unique();
-        local_verts.remove(center);
-
-        leading_verticies.assign(local_verts.begin(),local_verts.end()); // assign to vector
-    }
-
     std::vector<std::shared_ptr<Vertex>> lagging_verticies;
     {
-        std::list<std::shared_ptr<Vertex>> local_verts;
-        for (auto i : lagging_curves) {
-            i->get_verticies(local_verts);
-        }
-        local_verts.sort(); // remove duplicates
-        local_verts.unique();
-        local_verts.remove(center);
+        lead_vlist.remove(center);
+        lag_vlist.remove(center);
 
-        lagging_verticies.assign(local_verts.begin(),local_verts.end()); // assign to vector
+        std::list<std::pair<std::shared_ptr<Vertex>, std::shared_ptr<Vertex>>> vpairs;
+        auto j = lag_vlist.begin();
+        for (auto i : lead_vlist) {
+            vpairs.push_back(std::pair<std::shared_ptr<Vertex>, std::shared_ptr<Vertex>>(i, *j));
+            ++j;
+        }
+        vpairs.sort();
+        vpairs.unique();
+
+        for (auto &i : vpairs) {
+            leading_verticies.push_back(i.first);
+            lagging_verticies.push_back(i.second);
+        }
+    }
+
+    // If not leading/lagging, curve is internal
+    std::vector<std::shared_ptr<Curve>> internal_curves;
+    for (size_t i = 0; i != input.size(); ++i) {
+        if (!is_lead_or_lag[i]) {
+            internal_curves.push_back(input[i]);
+        }
     }
 
     // Get internal verticies
     std::vector<std::shared_ptr<Vertex>> internal_verticies;
     {
-        std::list<std::shared_ptr<Vertex>> local_verts;
+        std::list<std::shared_ptr<Vertex>> local_vlist;
         for (auto c : internal_curves) {
-            c->get_verticies(local_verts);
+            c->get_verticies(local_vlist);
         }
-        local_verts.sort(); // remove duplicates
-        local_verts.unique();
-        local_verts.remove(center);
+        local_vlist.sort(); // remove duplicates
+        local_vlist.unique();
+        local_vlist.remove(center);
 
         // Trim leading verticies
-        for(auto v : leading_verticies) {
-            local_verts.remove(v);
+        for (auto v : leading_verticies) {
+            local_vlist.remove(v);
         }
 
         // Trim lagging verticies
-        for(auto v : lagging_verticies) {
-            local_verts.remove(v);
+        for (auto v : lagging_verticies) {
+            local_vlist.remove(v);
         }
 
         // Copy to vector
-        internal_verticies.assign(local_verts.begin(),local_verts.end());
+        internal_verticies.assign(local_vlist.begin(), local_vlist.end());
     }
 
     // Make rotated copies
@@ -118,7 +115,6 @@ RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_pt
                 if (!last_iteration) {
                     Curves.back()->ForConstruction = true;
                 } else {
-                    //const_cast<Curve *>(c)->ForConstruction = true; // TODO: const_cast is ugly
                     c->ForConstruction = true;
                 }
             }
@@ -132,14 +128,13 @@ RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_pt
         double y0 = Center->y();
 
         std::vector<std::shared_ptr<Vertex>> rotated_leading;
-        for(auto v : leading_verticies) {
+        for (auto v : leading_verticies) {
             double dx = v->x() - x0;
             double dy = v->y() - y0;
 
             double vx = cosa * dx - sina * dy + x0;
             double vy = sina * dx + cosa * dy + y0;
 
-            //rotated_leading.push_back(new Vertex(vx, vy));
             rotated_leading.push_back(std::make_shared<Vertex>(vx, vy));
 
 
@@ -149,16 +144,15 @@ RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_pt
         }
 
         std::vector<std::shared_ptr<Vertex>> rotated_internal;
-        for(auto v : internal_verticies) {
+        for (auto v : internal_verticies) {
             double dx = v->x() - x0;
             double dy = v->y() - y0;
 
             double vx = cosa * dx - sina * dy + x0;
             double vy = sina * dx + cosa * dy + y0;
 
-            //rotated_internal.push_back(new Vertex(vx, vy));
             rotated_internal.push_back(std::make_shared<Vertex>(vx, vy));
-            
+
             Verticies.push_back(rotated_internal.back());
 
             Constraints.push_back(std::make_shared<Rotation>(v, rotated_internal.back(), Center, Angle * (i + 1)));
