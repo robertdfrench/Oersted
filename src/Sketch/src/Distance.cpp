@@ -1,4 +1,7 @@
-#include "Sketch.hpp"
+#include "Distance.h"
+#include "CircularArc.h"
+#include "LineSegment.h"
+#include "Vertex.h"
 
 template<>
 size_t Distance<CircularArc>::set_equation_index(size_t i) {
@@ -17,12 +20,12 @@ void Distance<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     */
 
     const double r0 = Element0->radius();
-    const double x0 = Element0->Center->x();
-    const double y0 = Element0->Center->y();
+    const double x0 = Element0->center()->x();
+    const double y0 = Element0->center()->y();
 
     const double r1 = Element1->radius();
-    const double x1 = Element1->Center->x();
-    const double y1 = Element1->Center->y();
+    const double x1 = Element1->center()->x();
+    const double y1 = Element1->center()->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;
@@ -31,28 +34,28 @@ void Distance<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     if (dr >= std::fmax(r0, r1)) {
         // Exterior
         r(EquationIndex) = dr - r0 - r1 - Dim;
-        J(EquationIndex, Element0->Radius->get_index()) -= (dr - Dim) / (r0 + r1);
-        J(EquationIndex, Element1->Radius->get_index()) -= (dr - Dim) / (r0 + r1);
+        J(EquationIndex, Element0->radius_index()) -= (dr - Dim) / (r0 + r1);
+        J(EquationIndex, Element1->radius_index()) -= (dr - Dim) / (r0 + r1);
     } else {
         // Interior
         if (r0 > r1) {
             r(EquationIndex) = Dim - (r0 - r1 - dr);
-            J(EquationIndex, Element0->Radius->get_index()) -= (Dim + dr) / (r0 - r1);
-            J(EquationIndex, Element1->Radius->get_index()) += (Dim + dr) / (r0 - r1);
+            J(EquationIndex, Element0->radius_index()) -= (Dim + dr) / (r0 - r1);
+            J(EquationIndex, Element1->radius_index()) += (Dim + dr) / (r0 - r1);
         } else {
             r(EquationIndex) = Dim - (r1 - r0 - dr);
-            J(EquationIndex, Element0->Radius->get_index()) += (Dim + dr) / (r1 - r0);
-            J(EquationIndex, Element1->Radius->get_index()) -= (Dim + dr) / (r1 - r0);
+            J(EquationIndex, Element0->radius_index()) += (Dim + dr) / (r1 - r0);
+            J(EquationIndex, Element1->radius_index()) -= (Dim + dr) / (r1 - r0);
         }
     }
 
     dx /= dr;
-    J(EquationIndex, Element0->Center->X->get_index()) -= dx;
-    J(EquationIndex, Element1->Center->X->get_index()) += dx;
+    J(EquationIndex, Element0->center()->x_index()) -= dx;
+    J(EquationIndex, Element1->center()->x_index()) += dx;
 
     dy /= dr;
-    J(EquationIndex, Element0->Center->Y->get_index()) -= dy;
-    J(EquationIndex, Element1->Center->Y->get_index()) += dy;
+    J(EquationIndex, Element0->center()->y_index()) -= dy;
+    J(EquationIndex, Element1->center()->y_index()) += dy;
 }
 
 template
@@ -72,10 +75,10 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         the distance beween the lines (one half base times height). The signed area of the triangle is equal to
         the cross product of the two vectors.
     */
-    const double x00 = Element0->Start->x();
-    const double y00 = Element0->Start->y();
-    const double x01 = Element0->End->x();
-    const double y01 = Element0->End->y();
+    const double x00 = Element0->start()->x();
+    const double y00 = Element0->start()->y();
+    const double x01 = Element0->end()->x();
+    const double y01 = Element0->end()->y();
     const double x0m = 0.5 * (x00 + x01);
     const double y0m = 0.5 * (y00 + y01);
 
@@ -85,10 +88,10 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     v0x /= d0;
     v0y /= d0;
 
-    const double x10 = Element1->Start->x();
-    const double y10 = Element1->Start->y();
-    const double x11 = Element1->End->x();
-    const double y11 = Element1->End->y();
+    const double x10 = Element1->start()->x();
+    const double y10 = Element1->start()->y();
+    const double x11 = Element1->end()->x();
+    const double y11 = Element1->end()->y();
     const double x1m = 0.5 * (x10 + x11);
     const double y1m = 0.5 * (y10 + y11);
 
@@ -112,17 +115,17 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex) = abs(cross) - Dim / 2.0;
 
-    J(EquationIndex, Element0->Start->X->get_index()) -= (v1y * d1 - cross * v0x) / d01;
-    J(EquationIndex, Element0->End->X->get_index()) -= (v1y * d1 + cross * v0x) / d01;
+    J(EquationIndex, Element0->start()->x_index()) -= (v1y * d1 - cross * v0x) / d01;
+    J(EquationIndex, Element0->end()->x_index()) -= (v1y * d1 + cross * v0x) / d01;
 
-    J(EquationIndex, Element1->Start->X->get_index()) += (v1my + cross * v1x) / d01;
-    J(EquationIndex, Element1->End->X->get_index()) -= (v0my + cross * v1x) / d01;
+    J(EquationIndex, Element1->start()->x_index()) += (v1my + cross * v1x) / d01;
+    J(EquationIndex, Element1->end()->x_index()) -= (v0my + cross * v1x) / d01;
 
-    J(EquationIndex, Element0->Start->Y->get_index()) += (v1x * d1 + cross * v0y) / d01;
-    J(EquationIndex, Element0->End->Y->get_index()) += (v1x * d1 - cross * v0y) / d01;
+    J(EquationIndex, Element0->start()->y_index()) += (v1x * d1 + cross * v0y) / d01;
+    J(EquationIndex, Element0->end()->y_index()) += (v1x * d1 - cross * v0y) / d01;
 
-    J(EquationIndex, Element1->Start->Y->get_index()) -= (v1mx - cross * v1y) / d01;
-    J(EquationIndex, Element1->End->Y->get_index()) += (v0mx - cross * v1y) / d01;
+    J(EquationIndex, Element1->start()->y_index()) -= (v1mx - cross * v1y) / d01;
+    J(EquationIndex, Element1->end()->y_index()) += (v0mx - cross * v1y) / d01;
 
     // Element1 center to Element 0 end points
     v0mx = x00 - x1m;
@@ -136,17 +139,17 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex) += abs(cross) - Dim / 2.0;
 
-    J(EquationIndex, Element0->Start->X->get_index()) += (v1my + cross * v0x) / d01;
-    J(EquationIndex, Element0->End->X->get_index()) -= (v0my + cross * v0x) / d01;
+    J(EquationIndex, Element0->start()->x_index()) += (v1my + cross * v0x) / d01;
+    J(EquationIndex, Element0->end()->x_index()) -= (v0my + cross * v0x) / d01;
 
-    J(EquationIndex, Element1->Start->X->get_index()) -= (v0y * d0 - cross * v1x) / d01;
-    J(EquationIndex, Element1->End->X->get_index()) -= (v0y * d0 + cross * v1x) / d01;
+    J(EquationIndex, Element1->start()->x_index()) -= (v0y * d0 - cross * v1x) / d01;
+    J(EquationIndex, Element1->end()->x_index()) -= (v0y * d0 + cross * v1x) / d01;
 
-    J(EquationIndex, Element0->Start->Y->get_index()) -= (v1mx - cross * v0y) / d01;
-    J(EquationIndex, Element0->End->Y->get_index()) += (v0mx - cross * v0y) / d01;
+    J(EquationIndex, Element0->start()->y_index()) -= (v1mx - cross * v0y) / d01;
+    J(EquationIndex, Element0->end()->y_index()) += (v0mx - cross * v0y) / d01;
 
-    J(EquationIndex, Element1->Start->Y->get_index()) += (v0x * d0 + cross * v1y) / d01;
-    J(EquationIndex, Element1->End->Y->get_index()) += (v0x * d0 - cross * v1y) / d01;
+    J(EquationIndex, Element1->start()->y_index()) += (v0x * d0 + cross * v1y) / d01;
+    J(EquationIndex, Element1->end()->y_index()) += (v0x * d0 - cross * v1y) / d01;
 
     // Parallel Constraint
     cross = (v0x * v1y - v0y * v1x);
@@ -161,20 +164,20 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         d1 /= scale;
 
         f = (v1y - cross * v0x) / d0;
-        J(EquationIndex + 1, Element0->Start->X->get_index()) -= f;
-        J(EquationIndex + 1, Element0->End->X->get_index()) += f;
+        J(EquationIndex + 1, Element0->start()->x_index()) -= f;
+        J(EquationIndex + 1, Element0->end()->x_index()) += f;
 
         f = (v1x + cross * v0y) / d0;
-        J(EquationIndex + 1, Element0->Start->Y->get_index()) += f;
-        J(EquationIndex + 1, Element0->End->Y->get_index()) -= f;
+        J(EquationIndex + 1, Element0->start()->y_index()) += f;
+        J(EquationIndex + 1, Element0->end()->y_index()) -= f;
 
         f = (v0y + cross * v1x) / d1;
-        J(EquationIndex + 1, Element1->Start->X->get_index()) += f;
-        J(EquationIndex + 1, Element1->End->X->get_index()) -= f;
+        J(EquationIndex + 1, Element1->start()->x_index()) += f;
+        J(EquationIndex + 1, Element1->end()->x_index()) -= f;
 
         f = (v0x - cross * v1y) / d1;
-        J(EquationIndex + 1, Element1->Start->Y->get_index()) -= f;
-        J(EquationIndex + 1, Element1->End->Y->get_index()) += f;
+        J(EquationIndex + 1, Element1->start()->y_index()) -= f;
+        J(EquationIndex + 1, Element1->end()->y_index()) += f;
     } else {
         // Use dot product equation
         r(EquationIndex + 1) = scale * (abs(dot) - 1.0);
@@ -183,20 +186,20 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         d1 /= (scale * SIGN(dot));
 
         f = (v1x - dot * v0x) / d0;
-        J(EquationIndex + 1, Element0->Start->X->get_index()) -= f;
-        J(EquationIndex + 1, Element0->End->X->get_index()) += f;
+        J(EquationIndex + 1, Element0->start()->x_index()) -= f;
+        J(EquationIndex + 1, Element0->end()->x_index()) += f;
 
         f = (v1y - dot * v0y) / d0;
-        J(EquationIndex + 1, Element0->Start->Y->get_index()) -= f;
-        J(EquationIndex + 1, Element0->End->Y->get_index()) += f;
+        J(EquationIndex + 1, Element0->start()->y_index()) -= f;
+        J(EquationIndex + 1, Element0->end()->y_index()) += f;
 
         f = (v0x - dot * v1x) / d1;
-        J(EquationIndex + 1, Element1->Start->X->get_index()) -= f;
-        J(EquationIndex + 1, Element1->End->X->get_index()) += f;
+        J(EquationIndex + 1, Element1->start()->x_index()) -= f;
+        J(EquationIndex + 1, Element1->end()->x_index()) += f;
 
         f = (v0y - dot * v1y) / d1;
-        J(EquationIndex + 1, Element1->Start->Y->get_index()) -= f;
-        J(EquationIndex + 1, Element1->End->Y->get_index()) += f;
+        J(EquationIndex + 1, Element1->start()->y_index()) -= f;
+        J(EquationIndex + 1, Element1->end()->y_index()) += f;
     }
 }
 
@@ -224,10 +227,10 @@ void Distance<Vertex>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex) = dr - Dim;
 
-    J(EquationIndex, Element0->X->get_index()) -= dx;
-    J(EquationIndex, Element0->Y->get_index()) -= dy;
-    J(EquationIndex, Element1->X->get_index()) += dx;
-    J(EquationIndex, Element1->Y->get_index()) += dy;
+    J(EquationIndex, Element0->x_index()) -= dx;
+    J(EquationIndex, Element0->y_index()) -= dy;
+    J(EquationIndex, Element1->x_index()) += dx;
+    J(EquationIndex, Element1->y_index()) += dy;
 }
 
 template

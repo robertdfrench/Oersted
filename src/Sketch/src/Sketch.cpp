@@ -1,12 +1,18 @@
-#include "Sketch.hpp"
+#include <boost/filesystem.hpp>
 
-/*
- * Sketch::Sketch() {
-    NumEquations = 0;
-    NumVariables = 0;
-    Boundary = std::make_shared<Contour>();
-}
-*/
+#include "Eigen"
+
+#include "Sketch.h"
+#include "Vertex.h"
+#include "Curve.h"
+#include "Constraint.h"
+#include "Pattern.h"
+#include "Constellation.h"
+#include "Contour.h"
+#include "Star.h"
+#include "Branch.h"
+#include "Variable.h"
+#include "sPoint.h"
 
 void Sketch::delete_me() {
 };

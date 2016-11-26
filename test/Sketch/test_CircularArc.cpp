@@ -1,5 +1,3 @@
-#include <math.h>
-#include <tgmath.h>
 #include "test_Sketch.hpp"
 
 TEST(CircularArc, constructor) {

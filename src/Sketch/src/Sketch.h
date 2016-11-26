@@ -1,150 +1,29 @@
 #ifndef OERSTED_SKETCH_H
 #define OERSTED_SKETCH_H
 
-#define SIGN(x) (double)((x > 0.0) - (x < 0.0))
-
-#include <algorithm>
 #include <cfloat>
-#include <cmath>
-#include <fstream>
 #include <list>
-#include <numeric>
+#include <memory>
+#include <utility>
 #include <vector>
 
-#include <boost/filesystem.hpp>
-
-#include "Eigen"
-
-class sPoint {
-public:
-    sPoint() : X{DBL_MAX}, Y{DBL_MAX} {};
-    sPoint(double x, double y) : X{x}, Y{y} {};
-
-    double X;
-    double Y;
-
-    double x() const {return X;};
-    double y() const {return Y;};
-};
-
-class Sketch;
-
-// Sketch Parameter
-class SketchParameter {
-public:
-    SketchParameter() : Index(SIZE_MAX) {};
-
-    virtual size_t set_index(size_t i) = 0;
-
-    size_t get_index() const { return Index; };
-
-    virtual void update(Eigen::VectorXd &delta) = 0;
-
-protected:
-    size_t Index;
-};
-
-class Variable : public SketchParameter {
-public:
-    Variable() : SketchParameter() {};
-
-    Variable(double const v) : SketchParameter(), Value(v) {};
-
-    size_t set_index(size_t i) override {
-        Index = i;
-        return 1;
-    };
-
-    void update(Eigen::VectorXd &delta) override { Value -= delta(Index); };
-
-    double const value() { return Value; };
-
-private:
-    double Value;
-};
-
-// Sketch Element
-class SketchElement {
-public:
-    virtual size_t set_equation_index(size_t i) = 0;
-
-    size_t get_equation_index() const { return EquationIndex; };
-
-    virtual void register_parameters(Sketch *s) = 0;
-
-    virtual void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) = 0;
-
-protected:
-    size_t EquationIndex;
-};
-
+class Variable;
 class Vertex;
-
 class Curve;
-
-class CircularArc;
-
-class LineSegment;
-
 class Constraint;
-
-class Angle;
-
-template<class T>
-class Coincident;
-
-template<class T>
-class Distance;
-
-class Fixation;
-
-class Horizontal;
-
-class Length;
-
-class Parallel;
-
-class Perpendicular;
-
-class Radius;
-
-class Rotation;
-
-class Symmetry;
-
-class Tangency;
-
-class Vertical;
-
 class Pattern;
-
-class MirrorCopy;
-
-class RotateCopy;
-
-// Contour
 class Contour;
 
-// Utility
-struct Branch;
-
-class Star;
-
-class Consellation;
-
-// Sketch
 enum class SaveMethod {
     Rasterize
 };
 
 class Sketch {
 public:
-    // Constructors
     Sketch() : NumVariables(0), NumEquations(0), Boundary() {};
 
     void delete_me();
 
-    // Public Member Functions
     std::shared_ptr<Variable> variable(size_t i) const { return Variables[i]; };
 
     std::shared_ptr<Vertex> vertex(size_t i) const { return Verticies[i]; };

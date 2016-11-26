@@ -1,4 +1,5 @@
-#include "Sketch.hpp"
+#include "CircularArc.h"
+#include "sPoint.h"
 
 void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     /*
@@ -16,13 +17,13 @@ void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex) = radius() - rad;
 
-    J(EquationIndex, Radius->get_index()) += rad / radius();
+    J(EquationIndex, radius_index()) += rad / radius();
 
-    J(EquationIndex, Start->X->get_index()) -= dx / rad;
-    J(EquationIndex, Start->Y->get_index()) -= dy / rad;
+    J(EquationIndex, Start->x_index()) -= dx / rad;
+    J(EquationIndex, Start->y_index()) -= dy / rad;
 
-    J(EquationIndex, Center->X->get_index()) += dx / rad;
-    J(EquationIndex, Center->Y->get_index()) += dy / rad;
+    J(EquationIndex, Center->x_index()) += dx / rad;
+    J(EquationIndex, Center->y_index()) += dy / rad;
 
     dx = End->x() - Center->x();
     dy = End->y() - Center->y();
@@ -30,13 +31,13 @@ void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex + 1) = radius() - rad;
 
-    J(EquationIndex + 1, Radius->get_index()) += rad / radius();
+    J(EquationIndex + 1, radius_index()) += rad / radius();
 
-    J(EquationIndex + 1, End->X->get_index()) -= dx / rad;
-    J(EquationIndex + 1, End->Y->get_index()) -= dy / rad;
+    J(EquationIndex + 1, End->x_index()) -= dx / rad;
+    J(EquationIndex + 1, End->y_index()) -= dy / rad;
 
-    J(EquationIndex + 1, Center->X->get_index()) += dx / rad;
-    J(EquationIndex + 1, Center->Y->get_index()) += dy / rad;
+    J(EquationIndex + 1, Center->x_index()) += dx / rad;
+    J(EquationIndex + 1, Center->y_index()) += dy / rad;
 }
 
 double CircularArc::s_to_a(double s) const {
@@ -205,8 +206,7 @@ Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c) const {
     if (cc.get() == nullptr) {
         return Direction::None;
     } else {
-        return is_identical(cc->radius(), cc->center()->x(), cc->center()->y(), cc->start()->x(), cc->start()->y(),
-                            cc->end()->x(), cc->end()->y());
+        return is_identical(cc->radius(), cc->center()->x(), cc->center()->y(), cc->start()->x(), cc->start()->y(), cc->end()->x(), cc->end()->y());
     }
 }
 
@@ -226,8 +226,7 @@ Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c, std::shared
     }
 }
 
-Direction CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys,
-                                    const double xe, const double ye) const {
+Direction CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const {
     double tol = FLT_EPSILON * radius();
 
     if (abs(radius() - r) < tol && abs(center()->x() - xc) < tol && abs(center()->y() - yc) < tol &&

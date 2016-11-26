@@ -1,4 +1,4 @@
-#include "Sketch.hpp"
+#include "Contour.h"
 
 Contour::Contour(std::vector<std::shared_ptr<Curve>> const &c) {
     // #TODO: Check for intersecting curves

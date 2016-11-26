@@ -86,15 +86,15 @@ TEST(Sketch, new_element) {
         auto v0 = s.new_element<Vertex>();
         EXPECT_TRUE(s.size() == 1);
         EXPECT_TRUE(v0->get_equation_index() == 0);
-        EXPECT_TRUE(v0->X->get_index() == 0);
-        EXPECT_TRUE(v0->Y->get_index() == 1);
+        EXPECT_TRUE(v0->x_index() == 0);
+        EXPECT_TRUE(v0->y_index() == 1);
 
         auto v1 = s.new_element<Vertex>();
 
         EXPECT_TRUE(s.size() == 2);
         EXPECT_TRUE(v1->get_equation_index() == 0);
-        EXPECT_TRUE(v1->X->get_index() == 2);
-        EXPECT_TRUE(v1->Y->get_index() == 3);
+        EXPECT_TRUE(v1->x_index() == 2);
+        EXPECT_TRUE(v1->y_index() == 3);
     }
 
     { // Case 1: LineSegment

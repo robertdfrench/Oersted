@@ -1,4 +1,5 @@
-#include "Sketch.hpp"
+#include "Rotation.h"
+#include "Vertex.h"
 
 void Rotation::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     double xo = Origin->x();
@@ -15,18 +16,18 @@ void Rotation::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     size_t ei = EquationIndex;
     r(ei) = (x0 - xo) * cos(a) - (y0 - yo) * sin(a) - (x1 - xo);
 
-    J(ei, Origin->X->get_index()) = 1.0 - cos(a);
-    J(ei, Origin->Y->get_index()) = sin(a);
-    J(ei, V0->X->get_index()) = cos(a);
-    J(ei, V0->Y->get_index()) = -sin(a);
-    J(ei, V1->X->get_index()) = -1.0;
+    J(ei, Origin->x_index()) = 1.0 - cos(a);
+    J(ei, Origin->y_index()) = sin(a);
+    J(ei, V0->x_index()) = cos(a);
+    J(ei, V0->y_index()) = -sin(a);
+    J(ei, V1->x_index()) = -1.0;
 
     ei++;
     r(ei) = (x0 - xo) * sin(a) + (y0 - yo) * cos(a) - (y1 - yo);
 
-    J(ei, Origin->X->get_index()) = -sin(a);
-    J(ei, Origin->Y->get_index()) = 1 - cos(a);
-    J(ei, V0->X->get_index()) = sin(a);
-    J(ei, V0->Y->get_index()) = cos(a);
-    J(ei, V1->Y->get_index()) = -1.0;
+    J(ei, Origin->x_index()) = -sin(a);
+    J(ei, Origin->y_index()) = 1 - cos(a);
+    J(ei, V0->x_index()) = sin(a);
+    J(ei, V0->y_index()) = cos(a);
+    J(ei, V1->y_index()) = -1.0;
 }

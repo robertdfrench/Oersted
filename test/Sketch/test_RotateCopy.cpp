@@ -44,9 +44,9 @@ TEST(RotateCopy, nonoverlapping) {
         }
 
         // Change Sketch
-        a0->Dim = a0->Dim / 2.0;
-        rad0->Dim = 1.5;
-        rad1->Dim = 0.5;
+        a0->dim(a0->dim() / 2.0);
+        rad0->dim(1.5);
+        rad1->dim(0.5);
 
         s.solve();
         s.build();
@@ -125,13 +125,12 @@ TEST(RotateCopy, overlapping) {
         }
 
         // Change Sketch
-        rad0->Dim = 2.5;
-        rad1->Dim = 0.5;
-        a0->Dim = 45;
+        rad0->dim(2.5);
+        rad1->dim(0.5);
+        a0->dim(45.0);
 
         res_norm = s.solve();
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR,
-                                         std::string("Rotate__overlapping_1_") + std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_1_") + std::to_string(remove_internal));
 
         result = s.build();
         ASSERT_TRUE(result);

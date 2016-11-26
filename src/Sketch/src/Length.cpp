@@ -1,8 +1,10 @@
-#include "Sketch.hpp"
+#include "Length.h"
+#include "LineSegment.h"
+#include "Vertex.h"
 
 void Length::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    double dx = Line->End->x() - Line->Start->x();
-    double dy = Line->End->y() - Line->Start->y();
+    double dx = Line->end()->x() - Line->start()->x();
+    double dy = Line->end()->y() - Line->start()->y();
     const double d = sqrt(dx * dx + dy * dy);
 
     r(EquationIndex) = d - Dim;
@@ -10,9 +12,9 @@ void Length::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     dx = dx / d;
     dy = dy / d;
 
-    J(EquationIndex, Line->Start->X->get_index()) -= dx;
-    J(EquationIndex, Line->Start->Y->get_index()) -= dy;
+    J(EquationIndex, Line->start()->x_index()) -= dx;
+    J(EquationIndex, Line->start()->y_index()) -= dy;
 
-    J(EquationIndex, Line->End->X->get_index()) += dx;
-    J(EquationIndex, Line->End->Y->get_index()) += dy;
+    J(EquationIndex, Line->end()->x_index()) += dx;
+    J(EquationIndex, Line->end()->y_index()) += dy;
 }

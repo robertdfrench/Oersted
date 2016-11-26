@@ -1,10 +1,11 @@
 #ifndef OERSTED_TEST_SKETCH_H
 #define OERSTED_TEST_SKETCH_H
 
+#include <cmath>
+#include <ctgmath>
+
 #include "Sketch.hpp"
 #include "gtest.h"
-
-#include <cmath>
 
 #define TOL FLT_EPSILON //#TODO: Tolerance is limited by accuracy of tangency constraint
 #define SAVE_DIR "./test/output/Sketch/"

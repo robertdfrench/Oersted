@@ -1,10 +1,12 @@
 #ifndef OERSTED_HORIZONTAL_H
 #define OERSTED_HORIZONTAL_H
 
+#include "Constraint.h"
+
+class LineSegment;
+
 class Horizontal : public Constraint {
 public:
-    std::shared_ptr<LineSegment> Line;
-
     Horizontal(std::shared_ptr<LineSegment> l) : Line(l) {};
 
     size_t set_equation_index(size_t i) override {
@@ -13,6 +15,9 @@ public:
     };
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
+
+protected:
+    std::shared_ptr<LineSegment> Line;
 };
 
 #endif //OERSTED_HORIZONTAL_H

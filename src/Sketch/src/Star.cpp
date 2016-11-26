@@ -1,6 +1,12 @@
-#include "Sketch.hpp"
+#include <numeric>
 
-Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
+#include "Branch.h"
+#include "Curve.h"
+#include "Star.h"
+#include "Sketch.h"
+#include "Vertex.h"
+
+Star::Star(std::shared_ptr<Vertex> v, Sketch const *s) {
     StarVertex = v;
 
     // Extract Curves
@@ -70,7 +76,7 @@ Star::Star(std::shared_ptr<Vertex> v, const Sketch *s) {
         size_t j = index[i];
         size_t k = index[(i + 1) % index.size()];
 
-        Branches.push_back(Branch{curves[j], orientation[j], angle[j] - angle[k]});
+        Branches.push_back(Branch{curves[j], angle[j] - angle[k], orientation[j]});
 
         // Handle branch cut
         if (Branches.back().Angle < 0.0) {

@@ -3,6 +3,8 @@
 
 #include "Pattern.h"
 
+class LineSegment;
+
 class MirrorCopy : public Pattern {
 public:
     MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal = false);

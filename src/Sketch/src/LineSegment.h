@@ -2,28 +2,35 @@
 #define OERSTED_LINESEGMENT_H
 
 #include "Curve.h"
+#include "Sketch.h"
 
-class LineSegment final : public Curve { // TODO: Use interface instead of friend class
+class LineSegment final : public Curve {
 public:
-    friend class Angle;
+    using Curve::on_manifold;
 
-    friend class Coincident<LineSegment>;
+    using Curve::on_segment;
 
-    friend class Distance<LineSegment>;
-
-    friend class Horizontal;
-
-    friend class Length;
-
-    friend class Tangency;
-
-    friend class Vertical;
-
+public:
     LineSegment() : Curve() {};
 
     LineSegment(LineSegment const *l) : Curve(l->Start, l->End, l->ForConstruction) {};
 
     LineSegment(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, bool fc = false) : Curve(v0, v1, fc) {};
+
+    size_t set_equation_index(size_t i) override {
+        EquationIndex = i;
+        return 0;
+    };
+
+    bool is_coincident(std::shared_ptr<Curve> const &c) const override;
+
+    double length() const override;
+
+    double area() const override { return 0.0; };
+
+    double a(double s, bool orientation) const override;
+
+    double da(double s, bool orientation) const override { return 0.0; };
 
     void get_verticies(std::list<std::shared_ptr<Vertex>> &v, Direction dir = Direction::Forward) const override {
         if (dir == Direction::Forward) {
@@ -35,42 +42,23 @@ public:
         }
     };
 
-    size_t set_equation_index(size_t i) override {
-        EquationIndex = i;
-        return 0;
-    };
-
     void register_parameters(Sketch *s) override {};
+
+    void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
 
     void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
 
-    sPoint point(double s) const override;
-
-    Vertex tangent(double s, bool orientation) const override;
-
-    double length() const override;
-
-    double area() const override { return 0.0; };
-
-    double a(double s, bool orientation) const override;
-
-    double da(double s, bool orientation) const override { return 0.0; };
-
     std::pair<double, double> supremum() const override;
 
-    using Curve::on_manifold;
-
-    using Curve::on_segment;
+    std::shared_ptr<Curve> clone() const override { return std::make_shared<LineSegment>(this); };
 
     Direction is_identical(std::shared_ptr<Curve> const &c) const override;
 
     Direction is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
 
-    bool is_coincident(std::shared_ptr<Curve> const &c) const override;
+    sPoint point(double s) const override;
 
-    std::shared_ptr<Curve> clone() const override { return std::make_shared<LineSegment>(this); };
-
-    void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
+    Vertex tangent(double s, bool orientation) const override;
 
 protected:
     bool on_manifold(const double x, const double y) const override;

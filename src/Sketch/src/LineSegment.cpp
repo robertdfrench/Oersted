@@ -1,4 +1,5 @@
-#include "Sketch.hpp"
+#include "LineSegment.h"
+#include "sPoint.h"
 
 sPoint LineSegment::point(double s) const {
     const double x0 = start()->x();

@@ -1,4 +1,7 @@
-#include "Sketch.hpp"
+#include "MirrorCopy.h"
+#include "Vertex.h"
+#include "LineSegment.h"
+#include "Symmetry.h"
 
 MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal) {
     // Creates mirror copies of the input curves about a line

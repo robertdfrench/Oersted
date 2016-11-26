@@ -1,7 +1,8 @@
-#include "Sketch.hpp"
+#include "RotateCopy.h"
+#include "Curve.h"
+#include "Rotation.h"
 
-RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_ptr<Vertex> center, double angle,
-                       size_t copies, bool remove_internal) {
+RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve>> input, std::shared_ptr<Vertex> center, double angle, size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
     // TODO: Three Groups (?): Leading Verticies, Lagging Verticies, Internal Verticies
     // TODO: Check for complete elimination of leading/lagging curves

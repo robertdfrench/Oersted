@@ -1,4 +1,8 @@
-#include "Sketch.hpp"
+#include "Pattern.h"
+#include "Sketch.h"
+#include "Vertex.h"
+#include "Curve.h"
+#include "Constraint.h"
 
 void Pattern::register_elements(Sketch *s) {
     for (auto v : Verticies) {

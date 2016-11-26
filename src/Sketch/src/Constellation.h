@@ -1,11 +1,18 @@
 #ifndef OERSTED_CONSTELLATION_H
 #define OERSTED_CONSTELLATION_H
 
-#include "Sketch.h"
+#include <list>
+#include <vector>
+#include <memory>
+
+class Branch;
+class Contour;
+class Curve;
+class Star;
+class Sketch;
 
 class Constellation {
 public:
-    // Constructors
     Constellation() {};
 
     Constellation(Sketch const *s);
@@ -19,13 +26,13 @@ public:
 private:
     std::list<Star> Stars;
 
-    void pop(std::shared_ptr<Curve> c = std::shared_ptr<Curve>());
+    bool find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation);
 
     bool twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 
-    void supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
+    void pop(std::shared_ptr<Curve> c = std::shared_ptr<Curve>());
 
-    bool find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation);
+    void supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 };
 
 #endif //OERSTED_CONSTELLATION_H

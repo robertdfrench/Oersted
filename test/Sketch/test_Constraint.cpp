@@ -250,7 +250,7 @@ TEST(Constraint, Angle) {
     for (size_t i = 0; i < 16; i++) {
         double a = 22.5 * i;
 
-        ang->Dim = a;
+        ang->dim(a);
 
         s.solve();
 
@@ -295,7 +295,7 @@ TEST(Constraint, Angle_Coincident) {
     for (size_t i = 0; i < N; ++i) {
         double a = i * dad;
 
-        ang->Dim = a;
+        ang->dim(a);
 
         s.solve();
 

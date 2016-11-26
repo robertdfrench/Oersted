@@ -1,8 +1,10 @@
-#include "Sketch.hpp"
+#include "Horizontal.h"
+#include "LineSegment.h"
+#include "Vertex.h"
 
 void Horizontal::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    r(EquationIndex) = Line->Start->y() - Line->End->y();
+    r(EquationIndex) = Line->start()->y() - Line->end()->y();
 
-    J(EquationIndex, Line->Start->Y->get_index()) += 1.0;
-    J(EquationIndex, Line->End->Y->get_index()) -= 1.0;
+    J(EquationIndex, Line->start()->y_index()) += 1.0;
+    J(EquationIndex, Line->end()->y_index()) -= 1.0;
 }

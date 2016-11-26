@@ -1,4 +1,5 @@
-#include "Sketch.hpp"
+#include "Angle.h"
+#include "LineSegment.h"
 
 void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     /*
@@ -9,15 +10,15 @@ void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         parameters is zero when the cosine (resp. sine) is equal to one.
     */
 
-    const double x00 = Line0->Start->x();
-    const double x01 = Line0->End->x();
-    const double x10 = Line1->Start->x();
-    const double x11 = Line1->End->x();
+    const double x00 = Line0->start()->x();
+    const double x01 = Line0->end()->x();
+    const double x10 = Line1->start()->x();
+    const double x11 = Line1->end()->x();
 
-    const double y00 = Line0->Start->y();
-    const double y01 = Line0->End->y();
-    const double y10 = Line1->Start->y();
-    const double y11 = Line1->End->y();
+    const double y00 = Line0->start()->y();
+    const double y01 = Line0->end()->y();
+    const double y10 = Line1->start()->y();
+    const double y11 = Line1->end()->y();
 
     double vx0 = x01 - x00;
     double vy0 = y01 - y00;
@@ -42,38 +43,38 @@ void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         r(EquationIndex) = scale * (dot - cos(M_PI * Dim / 180.0));
 
         f = scale * (vx1 - dot * vx0) / d0;
-        J(EquationIndex, Line0->Start->X->get_index()) -= f;
-        J(EquationIndex, Line0->End->X->get_index()) += f;
+        J(EquationIndex, Line0->start()->x_index()) -= f; //TODO: Change get_index() and set_index() to size_t index() and size_t index(size_t) (overloaded)
+        J(EquationIndex, Line0->end()->x_index()) += f;
 
         f = scale * (vx0 - dot * vx1) / d1;
-        J(EquationIndex, Line1->Start->X->get_index()) -= f;
-        J(EquationIndex, Line1->End->X->get_index()) += f;
+        J(EquationIndex, Line1->start()->x_index()) -= f;
+        J(EquationIndex, Line1->end()->x_index()) += f;
 
         f = scale * (vy1 - dot * vy0) / d0;
-        J(EquationIndex, Line0->Start->Y->get_index()) -= f;
-        J(EquationIndex, Line0->End->Y->get_index()) += f;
+        J(EquationIndex, Line0->start()->y_index()) -= f;
+        J(EquationIndex, Line0->end()->y_index()) += f;
 
         f = scale * (vy0 - dot * vy1) / d1;
-        J(EquationIndex, Line1->Start->Y->get_index()) -= f;
-        J(EquationIndex, Line1->End->Y->get_index()) += f;
+        J(EquationIndex, Line1->start()->y_index()) -= f;
+        J(EquationIndex, Line1->end()->y_index()) += f;
     } else {
         // Solve (cross product) = sin(Dim)
         r(EquationIndex) = scale * (cross - sin(M_PI * Dim / 180.0));
 
         f = scale * (vy1 - cross * vx0) / d0;
-        J(EquationIndex, Line0->Start->X->get_index()) -= f;
-        J(EquationIndex, Line0->End->X->get_index()) += f;
+        J(EquationIndex, Line0->start()->x_index()) -= f;
+        J(EquationIndex, Line0->end()->x_index()) += f;
 
         f = scale * (vy0 + cross * vx1) / d1;
-        J(EquationIndex, Line1->Start->X->get_index()) += f;
-        J(EquationIndex, Line1->End->X->get_index()) -= f;
+        J(EquationIndex, Line1->start()->x_index()) += f;
+        J(EquationIndex, Line1->end()->x_index()) -= f;
 
         f = scale * (vx1 + cross * vy0) / d0;
-        J(EquationIndex, Line0->Start->Y->get_index()) += f;
-        J(EquationIndex, Line0->End->Y->get_index()) -= f;
+        J(EquationIndex, Line0->start()->y_index()) += f;
+        J(EquationIndex, Line0->end()->y_index()) -= f;
 
         f = scale * (vx0 - cross * vy1) / d1;
-        J(EquationIndex, Line1->Start->Y->get_index()) -= f;
-        J(EquationIndex, Line1->End->Y->get_index()) += f;
+        J(EquationIndex, Line1->start()->y_index()) -= f;
+        J(EquationIndex, Line1->end()->y_index()) += f;
     }
 }

@@ -1,4 +1,7 @@
-#include "Sketch.hpp"
+#include "Tangency.h"
+#include "CircularArc.h"
+#include "LineSegment.h"
+#include "Vertex.h"
 
 void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     /*
@@ -10,15 +13,15 @@ void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         the triangle. The radius of the circular is the height of the triangle.
     */
 
-    const double xc = Arc->Center->x();
-    const double yc = Arc->Center->y();
+    const double xc = Arc->center()->x();
+    const double yc = Arc->center()->y();
     const double rc = Arc->radius();
 
-    const double x0 = Line->Start->x();
-    const double y0 = Line->Start->y();
+    const double x0 = Line->start()->x();
+    const double y0 = Line->start()->y();
 
-    const double x1 = Line->End->x();
-    const double y1 = Line->End->y();
+    const double x1 = Line->end()->x();
+    const double y1 = Line->end()->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;
@@ -39,19 +42,19 @@ void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 
     r(EquationIndex) = abs(cross) - rc;
 
-    J(EquationIndex, Arc->Radius->get_index()) -= abs(cross) / rc;
+    J(EquationIndex, Arc->radius_index()) -= abs(cross) / rc;
 
     f0 = (v1cy + cross * dx) / dr;
     f1 = (v0cy + cross * dx) / dr;
 
-    J(EquationIndex, Arc->Center->X->get_index()) -= f0 - f1;
-    J(EquationIndex, Line->Start->X->get_index()) += f0;
-    J(EquationIndex, Line->End->X->get_index()) -= f1;
+    J(EquationIndex, Arc->center()->x_index()) -= f0 - f1;
+    J(EquationIndex, Line->start()->x_index()) += f0;
+    J(EquationIndex, Line->end()->x_index()) -= f1;
 
     f0 = (v1cx - cross * dy) / dr;
     f1 = (v0cx - cross * dy) / dr;
 
-    J(EquationIndex, Arc->Center->Y->get_index()) += f0 - f1;
-    J(EquationIndex, Line->Start->Y->get_index()) -= f0;
-    J(EquationIndex, Line->End->Y->get_index()) += f1;
+    J(EquationIndex, Arc->center()->y_index()) += f0 - f1;
+    J(EquationIndex, Line->start()->y_index()) -= f0;
+    J(EquationIndex, Line->end()->y_index()) += f1;
 }

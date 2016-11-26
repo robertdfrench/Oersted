@@ -1,7 +1,10 @@
 #ifndef OERSTED_CONTOUR_H
 #define OERSTED_CONTOUR_H
 
-#include "Sketch.h"
+#include <memory>
+#include <vector>
+
+#include "Curve.h"
 
 class Contour {
 public:

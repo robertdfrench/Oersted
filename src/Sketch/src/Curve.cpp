@@ -1,4 +1,4 @@
-#include "Sketch.hpp"
+#include "Curve.h"
 
 bool Curve::on_segment(std::shared_ptr<Vertex> const &v) const {
     return on_segment(v->x(), v->y());

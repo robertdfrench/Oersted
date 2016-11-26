@@ -9,7 +9,9 @@ public:
 
 private:
     std::shared_ptr<Vertex> Center;
+
     double Angle; // TODO: Write 'update_angle' method which updates all associated rotation constraints
+
     size_t Copies;
 };
 

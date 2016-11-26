@@ -1,4 +1,9 @@
-#include "Sketch.hpp"
+#include "Constellation.h"
+#include "Sketch.h"
+#include "Star.h"
+#include "Branch.h"
+#include "Curve.h"
+#include "Contour.h"
 
 Constellation::Constellation(Sketch const *s) {
     for (size_t i = 0; i != s->size_verticies(); ++i) {
