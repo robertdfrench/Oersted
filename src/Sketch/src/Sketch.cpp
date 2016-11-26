@@ -1,4 +1,5 @@
 #include <boost/filesystem.hpp>
+#include <fstream>
 
 #include "Eigen"
 

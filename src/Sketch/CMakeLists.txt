@@ -10,6 +10,7 @@ set(SOURCE_FILES
         ./src/SketchElement.h ./src/SketchElement.cpp
 
         ./src/Vertex.h  ./src/Vertex.cpp
+        ./src/sPoint.h ./src/sPoint.cpp
 
         ./src/Curve.h   ./src/Curve.cpp
             ./src/LineSegment.h ./src/LineSegment.cpp
@@ -36,7 +37,7 @@ set(SOURCE_FILES
         ./src/Star.h    ./src/Star.cpp
         ./src/Constellation.h   ./src/Constellation.cpp
 
-        ./src/Contour.h ./src/Contour.cpp src/sPoint.cpp src/sPoint.h)
+        ./src/Contour.h ./src/Contour.cpp)
 
 add_library(sketch STATIC ${SOURCE_FILES})
 
