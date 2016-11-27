@@ -3,18 +3,15 @@
 
 #include "Mesh.h"
 
-class Point { // TODO, Replace Verticies member in Mesh with lighterweight Node class
+class Point {
 public:
-
     Point() : X{0.0}, Y{0.0} {};
 
     Point(double x, double y) : X{x}, Y{y} {};
 
-    //Point(Vertex const &v) : X{v.x()}, Y{v.y()} {};
+    Point(std::shared_ptr<Vertex const> const &v) : X{v->x()}, Y{v->y()} {};
 
-    Point(std::shared_ptr<Vertex>v) : X{v->x()}, Y{v->y()} {};
-
-    Point(sPoint const pp) : X{pp.x()}, Y{pp.y()} {};
+    Point(double2 const p) : X{p.X}, Y{p.Y} {};
 
     //double W; // Nurbs weight?
     double X;
@@ -25,9 +22,13 @@ public:
 
     bool operator==(Vertex const &v) const { return (X == v.x()) && (Y == v.y()); };
 
+    bool operator==(double2 const &p) const { return (X == p.X) && (Y == p.Y); };
+
     bool operator!=(Point const &p) const { return (X != p.X) || (Y != p.Y); };
 
-    bool operator!=(Vertex const &v) const { return (X != v.x()) && (Y != v.y()); };
+    bool operator!=(Vertex const &v) const { return (X != v.x()) || (Y != v.y()); };
+
+    bool operator!=(double2 const &p) const { return (X != p.X) || (Y != p.Y); };
 };
 
 double dist(Point const &p0, Point const &p1);

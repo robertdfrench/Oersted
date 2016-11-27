@@ -1,7 +1,7 @@
 #include "Rotation.h"
 #include "Vertex.h"
 
-void Rotation::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Rotation::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     double xo = Origin->x();
     double yo = Origin->y();
 

@@ -2,7 +2,7 @@
 #include "Vertex.h"
 #include "LineSegment.h"
 
-void Symmetry::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Symmetry::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     double x0 = V0->x();
     double y0 = V0->y();
 

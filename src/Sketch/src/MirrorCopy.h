@@ -7,10 +7,10 @@ class LineSegment;
 
 class MirrorCopy : public Pattern {
 public:
-    MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal = false);
+    MirrorCopy(std::vector<std::shared_ptr<Curve const>> &input, std::shared_ptr<LineSegment const> l, bool remove_internal = false);
 
-private:
-    std::shared_ptr<LineSegment> SymmetryLine;
+protected:
+    std::shared_ptr<LineSegment const> SymmetryLine;
 };
 
 #endif //OERSTED_MIRRORCOPY_H

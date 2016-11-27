@@ -2,10 +2,10 @@
 #include "LineSegment.h"
 #include "Vertex.h"
 
-void Length::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Length::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     double dx = Line->end()->x() - Line->start()->x();
     double dy = Line->end()->y() - Line->start()->y();
-    const double d = sqrt(dx * dx + dy * dy);
+    double d = sqrt(dx * dx + dy * dy);
 
     r(EquationIndex) = d - Dim;
 

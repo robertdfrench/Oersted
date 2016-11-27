@@ -6,8 +6,10 @@
 class Curve;
 
 struct Branch {
-    std::shared_ptr<Curve> Path;
+    std::shared_ptr<Curve const> Path;
+
     double Angle;
+
     bool Orientation;
 };
 

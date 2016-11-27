@@ -14,17 +14,19 @@ public:
         return 0;
     };
 
-    void register_elements(Sketch *s);
+    void register_elements(Sketch *s) const;
 
-    void register_parameters(Sketch *s) override {};
+    void register_parameters(Sketch *s) const override {};
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override {};
 
 protected:
-    std::vector<std::shared_ptr<Curve>> Input;
+    std::vector<std::shared_ptr<Curve const>> Input;
 
     std::vector<std::shared_ptr<Constraint>> Constraints;
+
     std::vector<std::shared_ptr<Curve>> Curves;
+
     std::vector<std::shared_ptr<Vertex>> Verticies;
 
     bool RemoveInternalBoundaries;

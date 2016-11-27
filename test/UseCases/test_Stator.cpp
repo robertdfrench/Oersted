@@ -84,6 +84,4 @@ TEST(Stator, Suite0) {
 
     mesh.refine();
     mesh.save_as(MDIR, "stator0_refined");
-
-    sketch.delete_me();
 }

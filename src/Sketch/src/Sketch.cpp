@@ -1,8 +1,3 @@
-#include <boost/filesystem.hpp>
-#include <fstream>
-
-#include "Eigen"
-
 #include "Sketch.h"
 #include "Vertex.h"
 #include "Curve.h"
@@ -13,10 +8,7 @@
 #include "Star.h"
 #include "Branch.h"
 #include "Variable.h"
-#include "sPoint.h"
-
-void Sketch::delete_me() {
-};
+#include "doublen.h"
 
 double Sketch::solve() {
     // #TODO: Tolerance based iteration convergence monitoring
@@ -104,10 +96,10 @@ void Sketch::save_as<SaveMethod::Rasterize>(std::string path, std::string file_n
     fs.open(path + file_name + ".oesk", std::fstream::out);
 
     for (size_t i = 0; i < Curves.size(); ++i) {
-        if (!Curves[i]->ForConstruction) {
+        if (!Curves[i]->for_construction()) {
             for (size_t j = 0; j <= 10; ++j) {
-                sPoint v = Curves[i]->point(j / 10.0);
-                fs << v.x() << ',' << v.y() << '\n';
+                double2 v = Curves[i]->point(j / 10.0);
+                fs << v.X << ',' << v.Y << '\n';
             }
             fs << "NaN" << ',' << "NaN" << '\n';
         }

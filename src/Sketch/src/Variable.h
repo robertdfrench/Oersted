@@ -18,12 +18,13 @@ public:
         return 1;
     };
 
-    double const value() { return Value; };
+    double value() const { return Value; };
 
     void update(Eigen::VectorXd &delta) { Value -= delta(Index); };
 
 protected:
     double Value;
+
     size_t Index;
 };
 

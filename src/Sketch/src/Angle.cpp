@@ -1,7 +1,7 @@
 #include "Angle.h"
 #include "LineSegment.h"
 
-void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
         The dot product of two unit vectors equals the cosine of the angle between them.
         The cross product of two unit vectros equals the sine of the angle between them.
@@ -10,15 +10,15 @@ void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         parameters is zero when the cosine (resp. sine) is equal to one.
     */
 
-    const double x00 = Line0->start()->x();
-    const double x01 = Line0->end()->x();
-    const double x10 = Line1->start()->x();
-    const double x11 = Line1->end()->x();
+    double x00 = Line0->start()->x();
+    double x01 = Line0->end()->x();
+    double x10 = Line1->start()->x();
+    double x11 = Line1->end()->x();
 
-    const double y00 = Line0->start()->y();
-    const double y01 = Line0->end()->y();
-    const double y10 = Line1->start()->y();
-    const double y11 = Line1->end()->y();
+    double y00 = Line0->start()->y();
+    double y01 = Line0->end()->y();
+    double y10 = Line1->start()->y();
+    double y11 = Line1->end()->y();
 
     double vx0 = x01 - x00;
     double vy0 = y01 - y00;

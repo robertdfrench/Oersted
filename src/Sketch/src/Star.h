@@ -13,11 +13,11 @@ class Star {
 public:
     Star() {};
 
-    Star(std::shared_ptr<Vertex> v, Sketch const *s);
+    Star(std::shared_ptr<Vertex const> v, Sketch const *s);
 
     size_t size() const { return Branches.size(); };
 
-    void pop(std::shared_ptr<Curve> c);
+    void pop(std::shared_ptr<Curve const> const &c);
 
     std::list<Branch>::const_iterator begin() const { return Branches.begin(); };
 
@@ -35,14 +35,15 @@ public:
 
     std::list<Branch>::iterator prev(std::list<Branch>::iterator iter) { return (iter == begin() ? (--end()) : --iter); };
 
-    std::shared_ptr<Curve> next(std::shared_ptr<Curve> c) const;
+    std::shared_ptr<Curve const> next(std::shared_ptr<Curve const> const &c) const;
 
-    std::shared_ptr<Curve> prev(std::shared_ptr<Curve> c) const;
+    std::shared_ptr<Curve const> prev(std::shared_ptr<Curve const> const &c) const;
 
-    std::shared_ptr<Vertex> const vertex() const { return StarVertex; };
+    std::shared_ptr<Vertex const> const vertex() const { return StarVertex; };
 
 private:
-    std::shared_ptr<Vertex> StarVertex;
+    std::shared_ptr<Vertex const> StarVertex;
+
     std::list<Branch> Branches;
 };
 

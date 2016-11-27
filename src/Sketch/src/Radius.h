@@ -7,7 +7,7 @@ class CircularArc;
 
 class Radius : public Constraint {
 public:
-    Radius(std::shared_ptr<CircularArc> c, double r) : Arc(c), Dim(r) {};
+    Radius(std::shared_ptr<CircularArc const> c, double r) : Arc(c), Dim(r) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
@@ -18,10 +18,10 @@ public:
 
     void dim(double d) { Dim = d; };
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override;
 
 protected:
-    std::shared_ptr<CircularArc> Arc;
+    std::shared_ptr<CircularArc const> Arc;
 
     double Dim;
 };

@@ -19,9 +19,9 @@ public:
 
     virtual size_t set_equation_index(size_t i) = 0;
 
-    virtual void register_parameters(Sketch *s) = 0;
+    virtual void register_parameters(Sketch *s) const = 0;
 
-    virtual void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) = 0;
+    virtual void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const = 0;
 
 protected:
     size_t EquationIndex;

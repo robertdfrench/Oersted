@@ -7,17 +7,17 @@ class LineSegment;
 
 class Horizontal : public Constraint {
 public:
-    Horizontal(std::shared_ptr<LineSegment> l) : Line(l) {};
+    Horizontal(std::shared_ptr<LineSegment const> l) : Line(l) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 1;
     };
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override;
 
 protected:
-    std::shared_ptr<LineSegment> Line;
+    std::shared_ptr<LineSegment const> Line;
 };
 
 #endif //OERSTED_HORIZONTAL_H

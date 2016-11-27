@@ -30,12 +30,12 @@ bool Constellation::twin(std::list<Star>::iterator &s_out, std::list<Branch>::it
 }
 
 void Constellation::supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out) {
-    std::pair<double,double> sup{0.0,0.0};
+    double2 sup{0.0,0.0};
     double ang{0.0};
 
     for (auto s = Stars.begin(); s != Stars.end(); ++s) {
         for (auto b = s->begin(); b != s->end(); ++b) {
-            std::pair<double,double> sup_ij = b->Path->supremum();
+            double2 sup_ij = b->Path->supremum();
             if ((sup_ij > sup) || (sup == sup_ij && b->Angle < ang)) {
                 sup = sup_ij;
                 ang = b->Angle;
@@ -47,7 +47,7 @@ void Constellation::supremum(std::list<Star>::iterator &s_out, std::list<Branch>
     }
 }
 
-void Constellation::pop(std::shared_ptr<Curve> c) {
+void Constellation::pop(std::shared_ptr<Curve const> c) {
     bool iterate = true;
 
     while (iterate) {
@@ -79,7 +79,7 @@ void Constellation::pop(std::shared_ptr<Curve> c) {
 }
 
 std::shared_ptr<Contour> Constellation::boundary() {
-    std::vector<std::shared_ptr<Curve>> curves;
+    std::vector<std::shared_ptr<Curve const>> curves;
     std::vector<bool> orientation;
 
     // Base of induction
@@ -125,7 +125,7 @@ std::shared_ptr<Contour> Constellation::boundary() {
 
 std::vector<std::shared_ptr<Contour>> Constellation::contours() {
     std::vector<std::shared_ptr<Contour>> contours;
-    std::vector<std::shared_ptr<Curve>> contour_curves;
+    std::vector<std::shared_ptr<Curve const>> contour_curves;
     std::vector<bool> orientation;
 
     while (size() > 0) {
@@ -139,7 +139,7 @@ std::vector<std::shared_ptr<Contour>> Constellation::contours() {
     return contours;
 }
 
-bool Constellation::find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation) {
+bool Constellation::find_closed_contour(std::vector<std::shared_ptr<Curve const>> &curves, std::vector<bool> &orientation) {
     curves.resize(0);
     orientation.resize(0);
 

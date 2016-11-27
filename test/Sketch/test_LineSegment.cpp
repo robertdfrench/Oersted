@@ -27,9 +27,9 @@ TEST(LineSegment, point) {
     for (size_t i = 0; i < 11; ++i) {
         double s = i / 10.0;
 
-        sPoint v = l.point(s);
-        EXPECT_NEAR(v0->x() * (1.0 - s) + v1->x() * s, v.x(), TOL);
-        EXPECT_NEAR(v0->y() * (1.0 - s) + v1->y() * s, v.y(), TOL);
+        double2 v = l.point(s);
+        EXPECT_NEAR(v0->x() * (1.0 - s) + v1->x() * s, v.X, TOL);
+        EXPECT_NEAR(v0->y() * (1.0 - s) + v1->y() * s, v.Y, TOL);
     }
 }
 
@@ -42,13 +42,13 @@ TEST(LineSegment, tangent) {
     for (size_t i = 0; i < 11; ++i) {
         double s = i / 10.0;
 
-        Vertex v = l.tangent(s, true);
-        EXPECT_NEAR(3.0 / 5.0, v.x(), TOL);
-        EXPECT_NEAR(-4.0 / 5.0, v.y(), TOL);
+        double2 v = l.tangent(s, true);
+        EXPECT_NEAR(3.0 / 5.0, v.X, TOL);
+        EXPECT_NEAR(-4.0 / 5.0, v.Y, TOL);
 
         v = l.tangent(s, false);
-        EXPECT_NEAR(-3.0 / 5.0, v.x(), TOL);
-        EXPECT_NEAR(4.0 / 5.0, v.y(), TOL);
+        EXPECT_NEAR(-3.0 / 5.0, v.X, TOL);
+        EXPECT_NEAR(4.0 / 5.0, v.Y, TOL);
     }
 }
 
@@ -107,8 +107,6 @@ TEST(LineSegment, on_manifold) {
         EXPECT_FALSE(l0->on_manifold(v4));
         EXPECT_TRUE(l0->on_manifold(v5));
         EXPECT_FALSE(l0->on_manifold(v6));
-
-        s.delete_me();
     }
 
     {   //ARGS::(Vertex,Vertex,double)
@@ -146,8 +144,6 @@ TEST(LineSegment, on_manifold) {
         EXPECT_FALSE(l->on_manifold(v2, origin, a));
         EXPECT_FALSE(l->on_manifold(v3, origin, a));
         EXPECT_FALSE(l->on_manifold(v4, origin, a));
-
-        s.delete_me();
     }
 }
 
@@ -174,8 +170,6 @@ TEST(LineSegment, on_segment) {
         EXPECT_FALSE(l->on_segment(voff1));
         EXPECT_FALSE(l->on_segment(voff2));
         EXPECT_FALSE(l->on_segment(voff3));
-
-        s.delete_me();
     }
 
     { // ARGS::(Vertex,Vertex,double)
@@ -203,8 +197,6 @@ TEST(LineSegment, on_segment) {
 
         EXPECT_FALSE(l0->on_segment(vf0, origin, angle));
         EXPECT_FALSE(l0->on_segment(vf1, origin, angle));
-
-        s.delete_me();
     }
 }
 
@@ -226,10 +218,10 @@ TEST(LineSegment, is_identical) {
         auto l0 = s.new_element<LineSegment>(v0, v1);
         auto l1 = s.new_element<LineSegment>(v1, v0);
 
-        EXPECT_TRUE(l->is_identical(l) == Direction::Forward);
-        EXPECT_TRUE(l->is_identical(lr) == Direction::Reverse);
-        EXPECT_TRUE(l->is_identical(l0) == Direction::Forward);
-        EXPECT_TRUE(l->is_identical(l1) == Direction::Reverse);
+        EXPECT_TRUE(l->is_identical(l) == MatchOrientation::Forward);
+        EXPECT_TRUE(l->is_identical(lr) == MatchOrientation::Reverse);
+        EXPECT_TRUE(l->is_identical(l0) == MatchOrientation::Forward);
+        EXPECT_TRUE(l->is_identical(l1) == MatchOrientation::Reverse);
 
         auto l2 = s.new_element<LineSegment>(v0, v2);
         auto l3 = s.new_element<LineSegment>(v0, v3);
@@ -238,14 +230,12 @@ TEST(LineSegment, is_identical) {
         auto l6 = s.new_element<LineSegment>(v0, v4);
         auto l7 = s.new_element<LineSegment>(v1, v4);
 
-        EXPECT_TRUE(l->is_identical(l2) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l3) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l4) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l5) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l6) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l7) == Direction::None);
-
-        s.delete_me();
+        EXPECT_TRUE(l->is_identical(l2) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l3) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l4) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l5) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l6) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l7) == MatchOrientation::None);
     }
 
     {   // ARGS::(LineSegment,Vertex,double)
@@ -267,15 +257,15 @@ TEST(LineSegment, is_identical) {
         auto l2 = s.new_element<LineSegment>(v2, v3);
         auto l3 = s.new_element<LineSegment>(v3, v2);
 
-        EXPECT_TRUE(l->is_identical(l0, origin, +45.0) == Direction::Forward);
-        EXPECT_TRUE(l->is_identical(l1, origin, +45.0) == Direction::Reverse);
-        EXPECT_TRUE(l->is_identical(l2, origin, -45.0) == Direction::Forward);
-        EXPECT_TRUE(l->is_identical(l3, origin, -45.0) == Direction::Reverse);
+        EXPECT_TRUE(l->is_identical(l0, origin, +45.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(l->is_identical(l1, origin, +45.0) == MatchOrientation::Reverse);
+        EXPECT_TRUE(l->is_identical(l2, origin, -45.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(l->is_identical(l3, origin, -45.0) == MatchOrientation::Reverse);
 
-        EXPECT_TRUE(l->is_identical(l0, origin, -45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l1, origin, -45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l2, origin, +45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l3, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l0, origin, -45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l1, origin, -45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l2, origin, +45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l3, origin, +45.0) == MatchOrientation::None);
 
         auto v4 = s.new_element<Vertex>(2.5 + 1.0, 0.0 + 1.0);
         auto v5 = s.new_element<Vertex>(0.0 + 1.0, 2.5 + 1.0);
@@ -289,17 +279,15 @@ TEST(LineSegment, is_identical) {
         auto l10 = s.new_element<LineSegment>(v3, v5);
         auto l11 = s.new_element<LineSegment>(v5, v3);
 
-        EXPECT_TRUE(l->is_identical(l4, origin, +45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l5, origin, +45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l6, origin, +45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l7, origin, +45.0) == Direction::None);
+        EXPECT_TRUE(l->is_identical(l4, origin, +45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l5, origin, +45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l6, origin, +45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l7, origin, +45.0) == MatchOrientation::None);
 
-        EXPECT_TRUE(l->is_identical(l8, origin, -45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l9, origin, -45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l10, origin, -45.0) == Direction::None);
-        EXPECT_TRUE(l->is_identical(l11, origin, -45.0) == Direction::None);
-
-        s.delete_me();
+        EXPECT_TRUE(l->is_identical(l8, origin, -45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l9, origin, -45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l10, origin, -45.0) == MatchOrientation::None);
+        EXPECT_TRUE(l->is_identical(l11, origin, -45.0) == MatchOrientation::None);
     }
 }
 
@@ -331,8 +319,6 @@ TEST(LineSegment, s_coincident) {
         EXPECT_FALSE(l0->is_coincident(l3));
         EXPECT_FALSE(l0->is_coincident(l4));
         EXPECT_FALSE(l0->is_coincident(l5));
-
-        s.delete_me();
     }
 
     {   // ARGS::(CircularArc)

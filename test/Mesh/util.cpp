@@ -80,13 +80,13 @@ void forced_refinement(Mesh &m, std::string file_name, size_t num_refines) {
     m.MaximumElementSize = maxe;
 }
 
-std::vector<size_t> map_verticies_to_points(std::vector<Vertex> verts, Mesh m) {
+std::vector<size_t> map_verticies_to_points(std::vector<std::shared_ptr<Vertex const>> verts, Mesh &m) {
     std::vector<size_t> index;
     index.reserve(verts.size());
 
     for (size_t i = 0;i != verts.size();++i) {
         for (size_t j = 0;j != m.size_points();++j) {
-            if (verts[i].x() == m.point(j).X && verts[i].y() == m.point(j).Y) {
+            if (verts[i]->x() == m.point(j).X && verts[i]->y() == m.point(j).Y) {
                 index.push_back(j);
                 break;
             }

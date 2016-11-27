@@ -26,9 +26,9 @@ TEST(CircularArc, point) {
             double s = i / 10.0;
             double a = a0 * (1.0 - s) + a1 * s;
 
-            sPoint v = c.point(s);
-            EXPECT_NEAR(r * cos(a), v.x(), TOL);
-            EXPECT_NEAR(r * sin(a), v.y(), TOL);
+            double2 v = c.point(s);
+            EXPECT_NEAR(r * cos(a), v.X, TOL);
+            EXPECT_NEAR(r * sin(a), v.Y, TOL);
         }
     }
 
@@ -46,9 +46,9 @@ TEST(CircularArc, point) {
             double s = i / 10.0;
             double a = a0 * (1.0 - s) + a1 * s;
 
-            sPoint v = c.point(s);
-            EXPECT_NEAR(r * cos(a), v.x(), TOL);
-            EXPECT_NEAR(r * sin(a), v.y(), TOL);
+            double2 v = c.point(s);
+            EXPECT_NEAR(r * cos(a), v.X, TOL);
+            EXPECT_NEAR(r * sin(a), v.Y, TOL);
         }
     }
 }
@@ -68,13 +68,13 @@ TEST(CircularArc, tangent) {
             double s = i / 10.0;
             double a = a0 * (1.0 - s) + a1 * s;
 
-            Vertex v = c.tangent(s, true);
-            EXPECT_NEAR(-sin(a), v.x(), TOL);
-            EXPECT_NEAR(cos(a), v.y(), TOL);
+            double2 v = c.tangent(s, true);
+            EXPECT_NEAR(-sin(a), v.X, TOL);
+            EXPECT_NEAR(cos(a), v.Y, TOL);
 
             v = c.tangent(s, false);
-            EXPECT_NEAR(sin(a), v.x(), TOL);
-            EXPECT_NEAR(-cos(a), v.y(), TOL);
+            EXPECT_NEAR(sin(a), v.X, TOL);
+            EXPECT_NEAR(-cos(a), v.Y, TOL);
         }
     }
 
@@ -92,13 +92,13 @@ TEST(CircularArc, tangent) {
             double s = i / 10.0;
             double a = a0 * (1.0 - s) + a1 * s;
 
-            Vertex v = c.tangent(s, true);
-            EXPECT_NEAR(-sin(a), v.x(), TOL);
-            EXPECT_NEAR(cos(a), v.y(), TOL);
+            double2 v = c.tangent(s, true);
+            EXPECT_NEAR(-sin(a), v.X, TOL);
+            EXPECT_NEAR(cos(a), v.Y, TOL);
 
             v = c.tangent(s, false);
-            EXPECT_NEAR(sin(a), v.x(), TOL);
-            EXPECT_NEAR(-cos(a), v.y(), TOL);
+            EXPECT_NEAR(sin(a), v.X, TOL);
+            EXPECT_NEAR(-cos(a), v.Y, TOL);
         }
     }
 }
@@ -236,8 +236,6 @@ TEST(CircularArc, on_manifold) {
         EXPECT_TRUE(c0->on_manifold(v4));
         EXPECT_FALSE(c0->on_manifold(v5));
         EXPECT_TRUE(c0->on_manifold(v6));
-
-        s.delete_me();
     }
 
     { //ARGS::(Vertex,Vertex,double)
@@ -279,8 +277,6 @@ TEST(CircularArc, on_manifold) {
         EXPECT_TRUE(c->on_manifold(v3, vo3, a3));
         EXPECT_FALSE(c->on_manifold(v3, vo3, a3 + 1.0));
         EXPECT_FALSE(c->on_manifold(v3, vo3, a3 - 1.0));
-
-        s.delete_me();
     }
 }
 
@@ -312,8 +308,6 @@ TEST(CircularArc, on_segment) {
         EXPECT_FALSE(c->on_segment(voff2));
         EXPECT_FALSE(c->on_segment(voff3));
         EXPECT_FALSE(c->on_segment(voff4));
-
-        s.delete_me();
     }
 
     {   // ARGS::(Vertex,Vertex,double)
@@ -357,8 +351,6 @@ TEST(CircularArc, on_segment) {
         EXPECT_FALSE(c->on_segment(voff2, origin, aoff2));
         EXPECT_FALSE(c->on_segment(voff3, origin, aoff3));
         EXPECT_FALSE(c->on_segment(voff4, origin, aoff4));
-
-        s.delete_me();
     }
 }
 
@@ -381,17 +373,17 @@ TEST(CircularArc, is_identical) {
         auto c0 = s.new_element<CircularArc>(v1, v2, v0, 1.0);
 
         // True
-        EXPECT_TRUE(c->is_identical(c) == Direction::Forward);
-        EXPECT_TRUE(c->is_identical(c0) == Direction::Forward);
+        EXPECT_TRUE(c->is_identical(c) == MatchOrientation::Forward);
+        EXPECT_TRUE(c->is_identical(c0) == MatchOrientation::Forward);
 
         // #TODO:	Radius does not match distance of endpoints from center
         //			Could be identical depending on other constraints
         //			Behavior is undefined unless Sketch::solve() is called
         auto c1 = s.new_element<CircularArc>(vc0, vc1, vcc, 0.5);
-        EXPECT_TRUE(c->is_identical(c1) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c1) == MatchOrientation::None);
 
         auto c2 = s.new_element<CircularArc>(v1, v2, v0, 0.5);
-        EXPECT_TRUE(c->is_identical(c2) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c2) == MatchOrientation::None);
 
         // False
         auto c3 = s.new_element<CircularArc>(vc1, vc0, vcc, 0.5);
@@ -399,12 +391,10 @@ TEST(CircularArc, is_identical) {
         auto c5 = s.new_element<CircularArc>(v1, v2, v3, 1.0);
         auto c6 = s.new_element<CircularArc>(v2, v1, v3, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c3) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c4) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c5) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c6) == Direction::None);
-
-        s.delete_me();
+        EXPECT_TRUE(c->is_identical(c3) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c4) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c5) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c6) == MatchOrientation::None);
     }
 
     {   // ARGS::(Vertex,Vertex,double)
@@ -422,10 +412,10 @@ TEST(CircularArc, is_identical) {
 
         auto c0 = s.new_element<CircularArc>(vs0, ve0, vc0, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c0, vc0, 180.0) == Direction::Forward);
-        EXPECT_TRUE(c->is_identical(c0, vc0, -180.0) == Direction::Forward);
-        EXPECT_TRUE(c->is_identical(c0, vc0, 179.0) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c0, vc0, 181.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c0, vc0, 180.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(c->is_identical(c0, vc0, -180.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(c->is_identical(c0, vc0, 179.0) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c0, vc0, 181.0) == MatchOrientation::None);
 
         auto v1origin = s.new_element<Vertex>(2.0, 2.0);
         auto vc1 = s.new_element<Vertex>(1.0, 3.0);
@@ -434,22 +424,20 @@ TEST(CircularArc, is_identical) {
 
         auto c1 = s.new_element<CircularArc>(vs1, ve1, vc1, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c1, v1origin, 90.0) == Direction::Forward);
-        EXPECT_TRUE(c->is_identical(c1, v1origin, -270.0) == Direction::Forward);
-        EXPECT_TRUE(c->is_identical(c1, v1origin, 89.0) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c1, v1origin, 91.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 90.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, -270.0) == MatchOrientation::Forward);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 89.0) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c1, v1origin, 91.0) == MatchOrientation::None);
 
         auto c2 = s.new_element<CircularArc>(ve0, vs0, vc0, 1.0); // reverse
 
-        EXPECT_TRUE(c->is_identical(c2, vc0, 180.0) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c2, vc0, -180.0) == Direction::None);
+        EXPECT_TRUE(c->is_identical(c2, vc0, 180.0) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c2, vc0, -180.0) == MatchOrientation::None);
 
         auto c3 = s.new_element<CircularArc>(ve1, vs1, vc1, 1.0);
 
-        EXPECT_TRUE(c->is_identical(c3, v1origin, 90.0) == Direction::None);
-        EXPECT_TRUE(c->is_identical(c3, v1origin, -270.0) == Direction::None);
-
-        s.delete_me();
+        EXPECT_TRUE(c->is_identical(c3, v1origin, 90.0) == MatchOrientation::None);
+        EXPECT_TRUE(c->is_identical(c3, v1origin, -270.0) == MatchOrientation::None);
     }
 }
 
@@ -476,8 +464,6 @@ TEST(CircularArc, is_coincident) {
         EXPECT_TRUE(c0->is_coincident(c1));
         EXPECT_FALSE(c0->is_coincident(c2));
         EXPECT_FALSE(c0->is_coincident(c3));
-
-        s.delete_me();
     }
 
     {   // ARGS::(LineSegment)
@@ -491,7 +477,5 @@ TEST(CircularArc, is_coincident) {
         auto l0 = std::make_shared<LineSegment>();
 
         EXPECT_FALSE(c0->is_coincident(l0));
-
-        s.delete_me();
     }
 }

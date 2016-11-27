@@ -1,7 +1,7 @@
 #include "CircularArc.h"
-#include "sPoint.h"
+#include "doublen.h"
 
-void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
         Calculate residual and jacobian from (1 - rad / radius())
         Normalize linearized equations by multiplying through by radius()
@@ -41,12 +41,12 @@ void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
 }
 
 double CircularArc::s_to_a(double s) const {
-    const double xc = Center->x();
-    const double yc = Center->y();
-    const double x0 = Start->x();
-    const double y0 = Start->y();
-    const double x1 = End->x();
-    const double y1 = End->y();
+    double xc = Center->x();
+    double yc = Center->y();
+    double x0 = Start->x();
+    double y0 = Start->y();
+    double x1 = End->x();
+    double y1 = End->y();
 
     double a0 = atan2(y0 - yc, x0 - xc);
     double a1 = atan2(y1 - yc, x1 - xc);
@@ -58,12 +58,12 @@ double CircularArc::s_to_a(double s) const {
 }
 
 double CircularArc::a_to_s(double a) const {
-    const double xc = Center->x();
-    const double yc = Center->y();
-    const double x0 = Start->x();
-    const double y0 = Start->y();
-    const double x1 = End->x();
-    const double y1 = End->y();
+    double xc = Center->x();
+    double yc = Center->y();
+    double x0 = Start->x();
+    double y0 = Start->y();
+    double x1 = End->x();
+    double y1 = End->y();
 
     double a0 = atan2(y0 - yc, x0 - xc);
     double a1 = atan2(y1 - yc, x1 - xc);
@@ -79,12 +79,12 @@ double CircularArc::a_to_s(double a) const {
 }
 
 double CircularArc::arc_angle() const {
-    const double xc = Center->x();
-    const double yc = Center->y();
-    const double x0 = Start->x();
-    const double y0 = Start->y();
-    const double x1 = End->x();
-    const double y1 = End->y();
+    double xc = Center->x();
+    double yc = Center->y();
+    double x0 = Start->x();
+    double y0 = Start->y();
+    double x1 = End->x();
+    double y1 = End->y();
 
     double a0 = atan2(y0 - yc, x0 - xc);
     double a1 = atan2(y1 - yc, x1 - xc);
@@ -95,19 +95,19 @@ double CircularArc::arc_angle() const {
     return (a1 - a0);
 }
 
-sPoint CircularArc::point(double s) const {
+double2 CircularArc::point(double s) const {
     double a = s_to_a(s);
 
-    return sPoint{center()->x() + radius() * cos(a), center()->y() + radius() * sin(a)};
+    return double2{center()->x() + radius() * cos(a), center()->y() + radius() * sin(a)};
 }
 
-Vertex CircularArc::tangent(double s, bool orientation) const {
+double2 CircularArc::tangent(double s, bool orientation) const {
     double a = s_to_a(s);
 
     if (orientation) {
-        return Vertex{-sin(a), cos(a)};
+        return double2{-sin(a), cos(a)};
     } else {
-        return Vertex{sin(a), -cos(a)};
+        return double2{sin(a), -cos(a)};
     }
 }
 
@@ -150,7 +150,7 @@ double CircularArc::da(double s, bool orientation) const {
     }
 }
 
-std::pair<double, double> CircularArc::supremum() const {
+double2 CircularArc::supremum() const {
     double x = start()->x();
     double y = start()->y();
     double sup = sqrt(x * x + y * y);
@@ -168,9 +168,9 @@ std::pair<double, double> CircularArc::supremum() const {
 
     double s = a_to_s(center()->atan());
     if (s > 0.0 && s < 1.0) {
-        sPoint v = point(s);
-        xx = v.x();
-        yy = v.y();
+        double2 v = point(s);
+        xx = v.X;
+        yy = v.Y;
         val = sqrt(xx * xx + yy * yy);
 
         if (val > sup) {
@@ -184,10 +184,10 @@ std::pair<double, double> CircularArc::supremum() const {
     double ang = s_to_a(par);
     double cross = abs(x * cos(ang) + y * sin(ang)) / sup; // cross product of vector from origin to point and tangent vector
 
-    return std::pair<double, double>(sup, cross);
+    return double2{sup, cross};
 }
 
-bool CircularArc::on_manifold(const double x, const double y) const {
+bool CircularArc::on_manifold(double x, double y) const {
     double dx = Center->x() - x;
     double dy = Center->y() - y;
     double dr = sqrt(dx * dx + dy * dy);
@@ -200,46 +200,44 @@ bool CircularArc::on_manifold(const double x, const double y) const {
     }
 }
 
-Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c) const {
-    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
+MatchOrientation CircularArc::is_identical(std::shared_ptr<Curve const> const &c) const {
+    std::shared_ptr<CircularArc const> cc = std::dynamic_pointer_cast<CircularArc const>(c);
 
     if (cc.get() == nullptr) {
-        return Direction::None;
+        return MatchOrientation::None;
     } else {
         return is_identical(cc->radius(), cc->center()->x(), cc->center()->y(), cc->start()->x(), cc->start()->y(), cc->end()->x(), cc->end()->y());
     }
 }
 
-Direction CircularArc::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
+MatchOrientation CircularArc::is_identical(std::shared_ptr<Curve const> const &c, std::shared_ptr<Vertex const> const &origin, double angle) const {
+    std::shared_ptr<CircularArc const> cc = std::dynamic_pointer_cast<CircularArc const>(c);
 
     if (cc.get() == nullptr) {
-        return Direction::None;
+        return MatchOrientation::None;
     } else {
-        double xc, yc, xs, ys, xe, ye;
+        double2 pc = cc->center()->rotate(origin, angle);
+        double2 ps = cc->start()->rotate(origin, angle);
+        double2 pe = cc->end()->rotate(origin, angle);
 
-        std::tie(xc, yc) = cc->center()->rotate(origin, angle);
-        std::tie(xs, ys) = cc->start()->rotate(origin, angle);
-        std::tie(xe, ye) = cc->end()->rotate(origin, angle);
-
-        return is_identical(cc->radius(), xc, yc, xs, ys, xe, ye);
+        return is_identical(cc->radius(), pc.X, pc.Y, ps.X, ps.Y, pe.X, pe.Y);
     }
 }
 
-Direction CircularArc::is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const {
+MatchOrientation CircularArc::is_identical(double r, double xc, double yc, double xs, double ys, double xe, double ye) const {
     double tol = FLT_EPSILON * radius();
 
     if (abs(radius() - r) < tol && abs(center()->x() - xc) < tol && abs(center()->y() - yc) < tol &&
         abs(start()->x() - xs) < tol && abs(start()->y() - ys) < tol && abs(end()->x() - xe) < tol &&
         abs(end()->y() - ye) < tol) {
-        return Direction::Forward;
+        return MatchOrientation::Forward;
     } else {
-        return Direction::None;
+        return MatchOrientation::None;
     }
 }
 
-bool CircularArc::is_coincident(std::shared_ptr<Curve> const &c) const {
-    std::shared_ptr<CircularArc> cc = std::dynamic_pointer_cast<CircularArc>(c);
+bool CircularArc::is_coincident(std::shared_ptr<Curve const> const &c) const {
+    std::shared_ptr<CircularArc const> cc = std::dynamic_pointer_cast<CircularArc const>(c);
 
     if (cc.get() == nullptr) {
         return false;
@@ -259,7 +257,7 @@ bool CircularArc::is_coincident(std::shared_ptr<Curve> const &c) const {
     }
 }
 
-bool CircularArc::on_segment(const double x, const double y) const {
+bool CircularArc::on_segment(double x, double y) const {
     double dx = x - center()->x();
     double dy = y - center()->y();
     double dr = sqrt(dx * dx + dy * dy);
@@ -295,7 +293,7 @@ bool CircularArc::on_segment(const double x, const double y) const {
     }
 }
 
-void CircularArc::replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) {
+void CircularArc::replace_verticies(std::vector<std::shared_ptr<Vertex const>> const &oldv, std::vector<std::shared_ptr<Vertex const>> const &newv) {
     auto i = std::find(oldv.begin(), oldv.end(), Start);
     if (i != oldv.end()) {
         size_t j = i - oldv.begin();

@@ -1,16 +1,16 @@
 #include "LineSegment.h"
-#include "sPoint.h"
+#include "doublen.h"
 
-sPoint LineSegment::point(double s) const {
-    const double x0 = start()->x();
-    const double y0 = start()->y();
-    const double x1 = end()->x();
-    const double y1 = end()->y();
+double2 LineSegment::point(double s) const {
+    double x0 = start()->x();
+    double y0 = start()->y();
+    double x1 = end()->x();
+    double y1 = end()->y();
 
-    return sPoint{x0 * (1.0 - s) + x1 * s, y0 * (1.0 - s) + y1 * s};
+    return double2{x0 * (1.0 - s) + x1 * s, y0 * (1.0 - s) + y1 * s};
 }
 
-Vertex LineSegment::tangent(double s, bool orientation) const {
+double2 LineSegment::tangent(double s, bool orientation) const {
     double dx = end()->x() - start()->x();
     double dy = end()->y() - start()->y();
     double dl = sqrt(dx * dx + dy * dy);
@@ -19,9 +19,9 @@ Vertex LineSegment::tangent(double s, bool orientation) const {
     dy /= dl;
 
     if (orientation) {
-        return Vertex{dx, dy};
+        return double2{dx, dy};
     } else {
-        return Vertex{-dx, -dy};
+        return double2{-dx, -dy};
     }
 }
 
@@ -33,7 +33,7 @@ double LineSegment::a(double s, bool orientation) const {
     }
 };
 
-std::pair<double, double> LineSegment::supremum() const {
+double2 LineSegment::supremum() const {
     double xs = start()->x();
     double ys = start()->y();
     double ls = sqrt(xs * xs + ys * ys);
@@ -57,10 +57,10 @@ std::pair<double, double> LineSegment::supremum() const {
         cross = abs(xe * dy - ye * dx) / le;
     }
 
-    return std::pair<double, double>(sup, cross);
+    return double2{sup, cross};
 };
 
-bool LineSegment::on_manifold(const double x, const double y) const {
+bool LineSegment::on_manifold(double x, double y) const {
     double dxv = (x - 0.5 * (start()->x() + end()->x()));
     double dyv = (y - 0.5 * (start()->y() + end()->y()));
     double dv = sqrt(dxv * dxv + dyv * dyv);
@@ -80,7 +80,7 @@ bool LineSegment::on_manifold(const double x, const double y) const {
     }
 }
 
-bool LineSegment::on_segment(const double x, const double y) const {
+bool LineSegment::on_segment(double x, double y) const {
     double dx0 = x - start()->x();
     double dy0 = y - start()->y();
     double dl0 = sqrt(dx0 * dx0 + dy0 * dy0);
@@ -106,32 +106,30 @@ bool LineSegment::on_segment(const double x, const double y) const {
     }
 }
 
-Direction LineSegment::is_identical(std::shared_ptr<Curve> const &c) const {
-    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
+MatchOrientation LineSegment::is_identical(std::shared_ptr<Curve const> const &c) const {
+    std::shared_ptr<LineSegment const> l = std::dynamic_pointer_cast<LineSegment const>(c);
 
     if (l.get() == nullptr) {
-        return Direction::None;
+        return MatchOrientation::None;
     } else {
         return is_identical(l->start()->x(), l->start()->y(), l->end()->x(), l->end()->y());
     }
 }
 
-Direction LineSegment::is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
+MatchOrientation LineSegment::is_identical(std::shared_ptr<Curve const> const &c, std::shared_ptr<Vertex const> const &origin, double angle) const {
+    std::shared_ptr<LineSegment const> l = std::dynamic_pointer_cast<LineSegment const>(c);
 
     if (l.get() == nullptr) {
-        return Direction::None;
+        return MatchOrientation::None;
     } else {
-        double xs, ys, xe, ye;
+        double2 ps = c->start()->rotate(origin, angle);
+        double2 pe = c->end()->rotate(origin, angle);
 
-        std::tie(xs, ys) = c->start()->rotate(origin, angle);
-        std::tie(xe, ye) = c->end()->rotate(origin, angle);
-
-        return is_identical(xs, ys, xe, ye);
+        return is_identical(ps.X, ps.Y, pe.X, pe.Y);
     }
 }
 
-Direction LineSegment::is_identical(const double x0, const double y0, const double x1, const double y1) const {
+MatchOrientation LineSegment::is_identical(double x0, double y0, double x1, double y1) const {
     double xs = start()->x();
     double ys = start()->y();
 
@@ -141,16 +139,16 @@ Direction LineSegment::is_identical(const double x0, const double y0, const doub
     double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
 
     if (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol) {
-        return Direction::Forward;
+        return MatchOrientation::Forward;
     } else if (abs(xs - x1) < tol && abs(ys - y1) < tol && abs(xe - x0) < tol && abs(ye - y0) < tol) {
-        return Direction::Reverse;
+        return MatchOrientation::Reverse;
     } else {
-        return Direction::None;
+        return MatchOrientation::None;
     }
 }
 
-bool LineSegment::is_coincident(std::shared_ptr<Curve> const &c) const {
-    std::shared_ptr<LineSegment> l = std::dynamic_pointer_cast<LineSegment>(c);
+bool LineSegment::is_coincident(std::shared_ptr<Curve const> const &c) const {
+    std::shared_ptr<LineSegment const> l = std::dynamic_pointer_cast<LineSegment const>(c);
 
     if (l.get() == nullptr) {
         return false;
@@ -163,11 +161,9 @@ bool LineSegment::is_coincident(std::shared_ptr<Curve> const &c) const {
     }
 }
 
-// bool LineSegment::is_coincident(const Curve* c, const Vertex* origin, const double_t angle) {return on_manifold(c->start(), origin, angle) && on_manifold(c->end(), origin, angle)};
-
 double LineSegment::length() const { return hypot(end()->x() - start()->x(), end()->y() - start()->y()); };
 
-void LineSegment::replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) {
+void LineSegment::replace_verticies(std::vector<std::shared_ptr<Vertex const>> const &oldv, std::vector<std::shared_ptr<Vertex const>> const &newv) {
     auto i = std::find(oldv.begin(), oldv.end(), Start);
     if (i != oldv.end()) {
         size_t j = i - oldv.begin();

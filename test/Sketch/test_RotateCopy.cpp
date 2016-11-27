@@ -28,7 +28,7 @@ TEST(RotateCopy, nonoverlapping) {
         auto co0 = s.new_element<Coincident<LineSegment>>(v0, l1);
         auto a0 = s.new_element<Angle>(l0, l1, a_deg);
 
-        std::vector<std::shared_ptr<Curve>> vec{l0, l1, c0, c1};
+        std::vector<std::shared_ptr<Curve const>> vec{l0, l1, c0, c1};
         auto r0 = s.new_element<RotateCopy>(vec, v0, 360.0 / (N - 1), N - 2);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__non_overlapping_0");
@@ -80,7 +80,7 @@ TEST(RotateCopy, overlapping) {
         auto l0 = s.new_element<LineSegment>(v1, v2);
         auto l1 = s.new_element<LineSegment>(v4, v3);
         auto lh = s.new_element<LineSegment>(v0, v5);
-        lh->ForConstruction = remove_internal;
+        lh->for_construction(remove_internal);
 
         auto c0 = s.new_element<CircularArc>(v2, v3, v0, 2.0);
         auto c1 = s.new_element<CircularArc>(v1, v4, v0, 1.0);
@@ -107,7 +107,7 @@ TEST(RotateCopy, overlapping) {
         bool result = s.build();
         ASSERT_TRUE(result);
 
-        std::vector<std::shared_ptr<Curve>> rvec = {l0, l1, c0, c1};
+        std::vector<std::shared_ptr<Curve const>> rvec = {l0, l1, c0, c1};
         auto r0 = s.new_element<RotateCopy>(rvec, v0, 360.0 / N, N - 2, remove_internal);
 
         res_norm = s.solve();

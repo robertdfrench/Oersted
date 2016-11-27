@@ -3,7 +3,7 @@
 #include "LineSegment.h"
 #include "Vertex.h"
 
-void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
         Draw two vectors from the center of the circular arc to the end-points of the line
         segment. The line is tangent to the circle iff the cross product of the vectors is
@@ -13,15 +13,15 @@ void Tangency::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         the triangle. The radius of the circular is the height of the triangle.
     */
 
-    const double xc = Arc->center()->x();
-    const double yc = Arc->center()->y();
-    const double rc = Arc->radius();
+    double xc = Arc->center()->x();
+    double yc = Arc->center()->y();
+    double rc = Arc->radius();
 
-    const double x0 = Line->start()->x();
-    const double y0 = Line->start()->y();
+    double x0 = Line->start()->x();
+    double y0 = Line->start()->y();
 
-    const double x1 = Line->end()->x();
-    const double y1 = Line->end()->y();
+    double x1 = Line->end()->x();
+    double y1 = Line->end()->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;

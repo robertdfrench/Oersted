@@ -10,7 +10,7 @@ set(SOURCE_FILES
         ./src/SketchElement.h ./src/SketchElement.cpp
 
         ./src/Vertex.h  ./src/Vertex.cpp
-        ./src/sPoint.h ./src/sPoint.cpp
+        src/doublen.h src/doublen.cpp
 
         ./src/Curve.h   ./src/Curve.cpp
             ./src/LineSegment.h ./src/LineSegment.cpp

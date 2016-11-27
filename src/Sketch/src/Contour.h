@@ -8,23 +8,13 @@
 
 class Contour {
 public:
-    // Constructors
-    Contour() : Curves(std::vector<std::shared_ptr<Curve>>()), Orientation(std::vector<bool>()) {};
+    Contour() : Curves(std::vector<std::shared_ptr<Curve const>>()), Orientation(std::vector<bool>()) {};
 
-    Contour(std::vector<std::shared_ptr<Curve>> const &c);
+    Contour(std::vector<std::shared_ptr<Curve const>> const &c);
 
-    Contour(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir);
+    Contour(std::vector<std::shared_ptr<Curve const>> const &c, std::vector<bool> const &dir);
 
-    //Public Member Functions
-    std::shared_ptr<Vertex> vertex(size_t i) const { return (Orientation[i] ? Curves[i]->start() : Curves[i]->end()); };
-
-    std::shared_ptr<Curve> curve(size_t i) const { return Curves[i]; };
-
-    const bool orientation(size_t i) const { return Orientation[i]; };
-
-    const size_t size() const { return Curves.size(); };
-
-    bool initialize(std::vector<std::shared_ptr<Curve>> const &c, std::vector<bool> const &dir);
+    size_t size() const { return Curves.size(); };
 
     auto begin() { return Curves.begin(); };
 
@@ -34,12 +24,21 @@ public:
 
     auto end() const { return Curves.end(); };
 
-    bool operator==(const Contour &rhs) const;
+    bool initialize(std::vector<std::shared_ptr<Curve const>> const &c, std::vector<bool> const &dir);
+
+    bool orientation(size_t i) const { return Orientation[i]; };
+
+    bool operator==(Contour const &rhs) const;
 
     double area() const;
 
+    std::shared_ptr<Vertex const> vertex(size_t i) const { return (Orientation[i] ? Curves[i]->start() : Curves[i]->end()); };
+
+    std::shared_ptr<Curve const> curve(size_t i) const { return Curves[i]; };
+
 private:
-    std::vector<std::shared_ptr<Curve>> Curves;
+    std::vector<std::shared_ptr<Curve const>> Curves;
+
     std::vector<bool> Orientation;
 };
 

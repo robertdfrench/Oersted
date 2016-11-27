@@ -64,8 +64,6 @@ TEST(Star, Suite_0) {
         angle += b->Angle;
     }
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
-
-    sketch.delete_me();
 }
 
 TEST(Star, Suite_1) {
@@ -114,8 +112,6 @@ TEST(Star, Suite_1) {
         angle += b->Angle;
     }
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
-
-    sketch.delete_me();
 }
 
 TEST(Star, Suite_2) {
@@ -174,8 +170,6 @@ TEST(Star, Suite_2) {
         angle += b->Angle;
     }
     EXPECT_NEAR(2.0 * M_PI, angle, TOL);
-
-    sketch.delete_me();
 }
 
 TEST(Star, find_closed_contour_0) {
@@ -226,8 +220,6 @@ TEST(Star, find_closed_contour_0) {
         EXPECT_TRUE(l5 == contour->curve(0) || l5 == contour->curve(1) || l5 == contour->curve(2));
         EXPECT_TRUE(l8 == contour->curve(0) || l8 == contour->curve(1) || l8 == contour->curve(2));
     }
-
-    sketch.delete_me();
 }
 
 TEST(Star, find_closed_contour_1) {
@@ -269,8 +261,6 @@ TEST(Star, find_closed_contour_1) {
         EXPECT_TRUE(l1 == contour->curve(0) || l1 == contour->curve(1) || l1 == contour->curve(2));
         EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
     }
-
-    sketch.delete_me();
 }
 
 TEST(Star, find_closed_contour_2) {
@@ -347,8 +337,6 @@ TEST(Star, find_closed_contour_2) {
         EXPECT_TRUE(l3 == boundary->curve(0) || l3 == boundary->curve(1) || l3 == boundary->curve(2) || l3 == boundary->curve(3));
         EXPECT_TRUE(l4 == boundary->curve(0) || l4 == boundary->curve(1) || l4 == boundary->curve(2) || l4 == boundary->curve(3));
     }
-
-    sketch.delete_me();
 }
 
 TEST(Star, find_closed_contour_3) {
@@ -387,8 +375,6 @@ TEST(Star, find_closed_contour_3) {
         EXPECT_TRUE(arc == contour->curve(0) || arc == contour->curve(1));
         EXPECT_TRUE(line == contour->curve(0) || line == contour->curve(1));
     }
-
-    sketch.delete_me();
 }
 
 TEST(Star, with_construction_lines) {
@@ -404,7 +390,7 @@ TEST(Star, with_construction_lines) {
     auto l2 = s.new_element<LineSegment>(v2, v3);
     auto l3 = s.new_element<LineSegment>(v3, v0);
     auto l4 = s.new_element<LineSegment>(v0, v2);
-    l4->ForConstruction = true;
+    l4->for_construction(true);
 
     s.solve();
     s.build();
@@ -415,6 +401,4 @@ TEST(Star, with_construction_lines) {
     EXPECT_TRUE(s.contour(0)->size() == 4);
     EXPECT_TRUE(s.boundary()->size() == 4);
     EXPECT_TRUE(*s.contour(0) == *s.boundary());
-
-    s.delete_me();
 }

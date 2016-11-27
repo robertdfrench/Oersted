@@ -3,7 +3,7 @@
 #include "LineSegment.h"
 #include "Symmetry.h"
 
-MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_ptr<LineSegment> l, bool remove_internal) {
+MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve const>> &input, std::shared_ptr<LineSegment const> l, bool remove_internal) {
     // Creates mirror copies of the input curves about a line
 
     // Assign Properties
@@ -14,11 +14,10 @@ MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_p
     // Clone input curves and create a list of unique input verticies
     Curves.reserve(Input.size());
 
-    std::list<std::shared_ptr<Vertex>> input_vlist;
+    std::list<std::shared_ptr<Vertex const>> input_vlist;
     for (auto c : Input) {
         if (l->is_coincident(c)) {
-            //const_cast<Curve *>(c)->ForConstruction = RemoveInternalBoundaries; // TODO: const_cast is ugly
-            c->ForConstruction = RemoveInternalBoundaries;
+            std::const_pointer_cast<Curve>(c)->for_construction(RemoveInternalBoundaries);
         } else {
             Curves.push_back(c->clone());
             c->get_verticies(input_vlist);
@@ -63,9 +62,9 @@ MirrorCopy::MirrorCopy(std::vector<std::shared_ptr<Curve>> &input, std::shared_p
     }
 
     // Replace verticies in mirror curves
-    std::vector<std::shared_ptr<Vertex>> input_vvector{input_vlist.begin(), input_vlist.end()};
+    std::vector<std::shared_ptr<Vertex const>> input_vvector{input_vlist.begin(), input_vlist.end()};
     for (auto c : Curves) {
-        c->replace_verticies(input_vvector, Verticies);
+        c->replace_verticies(input_vvector, std::vector<std::shared_ptr<Vertex const>>{Verticies.begin(), Verticies.end()});
         c->reverse();
     }
 

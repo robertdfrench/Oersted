@@ -3,12 +3,12 @@
 #include "LineSegment.h"
 
 template<>
-void Coincident<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    const double rc = Element->radius();
-    const double xc = Element->center()->x();
-    const double yc = Element->center()->y();
-    const double xp = Point->x();
-    const double yp = Point->y();
+void Coincident<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
+    double rc = Element->radius();
+    double xc = Element->center()->x();
+    double yc = Element->center()->y();
+    double xp = Point->x();
+    double yp = Point->y();
 
     double dx = xp - xc;
     double dy = yp - yc;
@@ -32,14 +32,14 @@ template
 class Coincident<CircularArc>;
 
 template<>
-void Coincident<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    const double xp = Point->x();
-    const double yp = Point->y();
+void Coincident<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
+    double xp = Point->x();
+    double yp = Point->y();
 
-    const double x0 = Element->start()->x();
-    const double y0 = Element->start()->y();
-    const double x1 = Element->end()->x();
-    const double y1 = Element->end()->y();
+    double x0 = Element->start()->x();
+    double y0 = Element->start()->y();
+    double x1 = Element->end()->x();
+    double y1 = Element->end()->y();
 
     double dx0 = x0 - xp;
     double dy0 = y0 - yp;

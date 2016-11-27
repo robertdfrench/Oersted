@@ -7,14 +7,13 @@ void test_sketch_size(Sketch &s, size_t nverts, size_t ncurves, size_t nconstrai
     EXPECT_EQ(ncontours, s.size_contours());
 }
 
-bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> center, double angle) {
-    double x, y;
-    std::tie(x, y) = v->rotate(center, angle);
+bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex const> const v, std::shared_ptr<Vertex const> const center, double angle) {
+    double2 p = v->rotate(center, angle);
 
     bool rotation_found = false;
     for (size_t j = 0; j != s.size_verticies(); ++j) {
-        std::shared_ptr<Vertex> vj = s.vertex(j);
-        rotation_found = (abs(vj->x() - x) < TOL && abs(vj->y() - y) < TOL);
+        std::shared_ptr<Vertex const> vj = s.vertex(j);
+        rotation_found = (abs(vj->x() - p.X) < TOL && abs(vj->y() - p.Y) < TOL);
 
         if (rotation_found) {
             break;
@@ -24,29 +23,27 @@ bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex> v, std::shared_ptr<
     return rotation_found;
 }
 
-bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> center, double angle) {
-    double x0, y0;
-    std::tie(x0, y0) = v0->rotate(center, angle);
+bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex const> const v0, std::shared_ptr<Vertex const> const v1, std::shared_ptr<Vertex const> const center, double angle) {
+    double2 p0 = v0->rotate(center, angle);
 
-    double x1, y1;
-    std::tie(x1, y1) = v1->rotate(center, angle);
+    double2 p1 = v1->rotate(center, angle);
 
     bool rotation0_found = false;
     bool rotation1_found = false;
 
     for (size_t j = 0; j != s.size_curves(); ++j) {
-        std::shared_ptr<Curve> c = s.curve(j);
-        std::shared_ptr<Vertex> vs = c->start();
-        std::shared_ptr<Vertex> ve = c->end();
+        auto c = s.curve(j);
+        auto vs = c->start();
+        auto ve = c->end();
 
-        rotation0_found = (abs(vs->x() - x0) < TOL && abs(vs->y() - y0) < TOL);
+        rotation0_found = (abs(vs->x() - p0.X) < TOL && abs(vs->y() - p0.Y) < TOL);
 
         if (rotation0_found) {
-            rotation1_found = (abs(ve->x() - x1) < TOL && abs(ve->y() - y1) < TOL);
+            rotation1_found = (abs(ve->x() - p1.X) < TOL && abs(ve->y() - p1.Y) < TOL);
         } else {
-            rotation0_found = (abs(ve->x() - x0) < TOL && abs(ve->y() - y0) < TOL);
+            rotation0_found = (abs(ve->x() - p0.X) < TOL && abs(ve->y() - p0.Y) < TOL);
             if (rotation0_found) {
-                rotation1_found = (abs(vs->x() - x1) < TOL && abs(vs->y() - y1) < TOL);
+                rotation1_found = (abs(vs->x() - p1.X) < TOL && abs(vs->y() - p1.Y) < TOL);
             }
         }
 
@@ -58,7 +55,7 @@ bool has_rotational_image(Sketch &s, std::shared_ptr<Vertex> v0, std::shared_ptr
     return rotation0_found && rotation1_found;
 }
 
-void test_rotated_verticies(Sketch &s, std::vector<size_t> index, std::shared_ptr<Vertex> center, double angle, size_t copies) {
+void test_rotated_verticies(Sketch &s, std::vector<size_t> index, std::shared_ptr<Vertex const> const center, double angle, size_t copies) {
     for (size_t j = 1; j != (copies + 1); ++j) {
         for (size_t i : index) {
             EXPECT_TRUE(has_rotational_image(s, s.vertex(i), center, angle * j));
@@ -66,7 +63,7 @@ void test_rotated_verticies(Sketch &s, std::vector<size_t> index, std::shared_pt
     }
 }
 
-void test_rotated_curves(Sketch &s, std::vector<size_t> index, std::shared_ptr<Vertex> center, double angle, size_t copies) {
+void test_rotated_curves(Sketch &s, std::vector<size_t> index, std::shared_ptr<Vertex const> const center, double angle, size_t copies) {
     for (size_t j = 1; j != (copies + 1); ++j) {
         for (size_t i : index) {
             EXPECT_TRUE(has_rotational_image(s, s.curve(i)->start(), s.curve(i)->end(), center, angle * j));

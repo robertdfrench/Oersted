@@ -21,13 +21,11 @@ TEST(Curve, supremum) {
     auto coin0 = s.new_element<Coincident<LineSegment>>(origin, l0);
     auto coin1 = s.new_element<Coincident<LineSegment>>(origin, l1);
 
-    std::pair<double,double> sc0 = c0->supremum();
-    std::pair<double,double> sl0 = l0->supremum();
+    double2 sc0 = c0->supremum();
+    double2 sl0 = l0->supremum();
 
     EXPECT_GT(sc0, sl0);
 
     s.solve();
     s.build();
-
-    s.delete_me();
 }

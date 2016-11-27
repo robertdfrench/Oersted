@@ -6,15 +6,15 @@
 #include "Sketch.h"
 #include "Vertex.h"
 
-Star::Star(std::shared_ptr<Vertex> v, Sketch const *s) {
+Star::Star(std::shared_ptr<Vertex const> v, Sketch const *s) {
     StarVertex = v;
 
     // Extract Curves
-    std::vector<std::shared_ptr<Curve>> curves;
+    std::vector<std::shared_ptr<Curve const>> curves;
     std::vector<bool> orientation;
     for (size_t i = 0; i < s->size_curves(); ++i) {
-        std::shared_ptr<Curve> c = s->curve(i);
-        if (!c->ForConstruction) {
+        std::shared_ptr<Curve const> c = s->curve(i);
+        if (!c->for_construction()) {
             if (StarVertex == c->start()) {
                 curves.push_back(c);
                 orientation.push_back(true);
@@ -59,7 +59,7 @@ Star::Star(std::shared_ptr<Vertex> v, Sketch const *s) {
     double x = StarVertex->x();
     double y = StarVertex->y();
     for (size_t i = 0; i != curves.size(); ++i) {
-        std::shared_ptr<Vertex> v;
+        std::shared_ptr<Vertex const> v;
         if (orientation[i]) {
             v = curves[i]->end();
         } else {
@@ -91,7 +91,7 @@ Star::Star(std::shared_ptr<Vertex> v, Sketch const *s) {
 
 }
 
-std::shared_ptr<Curve> Star::next(std::shared_ptr<Curve> c) const {
+std::shared_ptr<Curve const> Star::next(std::shared_ptr<Curve const> const &c) const {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             return next(b)->Path;
@@ -101,7 +101,7 @@ std::shared_ptr<Curve> Star::next(std::shared_ptr<Curve> c) const {
     return nullptr;
 }
 
-std::shared_ptr<Curve> Star::prev(std::shared_ptr<Curve> c) const {
+std::shared_ptr<Curve const> Star::prev(std::shared_ptr<Curve const> const &c) const {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             return prev(b)->Path;
@@ -111,7 +111,7 @@ std::shared_ptr<Curve> Star::prev(std::shared_ptr<Curve> c) const {
     return nullptr;
 }
 
-void Star::pop(std::shared_ptr<Curve> c) {
+void Star::pop(std::shared_ptr<Curve const> const &c) {
     for (auto b = begin(); b != end(); ++b) {
         if (b->Path == c) {
             prev(b)->Angle += b->Angle;

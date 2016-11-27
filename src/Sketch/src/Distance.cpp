@@ -10,7 +10,7 @@ size_t Distance<CircularArc>::set_equation_index(size_t i) {
 };
 
 template<>
-void Distance<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Distance<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
         There are two different cases depending on whether or not the smaller circle is intended to be
         exterior or interior to the larger circle. At present, the intent is discriminated by the position
@@ -19,13 +19,13 @@ void Distance<CircularArc>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
         circle and find a new equilibrium there.
     */
 
-    const double r0 = Element0->radius();
-    const double x0 = Element0->center()->x();
-    const double y0 = Element0->center()->y();
+    double r0 = Element0->radius();
+    double x0 = Element0->center()->x();
+    double y0 = Element0->center()->y();
 
-    const double r1 = Element1->radius();
-    const double x1 = Element1->center()->x();
-    const double y1 = Element1->center()->y();
+    double r1 = Element1->radius();
+    double x1 = Element1->center()->x();
+    double y1 = Element1->center()->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;
@@ -68,19 +68,19 @@ size_t Distance<LineSegment>::set_equation_index(size_t i) {
 };
 
 template<>
-void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
+void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
         Pick one line, draw vectors from the center of the line to each of the remaining line's end points.
         The area of the triangle formed by the vectors and line should equal half of the length of the line times
         the distance beween the lines (one half base times height). The signed area of the triangle is equal to
         the cross product of the two vectors.
     */
-    const double x00 = Element0->start()->x();
-    const double y00 = Element0->start()->y();
-    const double x01 = Element0->end()->x();
-    const double y01 = Element0->end()->y();
-    const double x0m = 0.5 * (x00 + x01);
-    const double y0m = 0.5 * (y00 + y01);
+    double x00 = Element0->start()->x();
+    double y00 = Element0->start()->y();
+    double x01 = Element0->end()->x();
+    double y01 = Element0->end()->y();
+    double x0m = 0.5 * (x00 + x01);
+    double y0m = 0.5 * (y00 + y01);
 
     double v0x = x01 - x00;
     double v0y = y01 - y00;
@@ -88,12 +88,12 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
     v0x /= d0;
     v0y /= d0;
 
-    const double x10 = Element1->start()->x();
-    const double y10 = Element1->start()->y();
-    const double x11 = Element1->end()->x();
-    const double y11 = Element1->end()->y();
-    const double x1m = 0.5 * (x10 + x11);
-    const double y1m = 0.5 * (y10 + y11);
+    double x10 = Element1->start()->x();
+    double y10 = Element1->start()->y();
+    double x11 = Element1->end()->x();
+    double y11 = Element1->end()->y();
+    double x1m = 0.5 * (x10 + x11);
+    double y1m = 0.5 * (y10 + y11);
 
     double v1x = x11 - x10;
     double v1y = y11 - y10;
@@ -213,11 +213,11 @@ size_t Distance<Vertex>::set_equation_index(size_t i) {
 }
 
 template<>
-void Distance<Vertex>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) {
-    const double x0 = Element0->x();
-    const double y0 = Element0->y();
-    const double x1 = Element1->x();
-    const double y1 = Element1->y();
+void Distance<Vertex>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
+    double x0 = Element0->x();
+    double y0 = Element0->y();
+    double x1 = Element1->x();
+    double y1 = Element1->y();
 
     double dx = x1 - x0;
     double dy = y1 - y0;

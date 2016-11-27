@@ -1,12 +1,12 @@
 #include "Sketch.h"
 #include "Vertex.h"
 
-void Vertex::register_parameters(Sketch *s) {
-    s->add_parameter(X);
-    s->add_parameter(Y);
+void Vertex::register_parameters(Sketch *s) const {
+    s->add_parameter(std::const_pointer_cast<Variable>(X));
+    s->add_parameter(std::const_pointer_cast<Variable>(Y));
 };
 
-std::pair<double, double> Vertex::rotate(std::shared_ptr<Vertex> const &origin, double const angle) const {
+double2 Vertex::rotate(std::shared_ptr<Vertex const> const &origin, double angle) const {
     double x = origin->x();
     double y = origin->y();
 
@@ -19,5 +19,5 @@ std::pair<double, double> Vertex::rotate(std::shared_ptr<Vertex> const &origin, 
     x += r * cos(a);
     y += r * sin(a);
 
-    return std::make_pair(x, y);
+    return double2{x,y};
 }

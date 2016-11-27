@@ -26,11 +26,11 @@ public:
 private:
     std::list<Star> Stars;
 
-    bool find_closed_contour(std::vector<std::shared_ptr<Curve>> &curves, std::vector<bool> &orientation);
+    bool find_closed_contour(std::vector<std::shared_ptr<Curve const>> &curves, std::vector<bool> &orientation);
 
     bool twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 
-    void pop(std::shared_ptr<Curve> c = std::shared_ptr<Curve>());
+    void pop(std::shared_ptr<Curve const> c = std::shared_ptr<Curve const>());
 
     void supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 };

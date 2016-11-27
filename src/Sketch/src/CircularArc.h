@@ -6,15 +6,18 @@
 
 class CircularArc final : public Curve {
 public:
-    CircularArc() : Curve(), Radius(std::make_shared<Variable>(0.0)) {};
+    using Curve::on_manifold;
+
+    using Curve::on_segment;
+
+public:
+    CircularArc() : Curve(), Radius(std::make_shared<Variable const>(0.0)) {};
 
     CircularArc(CircularArc const *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
 
-    CircularArc(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {};
+    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {};
 
-    CircularArc(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> c, double r, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(std::make_shared<Variable>(r)) {};
-
-    CircularArc(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> c, std::shared_ptr<Variable> r, Sketch &s, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(r) {};
+    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, double r, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(std::make_shared<Variable const>(r)) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
@@ -23,7 +26,7 @@ public:
 
     size_t radius_index() const { return Radius->get_index(); };
 
-    bool is_coincident(std::shared_ptr<Curve> const &c) const override;
+    bool is_coincident(std::shared_ptr<Curve const> const &c) const override;
 
     double a(double s, bool orientation) const override;
 
@@ -35,49 +38,45 @@ public:
 
     double radius() const { return Radius->value(); };
 
-    using Curve::on_manifold;
-
-    using Curve::on_segment;
-
-    void get_verticies(std::list<std::shared_ptr<Vertex>> &v, Direction dir = Direction::Forward) const override {
-        if (dir == Direction::Forward) {
+    void get_verticies(std::list<std::shared_ptr<Vertex const>> &v, MatchOrientation dir = MatchOrientation::Forward) const override {
+        if (dir == MatchOrientation::Forward) {
             v.push_back(Start);
             v.push_back(End);
             v.push_back(Center);
-        } else if (dir == Direction::Reverse) {
+        } else if (dir == MatchOrientation::Reverse) {
             v.push_back(End);
             v.push_back(Start);
             v.push_back(Center);
         }
     };
 
-    void register_parameters(Sketch *s) override { s->add_parameter(Radius); };
+    void register_parameters(Sketch *s) const override { s->add_parameter(std::const_pointer_cast<Variable>(Radius)); };
 
-    void replace_verticies(std::vector<std::shared_ptr<Vertex>> oldv, std::vector<std::shared_ptr<Vertex>> newv) override;
+    void replace_verticies(std::vector<std::shared_ptr<Vertex const>> const &oldv, std::vector<std::shared_ptr<Vertex const>> const &newv) override;
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
-
-    std::pair<double, double> supremum() const override;
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override;
 
     std::shared_ptr<Curve> clone() const override { return std::make_shared<CircularArc>(this); };
 
-    std::shared_ptr<Vertex> center() const { return Center; };
+    std::shared_ptr<Vertex const> center() const { return Center; };
 
-    Direction is_identical(std::shared_ptr<Curve> const &c) const override;
+    MatchOrientation is_identical(std::shared_ptr<Curve const> const &c) const override;
 
-    Direction is_identical(std::shared_ptr<Curve> const &c, std::shared_ptr<Vertex> const &origin, double const angle) const override;
+    MatchOrientation is_identical(std::shared_ptr<Curve const> const &c, std::shared_ptr<Vertex const> const &origin, double angle) const override;
 
-    sPoint point(double s) const override;
+    double2 point(double s) const override;
 
-    Vertex tangent(double s, bool orientation) const override;
+    double2 supremum() const override;
+
+    double2 tangent(double s, bool orientation) const override;
 
 protected:
-    std::shared_ptr<Vertex> Center;
-    std::shared_ptr<Variable> Radius;
+    std::shared_ptr<Vertex const> Center;
+    std::shared_ptr<Variable const> Radius;
 
-    bool on_manifold(const double x, const double y) const override;
+    bool on_manifold(double x, double y) const override;
 
-    bool on_segment(const double x, const double y) const override;
+    bool on_segment(double x, double y) const override;
 
     double s_to_a(double s) const;
 
@@ -85,7 +84,7 @@ protected:
 
     double arc_angle() const;
 
-    Direction is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
+    MatchOrientation is_identical(double r, double xc, double yc, double xs, double ys, double xe, double ye) const;
 };
 
 #endif //OERSTED_CIRCULARARC_H

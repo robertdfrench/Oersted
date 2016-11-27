@@ -1,23 +1,21 @@
 #include "Curve.h"
 
-bool Curve::on_segment(std::shared_ptr<Vertex> const &v) const {
+bool Curve::on_segment(std::shared_ptr<Vertex const> const &v) const {
     return on_segment(v->x(), v->y());
 }
 
-bool Curve::on_segment(std::shared_ptr<Vertex> const &v, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    double x, y;
-    std::tie(x, y) = v->rotate(origin, angle);
+bool Curve::on_segment(std::shared_ptr<Vertex const> const &v, std::shared_ptr<Vertex const> const &origin, double angle) const {
+    double2 p = v->rotate(origin, angle);
 
-    return on_segment(x, y);
+    return on_segment(p.X, p.Y);
 }
 
-bool Curve::on_manifold(std::shared_ptr<Vertex> const &v) const {
+bool Curve::on_manifold(std::shared_ptr<Vertex const> const &v) const {
     return on_manifold(v->x(), v->y());
 }
 
-bool Curve::on_manifold(std::shared_ptr<Vertex> const &v, std::shared_ptr<Vertex> const &origin, double const angle) const {
-    double x, y;
-    std::tie(x, y) = v->rotate(origin, angle);
+bool Curve::on_manifold(std::shared_ptr<Vertex const> const &v, std::shared_ptr<Vertex const> const &origin, double angle) const {
+    double2 p = v->rotate(origin, angle);
 
-    return on_manifold(x, y);
+    return on_manifold(p.X, p.Y);
 }

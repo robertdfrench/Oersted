@@ -5,7 +5,7 @@
 
 class Constraint : public SketchElement {
 public:
-    void register_parameters(Sketch *s) override {};
+    void register_parameters(Sketch *s) const override {};
 };
 
 #endif //OERSTED_CONSTRAINT_H

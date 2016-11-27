@@ -54,8 +54,6 @@ TEST(Rotor, Suite0) {
     m.refine();
 
     m.save_as(MDIR, "rotor0_refined");
-
-    s.delete_me();
 }
 
 TEST(Rotor, Circular_Barrier_Syncrel) {
@@ -148,6 +146,4 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     m.refine();
 
     m.save_as(MDIR, "rotor_circular_barrier_syncrel_refined");
-
-    s.delete_me();
 }

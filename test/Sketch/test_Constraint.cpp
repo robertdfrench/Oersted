@@ -11,8 +11,6 @@ TEST(Constraint, Vertex) {
 
     EXPECT_NEAR(M_E, v->x(), TOL);
     EXPECT_NEAR(M_PI, v->y(), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Fixation_Length) {
@@ -33,8 +31,6 @@ TEST(Constraint, Fixation_Length) {
     EXPECT_NEAR(M_1_PI, v0->x(), TOL);
     EXPECT_NEAR(M_2_SQRTPI, v0->y(), TOL);
     EXPECT_NEAR(M_LN2, line->length(), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Horizontal) {
@@ -51,8 +47,6 @@ TEST(Constraint, Horizontal) {
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Horizontal");
 
     EXPECT_NEAR(v0->y(), v1->y(), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Vertical) {
@@ -70,8 +64,6 @@ TEST(Constraint, Vertical) {
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical");
 
     EXPECT_NEAR(v0->x(), v1->x(), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Length) {
@@ -89,8 +81,6 @@ TEST(Constraint, Length) {
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Length");
 
     EXPECT_NEAR(1.0, line->length(), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, CircularArc) {
@@ -109,8 +99,6 @@ TEST(Constraint, CircularArc) {
 
     EXPECT_NEAR(c->radius(), hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
     EXPECT_NEAR(c->radius(), hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Radius) {
@@ -133,8 +121,6 @@ TEST(Constraint, Radius) {
     EXPECT_NEAR(3.14, c->radius(), TOL);
     EXPECT_NEAR(3.14, hypot(v0->x() - vc->x(), v0->y() - vc->y()), TOL);
     EXPECT_NEAR(3.14, hypot(v1->x() - vc->x(), v1->y() - vc->y()), TOL);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Tangency_CircularArc_LineSegment) {
@@ -199,8 +185,6 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         EXPECT_NEAR((M_SQRT2 - v451->x()), v451->y(), TOL);
         EXPECT_NEAR(0.0, v451->x(), TOL);
         EXPECT_NEAR(M_SQRT2, v451->y(), TOL);
-
-        s.delete_me();
     }
 
     { // Case 1: Test when CircularArc and LineSegment have shared endpoints
@@ -227,8 +211,6 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         EXPECT_NEAR(M_PI_2, (atan2(v1->y() - vc->y(), v1->x() - vc->x()) - atan2(v2->y() - v1->y(), v2->x() - v1->x())), TOL * M_PI_2);
         EXPECT_NEAR(M_SQRT1_2, v1->x(), TOL);
         EXPECT_NEAR(M_SQRT1_2, v1->y(), TOL);
-
-        s.delete_me();
     }
 }
 
@@ -265,8 +247,6 @@ TEST(Constraint, Angle) {
         EXPECT_NEAR(cos(M_PI * i / 8.0), v01->x(), TOL);
         EXPECT_NEAR(sin(M_PI * i / 8.0), v01->y(), TOL);
     }
-
-    s.delete_me();
 }
 
 TEST(Constraint, Angle_Coincident) {
@@ -310,8 +290,6 @@ TEST(Constraint, Angle_Coincident) {
         EXPECT_NEAR(0.0, tan(dar * i) * v11->x() - v11->y(), TOL);
         EXPECT_NEAR(0.0, tan(dar * i) * v10->x() - v10->y(), TOL);
     }
-
-    s.delete_me();
 }
 
 TEST(Constraint, Distance_Vertex_Vertex) {
@@ -327,8 +305,6 @@ TEST(Constraint, Distance_Vertex_Vertex) {
     //s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
 
     EXPECT_NEAR(M_LN2, hypot(v0->x() - v1->x(), v0->y() - v1->y()), TOL * M_LN2);
-
-    s.delete_me();
 }
 
 TEST(Constraint, Distance_LineSegment) {
@@ -372,8 +348,6 @@ TEST(Constraint, Distance_LineSegment) {
         EXPECT_NEAR(1.0, dot, TOL);
         EXPECT_NEAR(0.0, cross, TOL);
         EXPECT_NEAR(M_PI, len, TOL * M_PI);
-
-        s.delete_me();
     }
 
     { // Case 1: Corner case when LineSegments are initially perpendicular
@@ -430,8 +404,6 @@ TEST(Constraint, Distance_LineSegment) {
 
         l = abs(dx0 * dy1 - dy0 * dx1) / dr0;
         EXPECT_NEAR(1.0, l, TOL);
-
-        s.delete_me();
     }
 
     { // Case 2: Corner case when two LineSegments initially intersect at their midpoint
@@ -465,8 +437,6 @@ TEST(Constraint, Distance_LineSegment) {
         double dot = abs(dx0 * dx1 + dy0 * dy1);
 
         EXPECT_NEAR(1.0, dot, TOL); // TODO: Fails because lines intersect at midpoint
-
-        s.delete_me();
     }
 }
 
@@ -494,8 +464,6 @@ TEST(Constraint, Distance_CircularArc) {
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior");
 
         EXPECT_NEAR(1.0 / 3.0, hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c0->radius() - c1->radius(), TOL / 3.0);
-
-        s.delete_me();
     }
 
     { // Case 1: Distance between two circular arcs, the second being contained within the defining circular of the first
@@ -521,8 +489,6 @@ TEST(Constraint, Distance_CircularArc) {
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0");
 
         EXPECT_NEAR(1.0 / 3.0, c0->radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1->radius(), TOL / 3.0);
-
-        s.delete_me();
     }
 
     { // Case 2: Distance between two circular arcs, the second being contained within the defining circular of the first
@@ -548,8 +514,6 @@ TEST(Constraint, Distance_CircularArc) {
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1");
 
         EXPECT_NEAR(1.0 / 3.0, c0->radius() - hypot(vc0->x() - vc1->x(), vc0->y() - vc1->y()) - c1->radius(), TOL / 3.0);
-
-        s.delete_me();
     }
 }
 
@@ -574,8 +538,6 @@ TEST(Constraint, Coincident_CircularArc) {
     double dy = vc->y() - vp->y();
     double d = sqrt(dx * dx + dy * dy);
     EXPECT_NEAR(0.0, d - ca->radius(), TOL * ca->radius());
-
-    s.delete_me();
 }
 
 TEST(Constraint, Coincident_LineSegment) {
@@ -606,8 +568,6 @@ TEST(Constraint, Coincident_LineSegment) {
         dy1 /= dr1;
 
         EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
-
-        s.delete_me();
     }
 
     { // Case 1: Corner case where midpoint of LineSegment is
@@ -637,8 +597,6 @@ TEST(Constraint, Coincident_LineSegment) {
         dy1 /= dr1;
 
         EXPECT_NEAR(0.0, (dx0 * dy1 - dy0 * dx1), TOL);
-
-        s.delete_me();
     }
 }
 
@@ -686,8 +644,6 @@ TEST(Constraint, Symmetry) {
 
         EXPECT_NEAR(v2->x(), v3->x(), TOL);
         EXPECT_NEAR(v2->y(), -v3->y(), TOL);
-
-        s.delete_me();
     }
 
     { // Case 1: Vertical
@@ -717,8 +673,6 @@ TEST(Constraint, Symmetry) {
 
         EXPECT_NEAR(v2->x(), -v3->x(), TOL);
         EXPECT_NEAR(v2->y(), v3->y(), TOL);
-
-        s.delete_me();
     }
 
     { // Case 2: 45 degrees
@@ -746,8 +700,6 @@ TEST(Constraint, Symmetry) {
 
         EXPECT_NEAR(v3->y(), v2->x(), TOL);
         EXPECT_NEAR(v3->x(), v2->y(), TOL);
-
-        s.delete_me();
     }
 }
 
@@ -778,6 +730,4 @@ TEST(Constraint, Rotation) {
     EXPECT_NEAR(r1, r2, TOL);
     EXPECT_NEAR(v2->x(), dx1 * cos(a) - dy1 * sin(a) + v0->x(), TOL);
     EXPECT_NEAR(v2->y(), dx1 * sin(a) + dy1 * cos(a) + v0->y(), TOL);
-
-    s.delete_me();
 }

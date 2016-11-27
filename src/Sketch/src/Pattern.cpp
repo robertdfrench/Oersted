@@ -4,7 +4,7 @@
 #include "Curve.h"
 #include "Constraint.h"
 
-void Pattern::register_elements(Sketch *s) {
+void Pattern::register_elements(Sketch *s) const {
     for (auto v : Verticies) {
         s->add_element(v);
     }
