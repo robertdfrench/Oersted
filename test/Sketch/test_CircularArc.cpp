@@ -1,14 +1,7 @@
 #include "test_Sketch.hpp"
 
 TEST(CircularArc, constructor) {
-    { //ARGS::()
-        EXPECT_NO_THROW(CircularArc c);
-    }
-
-    { //ARGS::(Vertex,Vertex,Vertex)
-        std::shared_ptr<Vertex> v0, v1, center;
-        EXPECT_NO_THROW(CircularArc c(v0, v1, center));
-    }
+    EXPECT_NO_THROW(CircularArc c);
 }
 
 TEST(CircularArc, point) {

@@ -38,9 +38,9 @@ public:
 
     size_t size_verticies() const { return Verticies.size(); };
 
-    bool build();
+    bool build(); // TODO: Detailed return enum
 
-    double solve();
+    double solve(); // TODO: Detailed return enum
 
     void add_element(std::shared_ptr<Constraint> c);
 

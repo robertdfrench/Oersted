@@ -234,7 +234,7 @@ TEST(Constraint, Angle) {
 
         ang->dim(a);
 
-        s.solve();
+        double res_norm = s.solve();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_LineSegment_LineSegment_")+std::to_string(i));
 
@@ -243,7 +243,7 @@ TEST(Constraint, Angle) {
         EXPECT_NEAR(v0->y(), v00->y(), TOL);
         EXPECT_NEAR(1.0, line1->length(), TOL);
 
-        EXPECT_NEAR(tan(M_PI * i / 8.0), ((v01->y() - v0->y()) / (v01->x() - v0->x())), TOL);
+        EXPECT_NEAR(sin(M_PI * i / 8.0) * (v01->x() - v0->x()), cos(M_PI * i / 8.0) * (v01->y() - v0->y()), TOL); // Tests line sloep. Avoid divide by zero error when calling tan(+/-M_PI / 2.0) by using tan = sin/cos
         EXPECT_NEAR(cos(M_PI * i / 8.0), v01->x(), TOL);
         EXPECT_NEAR(sin(M_PI * i / 8.0), v01->y(), TOL);
     }
@@ -360,7 +360,8 @@ TEST(Constraint, Distance_LineSegment) {
 
         auto l0 = s.new_element<LineSegment>(v00, v01);
         auto l1 = s.new_element<LineSegment>(v10, v11);
-        auto d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
+
+        auto d01 = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
 
         s.solve();
 

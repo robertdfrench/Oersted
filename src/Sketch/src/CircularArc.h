@@ -15,7 +15,19 @@ public:
 
     CircularArc(CircularArc const *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
 
-    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {};
+    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {
+        double xc = c->x();
+        double yc = c->y();
+        double x0 = v0->x();
+        double y0 = v0->y();
+        double x1 = v1->x();
+        double y1 = v1->y();
+
+        double r0 = sqrt((xc - x0) * (xc - x0) + (yc - y0) * (yc - y0));
+        double r1 = sqrt((xc - x1) * (xc - x1) + (yc - y1) * (yc - y1));
+
+        Radius = std::make_shared<Variable>((r0 + r1) / 2.0);
+    };
 
     CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, double r, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(std::make_shared<Variable const>(r)) {};
 
@@ -34,7 +46,7 @@ public:
 
     double da(double s, bool orientation) const override;
 
-    double length() const override { throw; };
+    double length() const override { return radius() * arc_angle(); };
 
     double radius() const { return Radius->value(); };
 

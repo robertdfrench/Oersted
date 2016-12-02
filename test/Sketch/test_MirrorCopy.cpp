@@ -78,7 +78,7 @@ TEST(MirrorCopy, nonoverlapping) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_square");
 
-    s.solve();
+    double residual = s.solve();
     s.build();
 
     // Run Tests
@@ -91,7 +91,7 @@ TEST(MirrorCopy, nonoverlapping) {
     // Change elements
     {
         s.new_element<Length>(l0, 0.5);
-        s.solve();
+        residual = s.solve();
         s.build();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_trapezoid");
@@ -123,13 +123,12 @@ TEST(MirrorCopy, overlapping) {
         s.new_element<Fixation>(v0);
         s.new_element<Fixation>(v3);
 
-        // std::vector<const Curve *> vec{&l0, &l1, &l2, &l3};
         auto mvec = s.curves();
         auto mc0 = s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram")+std::to_string(remove_internal));
 
-        s.solve();
+        double residual = s.solve();
         s.build();
 
         // Run Tests
@@ -142,7 +141,7 @@ TEST(MirrorCopy, overlapping) {
         // Change elements
         {
             s.new_element<Length>(l1, 0.5);
-            s.solve();
+            residual = s.solve();
             s.build();
 
             s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_trapezoid")+std::to_string(remove_internal));
@@ -179,11 +178,10 @@ TEST(MirrorCopy, multiple_overlapping) {
         //l3.ForConstruction = true;
         s.new_element<Coincident<LineSegment>>(v5, l3);
 
-        //std::vector<const Curve *> vec{&l0, &l1, &l2, &l3, &l4, &l5, &l6};
         auto mvec = s.curves();
         s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
-        s.solve();
+        double residual = s.solve();
         s.build();
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_0_")+std::to_string(remove_internal));
@@ -198,7 +196,7 @@ TEST(MirrorCopy, multiple_overlapping) {
         // Change elements
         {
             s.new_element<Length>(l6, 2.0);
-            s.solve();
+            residual = s.solve();
             s.build();
 
             s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_1_")+std::to_string(remove_internal));

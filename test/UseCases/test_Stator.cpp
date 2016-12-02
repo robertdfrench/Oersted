@@ -1,6 +1,6 @@
 #include "test_UseCases.hpp"
 
-TEST(Stator, Suite0) {
+TEST(Stator, 0) {
     Sketch sketch;
 
     size_t Np{8};
@@ -71,7 +71,7 @@ TEST(Stator, Suite0) {
 
     Mesh mesh{sketch};
 
-    mesh.MinimumElementQuality = 0 * M_SQRT1_2;
+    mesh.MinimumElementQuality = M_SQRT1_2;
     mesh.MaximumElementSize = 2.5;
     mesh.MinimumElementSize = 0.25;
 
@@ -84,4 +84,154 @@ TEST(Stator, Suite0) {
 
     mesh.refine();
     mesh.save_as(MDIR, "stator0_refined");
+}
+
+TEST(Stator, 1) {
+    Sketch sketch;
+
+    // Parameters
+    size_t Np{8}; // number of poles
+    size_t Nt{6 * Np}; // number of teeth
+
+    double rsi{80e-3}; // stator inner radius
+    double rso{130e-3}; // stator outer radius
+    double at2_deg{180.0 / Nt}; // half tooth pitch angle in degrees
+    double at2_rad{M_PI / Nt}; // half tooth pitch angle in radians
+
+    double sow{1.0e-3}; // slot opening width
+    double sod{1.5e-3}; // slot opening depth
+
+    double ptw{0.66}; // tooth width percentage of rsi * cos(at2_rad)
+    double dtw{ptw * rsi * sin(at2_rad)};
+
+    double pbi{0.3}; // backiron width percentage of (rso - rsi)
+    double dbi{pbi * (rso - rsi)};
+
+    // Verticies
+    auto v0 = sketch.new_element<Vertex>(0.0, 0.0);
+    auto f0 = sketch.new_element<Fixation>(v0);
+
+    auto v1 = sketch.new_element<Vertex>(rsi, 0.0);
+    auto v2 = sketch.new_element<Vertex>(rso, 0.0);
+    auto v3 = sketch.new_element<Vertex>(rso * cos(at2_rad), rso * sin(at2_rad));
+    auto v4 = sketch.new_element<Vertex>(rsi * cos(at2_rad), rsi * sin(at2_rad));
+
+    auto v5 = sketch.new_element<Vertex>(rsi * cos(at2_rad), rsi * sin(at2_rad) - sod); // approximate dimensions
+    auto v6 = sketch.new_element<Vertex>(rsi * cos(at2_rad) + sod, rsi * sin(at2_rad) - sod); // approximate dimensions
+    auto v7 = sketch.new_element<Vertex>((rsi + sod) * cos(at2_rad), (rsi + sod) * sin(at2_rad));
+
+    auto v8 = sketch.new_element<Vertex>(rsi + 2 * sod, dtw);
+    auto v9 = sketch.new_element<Vertex>(rso - dbi, dtw);
+    auto v10 = sketch.new_element<Vertex>((rso - dbi) * cos(at2_rad), (rso - dbi) * sin(at2_rad));
+
+    auto v11 = sketch.new_element<Vertex>(rsi + 2 * sod, rsi * sin(at2_rad) - sod);
+    auto v12 = sketch.new_element<Vertex>((rso - 2 * dbi) * cos(at2_rad), (rso - 2 * dbi) * sin(at2_rad));
+
+    // LineSegment Curves
+    auto l_0_4 = sketch.new_element<LineSegment>(v0, v4, true);
+
+    auto l_1_2 = sketch.new_element<LineSegment>(v1, v2);
+    auto l_4_7 = sketch.new_element<LineSegment>(v4, v7);
+    auto l_7_10 = sketch.new_element<LineSegment>(v7, v10);
+    auto l_10_3 = sketch.new_element<LineSegment>(v10, v3);
+
+    auto l_5_6 = sketch.new_element<LineSegment>(v5, v6);
+    auto l_6_7 = sketch.new_element<LineSegment>(v6, v7);
+
+    auto l_8_9 = sketch.new_element<LineSegment>(v8, v9);
+
+    // Circle Curves
+    auto c_1_5_0 = sketch.new_element<CircularArc>(v1, v5, v0, rsi);
+    auto c_5_4_0 = sketch.new_element<CircularArc>(v5, v4, v0, rsi);
+    auto c_2_3_0 = sketch.new_element<CircularArc>(v2, v3, v0, rso);
+
+    auto c_6_8_11 = sketch.new_element<CircularArc>(v6, v8, v11);
+
+    auto c_9_10_12 = sketch.new_element<CircularArc>(v9, v10, v12);
+
+    // Angle Constraints
+    auto angle_1_2_0_4 = sketch.new_element<Angle>(l_1_2, l_0_4, at2_deg);
+    auto angle_1_2_4_7 = sketch.new_element<Angle>(l_1_2, l_4_7, at2_deg);
+    auto angle_1_2_7_10 = sketch.new_element<Angle>(l_1_2, l_7_10, at2_deg);
+    auto angle_1_2_10_3 = sketch.new_element<Angle>(l_1_2, l_10_3, at2_deg);
+
+    // Distance Constraint
+    auto distance_5_6_4_7 = sketch.new_element<Distance<LineSegment>>(l_5_6, l_4_7, sow);
+    auto distance_1_2_8_9 = sketch.new_element<Distance<LineSegment>>(l_1_2, l_8_9, dtw);
+
+    // Coincident Constraints
+    auto coincident_0_1_2 = sketch.new_element<Coincident<LineSegment>>(v0, l_1_2);
+
+    auto coincident_12_7_10 = sketch.new_element<Coincident<LineSegment>>(v12, l_7_10);
+
+    // Horizontal Constraints
+    auto horziontal_1_2 = sketch.new_element<Horizontal>(l_1_2);
+
+    // Length Constraints
+    auto length_5_6 = sketch.new_element<Length>(l_5_6, sod);
+    auto length_4_7 = sketch.new_element<Length>(l_4_7, sod);
+    auto length_10_3 = sketch.new_element<Length>(l_10_3, dbi);
+
+    // Radius Constraints
+    auto radius_1_5_0 = sketch.new_element<Radius>(c_1_5_0, rsi);
+    auto radius_2_3_0 = sketch.new_element<Radius>(c_2_3_0, rso);
+
+    // Tangency Constraints
+    auto tangent_9_10_12_8_9 = sketch.new_element<Tangency>(c_9_10_12, l_8_9);
+
+    auto tangent_6_8_11_8_9 = sketch.new_element<Tangency>(c_6_8_11, l_8_9);
+
+    auto tangent_6_8_11_6_7 = sketch.new_element<Tangency>(c_6_8_11, l_6_7);
+
+    // Solve
+    double residual_norm = sketch.solve();
+
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_0_half");
+
+    // MirrorCopy
+    auto mccs = sketch.curves();
+
+    auto mirror_copy = sketch.new_element<MirrorCopy>(mccs, l_0_4, true);
+
+    // Solve Again
+    residual_norm = sketch.solve();
+
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_1_mirror");
+
+    // RotateCopy
+    auto rccs = sketch.curves();
+
+    auto rotate_copy = sketch.new_element<RotateCopy>(rccs, v0, at2_deg * 2.0, 1, true); // Can do 5 copies for full pole, but is slow at -O0
+
+    // Solve Again
+    residual_norm = sketch.solve();
+
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_2_rotate");
+
+    // Solve Again
+    radius_1_5_0->dim(radius_1_5_0->dim() + 10e-3);
+
+    residual_norm = sketch.solve();
+
+    sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_2_rotate_radius");
+
+    // Build
+    bool build_result = sketch.build();
+
+    // Create Mesh
+    Mesh mesh{sketch};
+
+    mesh.MinimumElementQuality = M_SQRT1_2;
+    mesh.MaximumElementSize = 2.0e-3;
+    mesh.MinimumElementSize = 0.20e-3;
+
+    mesh.create();
+
+    EXPECT_TRUE(edges_are_valid(mesh));
+    EXPECT_TRUE(edges_are_optimal(mesh));
+
+    mesh.save_as(MDIR, "stator1");
+
+    mesh.refine();
+    mesh.save_as(MDIR, "stator1_refined");
 }
