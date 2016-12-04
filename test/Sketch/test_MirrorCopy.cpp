@@ -78,31 +78,30 @@ TEST(MirrorCopy, nonoverlapping) {
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_square");
 
-    double residual = s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
     s.build();
 
     // Run Tests
-    {
-        test_sketch_size(s, 10, 9, 6, 2);
-        test_mirror_verticies(s, {0, 1, 2, 3}, l4);
-        test_mirror_curves(s, {0, 1, 2, 3}, l4);
-    }
+    test_sketch_size(s, 10, 9, 6, 2);
+    test_mirror_verticies(s, {0, 1, 2, 3}, l4);
+    test_mirror_curves(s, {0, 1, 2, 3}, l4);
 
     // Change elements
-    {
-        s.new_element<Length>(l0, 0.5);
-        residual = s.solve();
-        s.build();
+    s.new_element<Length>(l0, 0.5);
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_trapezoid");
-    }
+    res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
+    s.build();
+
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_trapezoid");
 
     // Run Tests
-    {
-        test_sketch_size(s, 10, 9, 7, 2);
-        test_mirror_verticies(s, {0, 1, 2, 3}, l4);
-        test_mirror_curves(s, {0, 1, 2, 3}, l4);
-    }
+    test_sketch_size(s, 10, 9, 7, 2);
+    test_mirror_verticies(s, {0, 1, 2, 3}, l4);
+    test_mirror_curves(s, {0, 1, 2, 3}, l4);
 }
 
 TEST(MirrorCopy, overlapping) {
@@ -126,33 +125,32 @@ TEST(MirrorCopy, overlapping) {
         auto mvec = s.curves();
         auto mc0 = s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram")+std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_parallelogram") + std::to_string(remove_internal));
 
-        double residual = s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+
         s.build();
 
         // Run Tests
-        {
-            test_sketch_size(s, 6, 7, 4, 2 - remove_internal);
-            test_mirror_verticies(s, {1, 2}, l3);
-            test_mirror_curves(s, {0, 1, 2}, l3);
-        }
+        test_sketch_size(s, 6, 7, 4, 2 - remove_internal);
+        test_mirror_verticies(s, {1, 2}, l3);
+        test_mirror_curves(s, {0, 1, 2}, l3);
 
         // Change elements
-        {
-            s.new_element<Length>(l1, 0.5);
-            residual = s.solve();
-            s.build();
+        s.new_element<Length>(l1, 0.5);
 
-            s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_trapezoid")+std::to_string(remove_internal));
-        }
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+
+        s.build();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_trapezoid") + std::to_string(remove_internal));
 
         // Run Tests
-        {
-            test_sketch_size(s, 6, 7, 5, 2 - remove_internal);
-            test_mirror_verticies(s, {1, 2}, l3);
-            test_mirror_curves(s, {0, 1, 2}, l3);
-        }
+        test_sketch_size(s, 6, 7, 5, 2 - remove_internal);
+        test_mirror_verticies(s, {1, 2}, l3);
+        test_mirror_curves(s, {0, 1, 2}, l3);
     }
 }
 
@@ -181,32 +179,32 @@ TEST(MirrorCopy, multiple_overlapping) {
         auto mvec = s.curves();
         s.new_element<MirrorCopy>(mvec, l3, remove_internal);
 
-        double residual = s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+
         s.build();
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_0_")+std::to_string(remove_internal));
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_0_") + std::to_string(remove_internal));
 
         // Run Tests
-        {
-            test_sketch_size(s, 9, 12, 4, 4 - 2 * remove_internal);
-            test_mirror_verticies(s, {1, 2, 4}, l3);
-            test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
-        }
+        test_sketch_size(s, 9, 12, 4, 4 - 2 * remove_internal);
+        test_mirror_verticies(s, {1, 2, 4}, l3);
+        test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
+
 
         // Change elements
-        {
-            s.new_element<Length>(l6, 2.0);
-            residual = s.solve();
-            s.build();
+        s.new_element<Length>(l6, 2.0);
 
-            s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_1_")+std::to_string(remove_internal));
-        }
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+
+        s.build();
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_1_") + std::to_string(remove_internal));
 
         // Run Tests
-        {
-            test_sketch_size(s, 9, 12, 5, 4 - 2 * remove_internal);
-            test_mirror_verticies(s, {1, 2, 4}, l3);
-            test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
-        }
+        test_sketch_size(s, 9, 12, 5, 4 - 2 * remove_internal);
+        test_mirror_verticies(s, {1, 2, 4}, l3);
+        test_mirror_curves(s, {0, 1, 2, 4, 5}, l3);
     }
 }

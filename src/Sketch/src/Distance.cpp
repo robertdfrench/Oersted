@@ -66,7 +66,7 @@ size_t Distance<LineSegment>::set_equation_index(size_t i) {
     EquationIndex = i;
     return 2;
 };
-
+#include <iostream>
 template<>
 void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
     /*
@@ -111,7 +111,9 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const
 
     d01 = d0 + d1;
     cross = (v0mx * v1my - v1mx * v0my) / d01;
-    d01 *= SIGN(cross);
+    if (cross < 0) {
+        d01 *= -1.0;
+    }
 
     r(EquationIndex) = abs(cross) - Dim / 2.0;
 
@@ -135,7 +137,9 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const
 
     d01 = d0 + d1;
     cross = (v0mx * v1my - v1mx * v0my) / d01;
-    d01 *= SIGN(cross);
+    if (cross < 0) {
+        d01 *= -1.0;
+    }
 
     r(EquationIndex) += abs(cross) - Dim / 2.0;
 
@@ -157,6 +161,7 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const
     scale = std::fmax(d0, d1);
 
     if (abs(cross) < abs(dot)) {
+        //std::cerr << "CROSS" << std::endl;
         // Use cross product equation
         r(EquationIndex + 1) = scale * cross;
 
@@ -180,10 +185,16 @@ void Distance<LineSegment>::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const
         J(EquationIndex + 1, Element1->end()->y_index()) += f;
     } else {
         // Use dot product equation
+        //std::cerr << "DOT" << std::endl;
         r(EquationIndex + 1) = scale * (abs(dot) - 1.0);
 
-        d0 /= (scale * SIGN(dot));
-        d1 /= (scale * SIGN(dot));
+        if (dot >= 0) {
+            d0 /= (scale);
+            d1 /= (scale);
+        } else {
+            d0 /= (-scale);
+            d1 /= (-scale);
+        }
 
         f = (v1x - dot * v0x) / d0;
         J(EquationIndex + 1, Element0->start()->x_index()) -= f;

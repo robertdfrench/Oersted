@@ -17,22 +17,20 @@
 double Sketch::solve() {
     // TODO: Time to finish the bells and whistles here
     // TODO: Use sparse matrix representation for Jacobian, (this is lower priority since typical uses will not produce very large matrices)
-    // TODO: Add residual instrumentation to tests
+    // TODO: Try extracting sub matrix and solving (Certain constraints are known to eliminate variables (Radius, Fixation), if the matrix can be permuted so that a submatrix on the block diagonal is lower-triangular, then a subsystem of equations can be solved independently of the remaining equations. Moreover, if the jacobian can be permuted into a block lower triangular form, subsets of equations can be solved blockwise)
+    // TODO: Extract newton_update over Verticies, Curves, and Constraints into a private method
+    // TODO: Extract armijo_update into a private method
+    // TODO: Strictly decreasing armijo_update from armijo_int = 0; (Typical expected case)
 
     if (NumVariables < NumEquations) {
         std::cerr << "Variables = " << NumVariables << ", Equations = " << NumEquations << ". Number of variables is less than the number of equations. The sketch may be over-constrained." << std::endl;
     }
 
-    Eigen::VectorXd delta = Eigen::VectorXd::Zero(NumVariables);
-    Eigen::VectorXd x = Eigen::VectorXd::Zero(NumVariables);
     Eigen::VectorXd r = Eigen::VectorXd::Zero(NumEquations);
-    Eigen::VectorXd dr = Eigen::VectorXd::Zero(NumEquations);
     Eigen::MatrixXd J = Eigen::MatrixXd::Zero(NumEquations, NumVariables);
-    //Eigen::MatrixXd JJT = Eigen::MatrixXd::Zero(NumEquations, NumEquations);
-    //Eigen::FullPivHouseholderQR<Eigen::MatrixXd> QR;
-    //Eigen::FullPivLU<Eigen::MatrixXd> LU;
 
     // Calculate scale parameter for tolerances
+    // TODO: Sketch::scale();
     double scale = 0.0;
     if (Curves.size() > 0) {
         for (size_t i = 0;i!= Curves.size();++i){
@@ -57,6 +55,7 @@ double Sketch::solve() {
     }
 
     // Initial residual calculation
+    // TODO: Sketch::update_equation(J,r)
     for (size_t i = 0; i != Verticies.size(); ++i) {
         Verticies[i]->update(J, r);
     }
@@ -70,104 +69,98 @@ double Sketch::solve() {
     }
 
     // Setup iteration
-    double residual_norm{r.norm() / scale};
-    double residual_tol = std::sqrt(NumEquations + 1.0) * DBL_EPSILON;
-    int armijo_int{0};
-    long max_rank(std::min(NumEquations, NumVariables));
-    for (size_t j = 0; residual_norm > residual_tol && j != (8 * sizeof(double)); ++j) {
-        // TODO: Try extracting sub matrix and solving (Certain constraints are known to eliminate variables (Radius, Fixation), if the matrix can be permuted so that a submatrix on the block diagonal is lower-triangular, then a subsystem of equations can be solved independently of the remaining equations. Moreover, if the jacobian can be permuted into a block lower triangular form, subsets of equations can be solved blockwise)
-        // TODO: Extract newton_update over Verticies, Curves, and Constraints into a private method
-        // TODO: Extract armijo_update into a private method
-        // TODO: Factor out rank deficiency perturbation to be independent of QR/LU/LDL^T choice
+    double res_norm{r.norm() / scale};
+    double res_tol{std::sqrt(NumEquations + 1.0) * DBL_EPSILON};
+    size_t double_bits = (CHAR_BIT * sizeof(double));
 
+    long prev_rank{std::min(NumEquations,NumVariables)};
+    for (size_t j = 0; res_norm > res_tol && j != double_bits; ++j) {
         Eigen::FullPivHouseholderQR<Eigen::MatrixXd> QR = J.fullPivHouseholderQr();
-        delta = QR.solve(r) * std::pow(2.0, (double) armijo_int);
+        Eigen::VectorXd delta = QR.solve(r);
+
         long iter_rank = QR.rank();
 
-        if (iter_rank < max_rank) {
-            max_rank = iter_rank;
+        if (iter_rank < prev_rank) {
             std::cerr << "Rank = " << iter_rank << ", Equations = " << NumEquations << ", Variables = " << NumVariables << ", Iteration = " << j
                       << ". The jacobian rank is less than the number of equations. Some sketch elements may be over-constrained." << std::endl;
 
             // Randomly perturb the delta vector to prevent stagnation at inflection point
             std::random_device rdev;
             std::mt19937 rgen(rdev());
-            auto rdist = std::uniform_real_distribution<>(-FLT_EPSILON * scale, FLT_EPSILON * scale);
+            auto rdist = std::uniform_real_distribution<>(-DBL_EPSILON * scale, DBL_EPSILON * scale);
             for (size_t i = 0; i != Variables.size(); ++i) {
                 delta(Variables[i]->get_index()) += rdist(rgen);
             }
         }
+        prev_rank = iter_rank;
 
-        // Update Jacobian, residual, and Armijo step-size
-        double iter_norm{DBL_MAX};
-        int armijo_dir{0};
-        while (iter_norm > residual_norm && residual_norm > std::sqrt(NumEquations + 1) * DBL_EPSILON) {
-            for (size_t i = 0; i < Variables.size(); ++i) {
-                Variables[i]->update(delta);
-            }
+        // Update variables
+        // TODO: Sketch::update_variables(delta);
+        for (size_t i = 0; i < Variables.size(); ++i) {
+            Variables[i]->update(delta);
+        }
 
-            J.setZero();
+        // TODO: Sketch::update_equation
+        J.setZero();
 
-            for (size_t i = 0; i != Verticies.size(); ++i) {
-                Verticies[i]->update(J, r);
-            }
+        for (size_t i = 0; i != Verticies.size(); ++i) {
+            Verticies[i]->update(J, r);
+        }
 
-            for (size_t i = 0; i != Curves.size(); ++i) {
-                Curves[i]->update(J, r);
-            }
+        for (size_t i = 0; i != Curves.size(); ++i) {
+            Curves[i]->update(J, r);
+        }
 
-            for (size_t i = 0; i != Constraints.size(); ++i) {
-                Constraints[i]->update(J, r);
-            }
+        for (size_t i = 0; i != Constraints.size(); ++i) {
+            Constraints[i]->update(J, r);
+        }
 
-            iter_norm = r.norm() / scale;
+        // Update Jacobian, residual, and take Armijo step
+        // TODO: Sketch::armijo(res_norm,res_tol);
+        double iter_norm{r.norm() / scale};
+        if (iter_norm > res_norm) {
+            delta *= -0.5;
 
-            if (armijo_dir == 0) {
-                if (iter_norm < residual_norm) {
-                    armijo_dir = +1;
-                } else {
-                    delta = -delta;
-                    armijo_dir = -1;
+            size_t armijo_iter{0};
+            while (iter_norm > res_norm && iter_norm > res_tol && res_norm > res_tol && armijo_iter != double_bits) {
+                // TODO: Sketch::update_variables(delta);
+                for (size_t i = 0; i < Variables.size(); ++i) {
+                    Variables[i]->update(delta);
                 }
-            }
 
-            if (armijo_dir == 1) {
-                if (iter_norm < residual_norm) {
-                    if (armijo_int == 0) {
-                        residual_norm = iter_norm;
-                        break;
-                    } else {
-                        delta /= 2.0;
-                        armijo_int += 1;
-                    }
-                } else {
-                    delta *= -2.0;
-                    armijo_dir = -1;
+                // TODO: Sketch::update_equation
+                J.setZero();
+
+                for (size_t i = 0; i != Verticies.size(); ++i) {
+                    Verticies[i]->update(J, r);
                 }
-            }
 
-            if (armijo_dir == -1) {
-                if (iter_norm > residual_norm) {
-                    if (armijo_int == -(8 * sizeof(double))) {
-                        std::cerr << "Residual norm was not reduced for Armijo step-sizes greater than 2^-(8*sizeof(double))" << std::endl;
-                        residual_norm = iter_norm;
-                        break;
-                    } else {
-                        delta /= 2.0;
-                        armijo_int -= 1;
+                for (size_t i = 0; i != Curves.size(); ++i) {
+                    Curves[i]->update(J, r);
+                }
+
+                for (size_t i = 0; i != Constraints.size(); ++i) {
+                    Constraints[i]->update(J, r);
+                }
+
+                iter_norm = r.norm() / scale;
+
+                if (iter_norm > res_norm) {
+                    delta *= 0.5;
+                    armijo_iter += 1;
+
+                    if (armijo_iter == double_bits) {
+                        std::cerr << "Residual norm was not reduced for Armijo step-sizes greater than 2^-(CHAR_BIT * sizeof(double))" << std::endl;
                     }
-                } else {
-                    residual_norm = iter_norm;
-                    break;
                 }
             }
         }
+        res_norm = iter_norm;
     }
-
-    return residual_norm;
+    return res_norm;
 }
 
-bool Sketch::build() {
+bool Sketch::build() { // TOOD: Instrumentation in tests
     Constellation c = Constellation(this);
 
     Boundary = c.boundary();

@@ -36,7 +36,8 @@ TEST(Rotor, Suite0) {
     s.new_element<LineSegment>(v6, v7);
     s.new_element<LineSegment>(v7, v4);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.build();
 
@@ -127,7 +128,8 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     auto dist1 = s.new_element<Distance<Vertex>>(vr1, vr0, pd * dmax); // TODO: Fix distance with shared_ptr
 
     // Solve
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.build();
 

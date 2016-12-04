@@ -7,7 +7,8 @@ TEST(Constraint, Vertex) {
 
     auto f = s.new_element<Fixation>(v);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     EXPECT_NEAR(M_E, v->x(), TOL);
     EXPECT_NEAR(M_PI, v->y(), TOL);
@@ -24,7 +25,8 @@ TEST(Constraint, Fixation_Length) {
     auto fix = s.new_element<Fixation>(v0);
     auto len = s.new_element<Length>(line, M_LN2);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Fixation_Length");
 
@@ -42,7 +44,8 @@ TEST(Constraint, Horizontal) {
     auto line = s.new_element<LineSegment>(v0, v1);
     auto horz = s.new_element<Horizontal>(line);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Horizontal");
 
@@ -59,7 +62,8 @@ TEST(Constraint, Vertical) {
 
     auto vert = s.new_element<Vertical>(line);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Vertical");
 
@@ -76,7 +80,8 @@ TEST(Constraint, Length) {
 
     auto length = s.new_element<Length>(line, 1.0);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Length");
 
@@ -93,7 +98,8 @@ TEST(Constraint, CircularArc) {
 
     auto c = s.new_element<CircularArc>(v0, v1, vc, 2.1);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__CircularArc");
 
@@ -112,7 +118,8 @@ TEST(Constraint, Radius) {
 
     auto r = s.new_element<Radius>(c, 3.14);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Radius");
 
@@ -163,7 +170,8 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         auto tan45 = s.new_element<Tangency>(c, l45);
         auto vert45 = s.new_element<Vertical>(l45v);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_0");
 
@@ -203,7 +211,8 @@ TEST(Constraint, Tangency_CircularArc_LineSegment) {
         auto t = s.new_element<Tangency>(c, l);
         auto r = s.new_element<Radius>(c, 1.0);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Tangency_CircularArc_LineSegment_1");
 
@@ -235,6 +244,7 @@ TEST(Constraint, Angle) {
         ang->dim(a);
 
         double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_LineSegment_LineSegment_")+std::to_string(i));
 
@@ -277,7 +287,8 @@ TEST(Constraint, Angle_Coincident) {
 
         ang->dim(a);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Constraint__Angle_Coincident_")+std::to_string(i));
 
@@ -300,9 +311,10 @@ TEST(Constraint, Distance_Vertex_Vertex) {
 
     auto d = s.new_element<Distance<Vertex>>(v0, v1, M_LN2);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
-    //s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
 
     EXPECT_NEAR(M_LN2, hypot(v0->x() - v1->x(), v0->y() - v1->y()), TOL * M_LN2);
 }
@@ -320,7 +332,8 @@ TEST(Constraint, Distance_LineSegment) {
         auto l1 = s.new_element<LineSegment>(v10, v11);
         auto d = s.new_element<Distance<LineSegment>>(l0, l1, M_PI);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment");
 
@@ -363,7 +376,8 @@ TEST(Constraint, Distance_LineSegment) {
 
         auto d01 = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_initially_perpendicular");
 
@@ -417,9 +431,11 @@ TEST(Constraint, Distance_LineSegment) {
 
         auto l0 = s.new_element<LineSegment>(v00, v01);
         auto l1 = s.new_element<LineSegment>(v10, v11);
+
         auto d = s.new_element<Distance<LineSegment>>(l0, l1, 1.0);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_LineSegment_midpoint_intersection");
 
@@ -456,11 +472,13 @@ TEST(Constraint, Distance_CircularArc) {
         auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 0.2);
         auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         auto d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
 
-        s.solve();
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_exterior");
 
@@ -481,11 +499,13 @@ TEST(Constraint, Distance_CircularArc) {
         auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
         auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         auto d = s.new_element<Distance<CircularArc>>(c0, c1, 1.0 / 3.0);
 
-        s.solve();
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_0");
 
@@ -506,11 +526,13 @@ TEST(Constraint, Distance_CircularArc) {
         auto c0 = s.new_element<CircularArc>(v00, v01, vc0, 1.0);
         auto c1 = s.new_element<CircularArc>(v10, v11, vc1, 0.2);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         auto d = s.new_element<Distance<CircularArc>>(c1, c0, 1.0 / 3.0);
 
-        s.solve();
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_CircularArc_interior_1");
 
@@ -531,7 +553,8 @@ TEST(Constraint, Coincident_CircularArc) {
 
     auto co = s.new_element<Coincident<CircularArc>>(vp, ca);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_CircularArc");
 
@@ -553,7 +576,8 @@ TEST(Constraint, Coincident_LineSegment) {
 
         auto c = s.new_element<Coincident<LineSegment>>(vp, l);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment");
 
@@ -582,7 +606,8 @@ TEST(Constraint, Coincident_LineSegment) {
 
         auto c = s.new_element<Coincident<LineSegment>>(vp, l);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Coincident_LineSegment_deg180.csv");
 
@@ -628,11 +653,12 @@ TEST(Constraint, Symmetry) {
 
         auto l0 = s.new_element<LineSegment>(v0, v1);
 
-        s.new_element<Fixation>(v0);
-        s.new_element<Horizontal>(l0);
-        s.new_element<Length>(l0, 1.0);
+        auto f0 = s.new_element<Fixation>(v0);
+        auto h0 =s.new_element<Horizontal>(l0);
+        auto len0 = s.new_element<Length>(l0, 1.0);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(0.0, v0->x(), TOL);
         EXPECT_NEAR(0.0, v0->y(), TOL);
@@ -640,8 +666,10 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, l0->length(), TOL);
         EXPECT_NEAR(1.0, v1->x(), TOL);
 
-        s.new_element<Symmetry>(v2, v3, l0);
-        s.solve();
+        auto sym0 = s.new_element<Symmetry>(v2, v3, l0);
+
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(v2->x(), v3->x(), TOL);
         EXPECT_NEAR(v2->y(), -v3->y(), TOL);
@@ -657,11 +685,12 @@ TEST(Constraint, Symmetry) {
 
         auto l0 = s.new_element<LineSegment>(v0, v1);
 
-        s.new_element<Fixation>(v0);
-        s.new_element<Vertical>(l0);
-        s.new_element<Length>(l0, 1.0);
+        auto f0 = s.new_element<Fixation>(v0);
+        auto vert0 = s.new_element<Vertical>(l0);
+        auto len0 = s.new_element<Length>(l0, 1.0);
 
-        s.solve();
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(0.0, v0->x(), TOL);
         EXPECT_NEAR(0.0, v0->y(), TOL);
@@ -669,8 +698,9 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, l0->length(), TOL);
         EXPECT_NEAR(1.0, v1->y(), TOL);
 
-        s.new_element<Symmetry>(v2, v3, l0);
-        s.solve();
+        auto sym0 = s.new_element<Symmetry>(v2, v3, l0);
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(v2->x(), -v3->x(), TOL);
         EXPECT_NEAR(v2->y(), v3->y(), TOL);
@@ -685,10 +715,12 @@ TEST(Constraint, Symmetry) {
         auto v3 = s.new_element<Vertex>(0.8, 0.2);
 
         auto l0 = s.new_element<LineSegment>(v0, v1);
-        s.new_element<Fixation>(v0);
-        s.new_element<Fixation>(v1);
 
-        s.solve();
+        auto f0 = s.new_element<Fixation>(v0);
+        auto f1 = s.new_element<Fixation>(v1);
+
+        double res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(0.0, v0->x(), TOL);
         EXPECT_NEAR(0.0, v0->y(), TOL);
@@ -696,8 +728,10 @@ TEST(Constraint, Symmetry) {
         EXPECT_NEAR(1.0, v1->y(), TOL);
         EXPECT_NEAR(M_SQRT2, l0->length(), TOL);
 
-        s.new_element<Symmetry>(v2, v3, l0);
-        s.solve();
+        auto sym0 = s.new_element<Symmetry>(v2, v3, l0);
+
+        res_norm = s.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
 
         EXPECT_NEAR(v3->y(), v2->x(), TOL);
         EXPECT_NEAR(v3->x(), v2->y(), TOL);
@@ -718,7 +752,8 @@ TEST(Constraint, Rotation) {
     auto r = s.new_element<Rotation>(v1, v2, v0, a);
     a *= M_PI / 180.0;
 
-    s.solve();
+    auto res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     double dx1 = v1->x() - v0->x();
     double dy1 = v1->y() - v0->y();

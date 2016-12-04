@@ -26,6 +26,8 @@ TEST(Curve, supremum) {
 
     EXPECT_GT(sc0, sl0);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
     s.build();
 }

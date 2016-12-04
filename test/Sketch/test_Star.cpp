@@ -209,7 +209,8 @@ TEST(Star, find_closed_contour_0) {
 
     // Sketch internal contour parsing
     {
-        sketch.solve();
+        double res_norm = sketch.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
         EXPECT_TRUE(sketch.build());
         EXPECT_EQ(sketch.size_contours(), 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
@@ -250,8 +251,9 @@ TEST(Star, find_closed_contour_1) {
 
     // Sketch internal contour parsing
     {
-        sketch.solve();
-        sketch.build();
+        double res_norm = sketch.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+        EXPECT_TRUE(sketch.build());
         EXPECT_TRUE(sketch.size_contours() == 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
@@ -295,7 +297,8 @@ TEST(Star, find_closed_contour_2) {
 
     // Sketch internal contour parsing
     {
-        sketch.solve();
+        double res_norm = sketch.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
         EXPECT_TRUE(sketch.build());
 
         EXPECT_EQ(sketch.size_contours(), 2);
@@ -363,7 +366,9 @@ TEST(Star, find_closed_contour_3) {
 
     // Sketch internal contour parsing
     {
-        sketch.solve();
+        double res_norm = sketch.solve();
+        EXPECT_LE(res_norm, FLT_EPSILON);
+
         sketch.build();
 
         EXPECT_TRUE(sketch.size_contours() == 1);
@@ -392,7 +397,9 @@ TEST(Star, with_construction_lines) {
     auto l4 = s.new_element<LineSegment>(v0, v2);
     l4->for_construction(true);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
     s.build();
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Star__with_construction_lines");

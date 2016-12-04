@@ -38,6 +38,7 @@ TEST(Stator, 0) {
     auto rcopy = sketch.new_element<RotateCopy>(rvec, origin, 360.0 / Nt, 1, true);
 
     double res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_0");
 
@@ -63,6 +64,7 @@ TEST(Stator, 0) {
     auto dist0 = sketch.new_element<Distance<LineSegment>>(l0, l3, dt);
 
     res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator0_1");
 
@@ -184,7 +186,8 @@ TEST(Stator, 1) {
     auto tangent_6_8_11_6_7 = sketch.new_element<Tangency>(c_6_8_11, l_6_7);
 
     // Solve
-    double residual_norm = sketch.solve();
+    double res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_0_half");
 
@@ -194,7 +197,8 @@ TEST(Stator, 1) {
     auto mirror_copy = sketch.new_element<MirrorCopy>(mccs, l_0_4, true);
 
     // Solve Again
-    residual_norm = sketch.solve();
+    res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_1_mirror");
 
@@ -204,14 +208,16 @@ TEST(Stator, 1) {
     auto rotate_copy = sketch.new_element<RotateCopy>(rccs, v0, at2_deg * 2.0, 1, true); // Can do 5 copies for full pole, but is slow at -O0
 
     // Solve Again
-    residual_norm = sketch.solve();
+    res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_2_rotate");
 
     // Solve Again
     radius_1_5_0->dim(radius_1_5_0->dim() + 10e-3);
 
-    residual_norm = sketch.solve();
+    res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_2_rotate_radius");
 
