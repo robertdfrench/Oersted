@@ -7,13 +7,9 @@ void CircularArc::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
         Normalize linearized equations by multiplying through by radius()
     */
 
-    // #TODO: Clean this method
-    double dx, dy, rad;
-
-    // Jacobian, Residual
-    dx = Start->x() - Center->x();
-    dy = Start->y() - Center->y();
-    rad = sqrt(dx * dx + dy * dy);
+    double dx = Start->x() - Center->x();
+    double dy = Start->y() - Center->y();
+    double rad = sqrt(dx * dx + dy * dy);
 
     r(EquationIndex) = radius() - rad;
 
@@ -242,18 +238,12 @@ bool CircularArc::is_coincident(std::shared_ptr<Curve const> const &c) const {
     if (cc.get() == nullptr) {
         return false;
     } else {
-        // #TODO: Extract input curve center, put the rest of the method in subroutine
-        // #TODO: Then, can call subroutine for implementation of rotation version
         double xc = cc->Center->x();
         double yc = cc->Center->y();
         double rc = cc->radius();
         double tol = radius() * FLT_EPSILON;
 
-        if (abs(Center->x() - xc) < tol && abs(Center->y() - yc) < tol && abs(radius() - rc) < tol) {
-            return true;
-        } else {
-            return false;
-        }
+        return (abs(Center->x() - xc) < tol && abs(Center->y() - yc) < tol && abs(radius() - rc) < tol);
     }
 }
 

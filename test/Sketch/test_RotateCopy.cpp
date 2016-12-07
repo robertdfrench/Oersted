@@ -36,7 +36,8 @@ TEST(RotateCopy, nonoverlapping) {
         double res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        bool result = s.build();
+        ASSERT_TRUE(result);
 
         // Run Tests
         test_sketch_size(s, 13, 12, 14, 3);
@@ -51,7 +52,8 @@ TEST(RotateCopy, nonoverlapping) {
         res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        result = s.build();
+        ASSERT_TRUE(result);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Rotate__non_overlapping_1");
 
@@ -100,13 +102,18 @@ TEST(RotateCopy, overlapping) {
 
         auto a1 = s.new_element<Angle>(l0, l1, a_deg);
 
+        // Test base sketch
         double res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_") + std::to_string(remove_internal));
         bool result = s.build();
         ASSERT_TRUE(result);
 
+        test_sketch_size(s, 6, 5, 8, 1);
+
+        s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Rotate__overlapping_base_0_") + std::to_string(remove_internal));
+
+        // Create rotate copy
         std::vector<std::shared_ptr<Curve const>> rvec = {l0, l1, c0, c1};
         auto r0 = s.new_element<RotateCopy>(rvec, v0, 360.0 / N, N - 2, remove_internal);
 
@@ -118,7 +125,6 @@ TEST(RotateCopy, overlapping) {
         result = s.build();
         ASSERT_TRUE(result);
 
-        // Run Tests
         test_sketch_size(s, 10, 11, 12, 3 - 2 * remove_internal);
         test_rotated_verticies(s, {1, 2, 3, 4}, v0, 360.0 / N, N - 2);
         test_rotated_curves(s, {0, 1, 3, 4}, v0, 360.0 / N, N - 2);

@@ -39,7 +39,8 @@ TEST(Rotor, Suite0) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     s.save_as<SaveMethod::Rasterize>(SDIR, "rotor_0");
 
@@ -131,7 +132,8 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     s.save_as<SaveMethod::Rasterize>(SDIR, "rotor_circular_barrier_syncrel");
 

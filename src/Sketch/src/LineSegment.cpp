@@ -136,7 +136,7 @@ MatchOrientation LineSegment::is_identical(double x0, double y0, double x1, doub
     double xe = end()->x();
     double ye = end()->y();
 
-    double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye)); // #TODO: L1 norm is more efficient tolerance strategy
+    double tol = FLT_EPSILON * std::fmax(abs(xs - xe), abs(ys - ye));
 
     if (abs(xs - x0) < tol && abs(ys - y0) < tol && abs(xe - x1) < tol && abs(ye - y1) < tol) {
         return MatchOrientation::Forward;
@@ -153,11 +153,7 @@ bool LineSegment::is_coincident(std::shared_ptr<Curve const> const &c) const {
     if (l.get() == nullptr) {
         return false;
     } else {
-        if (on_manifold(c->start()) && on_manifold(c->end())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (on_manifold(c->start()) && on_manifold(c->end()));
     }
 }
 

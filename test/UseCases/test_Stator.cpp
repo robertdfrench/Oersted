@@ -222,7 +222,8 @@ TEST(Stator, 1) {
     sketch.save_as<SaveMethod::Rasterize>(SDIR, "stator1_2_rotate_radius");
 
     // Build
-    bool build_result = sketch.build();
+    bool result = sketch.build();
+    ASSERT_TRUE(result);
 
     // Create Mesh
     Mesh mesh{sketch};

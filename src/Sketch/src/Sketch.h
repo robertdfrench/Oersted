@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include <boost/filesystem.hpp>
 
@@ -40,6 +41,8 @@ public:
 
     bool build(); // TODO: Detailed return enum
 
+    double characteristic_length() const;
+
     double solve(); // TODO: Detailed return enum
 
     void add_element(std::shared_ptr<Constraint> c);
@@ -51,6 +54,12 @@ public:
     void add_element(std::shared_ptr<Vertex> v);
 
     void add_parameter(std::shared_ptr<Variable> v) { add_parameter(Variables, v); };
+
+    void perturb(Eigen::VectorXd &delta, double scale) const;
+
+    void update_linearization(Eigen::MatrixXd &J, Eigen::VectorXd &r) const;
+
+    void update_variables(Eigen::VectorXd &delta) const;
 
     template<SaveMethod S>
     void save_as(std::string path, std::string file_name) const;

@@ -174,6 +174,7 @@ TEST(Star, Suite_2) {
 
 TEST(Star, find_closed_contour_0) {
     Sketch sketch;
+
     auto v0 = sketch.new_element<Vertex>(0.0, 0.0);
     auto v1 = sketch.new_element<Vertex>(1.0, 0.0);
     auto v2 = sketch.new_element<Vertex>(2.0, 0.0);
@@ -197,30 +198,26 @@ TEST(Star, find_closed_contour_0) {
     auto l8 = sketch.new_element<LineSegment>(v4, v0);
 
     // Manual contour creation
-    {
-        std::vector<Star> stars;
+    std::vector<Star> stars;
 
-        stars.push_back(Star{v0, &sketch});
-        stars.push_back(Star{v1, &sketch});
-        stars.push_back(Star{v4, &sketch});
+    stars.push_back(Star{v0, &sketch});
+    stars.push_back(Star{v1, &sketch});
+    stars.push_back(Star{v4, &sketch});
 
-        star_angle_sum_equals_2pi(stars);
-    }
+    star_angle_sum_equals_2pi(stars);
 
     // Sketch internal contour parsing
-    {
-        double res_norm = sketch.solve();
-        EXPECT_LE(res_norm, FLT_EPSILON);
-        EXPECT_TRUE(sketch.build());
-        EXPECT_EQ(sketch.size_contours(), 1);
-        EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
+    double res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    ASSERT_TRUE(sketch.build());
+    EXPECT_EQ(sketch.size_contours(), 1);
+    EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
-        auto contour = sketch.contour(0);
-        EXPECT_TRUE(contour->size() == 3);
-        EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
-        EXPECT_TRUE(l5 == contour->curve(0) || l5 == contour->curve(1) || l5 == contour->curve(2));
-        EXPECT_TRUE(l8 == contour->curve(0) || l8 == contour->curve(1) || l8 == contour->curve(2));
-    }
+    auto contour = sketch.contour(0);
+    EXPECT_TRUE(contour->size() == 3);
+    EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
+    EXPECT_TRUE(l5 == contour->curve(0) || l5 == contour->curve(1) || l5 == contour->curve(2));
+    EXPECT_TRUE(l8 == contour->curve(0) || l8 == contour->curve(1) || l8 == contour->curve(2));
 }
 
 TEST(Star, find_closed_contour_1) {
@@ -240,29 +237,25 @@ TEST(Star, find_closed_contour_1) {
     auto c1 = sketch.new_element<CircularArc>(v3, v1, v0, 1.0);
 
     // Manual contour construction
-    {
-        std::vector<Star> stars;
-        stars.push_back(Star{v0, &sketch});
-        stars.push_back(Star{v1, &sketch});
-        stars.push_back(Star{v2, &sketch});
+    std::vector<Star> stars;
+    stars.push_back(Star{v0, &sketch});
+    stars.push_back(Star{v1, &sketch});
+    stars.push_back(Star{v2, &sketch});
 
-        star_angle_sum_equals_2pi(stars);
-    }
+    star_angle_sum_equals_2pi(stars);
 
     // Sketch internal contour parsing
-    {
-        double res_norm = sketch.solve();
-        EXPECT_LE(res_norm, FLT_EPSILON);
-        EXPECT_TRUE(sketch.build());
-        EXPECT_TRUE(sketch.size_contours() == 1);
-        EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
+    double res_norm = sketch.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    ASSERT_TRUE(sketch.build());
+    EXPECT_TRUE(sketch.size_contours() == 1);
+    EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
 
-        auto contour = sketch.contour(0);
-        EXPECT_TRUE(contour->size() == 3);
-        EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
-        EXPECT_TRUE(l1 == contour->curve(0) || l1 == contour->curve(1) || l1 == contour->curve(2));
-        EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
-    }
+    auto contour = sketch.contour(0);
+    EXPECT_TRUE(contour->size() == 3);
+    EXPECT_TRUE(l0 == contour->curve(0) || l0 == contour->curve(1) || l0 == contour->curve(2));
+    EXPECT_TRUE(l1 == contour->curve(0) || l1 == contour->curve(1) || l1 == contour->curve(2));
+    EXPECT_TRUE(c0 == contour->curve(0) || c0 == contour->curve(1) || c0 == contour->curve(2));
 }
 
 TEST(Star, find_closed_contour_2) {
@@ -299,7 +292,7 @@ TEST(Star, find_closed_contour_2) {
     {
         double res_norm = sketch.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
-        EXPECT_TRUE(sketch.build());
+        ASSERT_TRUE(sketch.build());
 
         EXPECT_EQ(sketch.size_contours(), 2);
         EXPECT_FALSE(sketch.contour(0) == sketch.boundary());
@@ -369,7 +362,8 @@ TEST(Star, find_closed_contour_3) {
         double res_norm = sketch.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        sketch.build();
+        bool result = sketch.build();
+        ASSERT_TRUE(result);
 
         EXPECT_TRUE(sketch.size_contours() == 1);
         EXPECT_TRUE(*sketch.contour(0) == *sketch.boundary());
@@ -400,7 +394,8 @@ TEST(Star, with_construction_lines) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Star__with_construction_lines");
 

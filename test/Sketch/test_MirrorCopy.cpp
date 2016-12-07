@@ -81,7 +81,8 @@ TEST(MirrorCopy, nonoverlapping) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     // Run Tests
     test_sketch_size(s, 10, 9, 6, 2);
@@ -94,7 +95,8 @@ TEST(MirrorCopy, nonoverlapping) {
     res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    result = s.build();
+    ASSERT_TRUE(result);
 
     s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Pattern__Mirror_nonoverlapping_trapezoid");
 
@@ -130,7 +132,8 @@ TEST(MirrorCopy, overlapping) {
         double res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        bool result = s.build();
+        ASSERT_TRUE(result);
 
         // Run Tests
         test_sketch_size(s, 6, 7, 4, 2 - remove_internal);
@@ -143,7 +146,8 @@ TEST(MirrorCopy, overlapping) {
         res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        result = s.build();
+        ASSERT_TRUE(result);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__overlapping_trapezoid") + std::to_string(remove_internal));
 
@@ -182,7 +186,8 @@ TEST(MirrorCopy, multiple_overlapping) {
         double res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        bool result = s.build();
+        ASSERT_TRUE(result);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_0_") + std::to_string(remove_internal));
 
@@ -198,7 +203,8 @@ TEST(MirrorCopy, multiple_overlapping) {
         res_norm = s.solve();
         EXPECT_LE(res_norm, FLT_EPSILON);
 
-        s.build();
+        result = s.build();
+        ASSERT_TRUE(result);
 
         s.save_as<SaveMethod::Rasterize>(SAVE_DIR, std::string("Mirror__multiple_overlapping_1_") + std::to_string(remove_internal));
 

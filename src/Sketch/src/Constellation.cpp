@@ -132,7 +132,8 @@ std::vector<std::shared_ptr<Contour>> Constellation::contours() {
         if (find_closed_contour(contour_curves, orientation)) {
             contours.push_back(std::make_shared<Contour>(contour_curves, orientation));
         } else {
-            return std::vector<std::shared_ptr<Contour>>(); // TODO: Ugly multiple return points
+            std::cerr << "Failed to find closed contour" << std::endl;
+            break;
         }
     }
 

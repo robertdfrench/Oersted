@@ -15,7 +15,7 @@ public:
 
     Vertex(std::shared_ptr<Vertex const> const &v) : X(v->X), Y(v->Y) {};
 
-    size_t set_equation_index(size_t i) override { //
+    size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 0;
     };

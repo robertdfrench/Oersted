@@ -7,7 +7,6 @@
 class CircularArc final : public Curve {
 public:
     using Curve::on_manifold;
-
     using Curve::on_segment;
 
 public:

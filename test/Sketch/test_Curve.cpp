@@ -29,5 +29,6 @@ TEST(Curve, supremum) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 }

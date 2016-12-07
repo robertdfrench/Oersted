@@ -314,8 +314,6 @@ TEST(Constraint, Distance_Vertex_Vertex) {
     double res_norm = s.solve();
     EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "Constraint__Distance_Vertex_Vertex");
-
     EXPECT_NEAR(M_LN2, hypot(v0->x() - v1->x(), v0->y() - v1->y()), TOL * M_LN2);
 }
 

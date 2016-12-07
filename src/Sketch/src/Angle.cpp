@@ -43,7 +43,7 @@ void Angle::update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const {
         r(EquationIndex) = scale * (dot - cos(M_PI * Dim / 180.0));
 
         f = scale * (vx1 - dot * vx0) / d0;
-        J(EquationIndex, Line0->start()->x_index()) -= f; //TODO: Change get_index() and set_index() to size_t index() and size_t index(size_t) (overloaded)
+        J(EquationIndex, Line0->start()->x_index()) -= f;
         J(EquationIndex, Line0->end()->x_index()) += f;
 
         f = scale * (vx0 - dot * vx1) / d1;

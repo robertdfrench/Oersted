@@ -4,7 +4,6 @@
 
 RotateCopy::RotateCopy(std::vector<std::shared_ptr<Curve const>> input, std::shared_ptr<Vertex const> center, double angle, size_t copies, bool remove_internal) {
     // Creates rotated copies of the input curves about an vertex
-    // TODO: Three Groups (?): Leading Verticies, Lagging Verticies, Internal Verticies
     // TODO: Check for complete elimination of leading/lagging curves
 
     // Assign properties
