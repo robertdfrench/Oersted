@@ -1,6 +1,8 @@
 #include "test_Mesh.hpp"
 
 TEST(Mesh, create_triangle_domain) {
+    std::string test_name = "triangle_domain";
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(1.0, 0.0);
@@ -11,79 +13,85 @@ TEST(Mesh, create_triangle_domain) {
     auto l1 = s.new_element<LineSegment>(v1, v2);
     auto l2 = s.new_element<LineSegment>(v2, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "triangle_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2}, m);
 
-    { // Test number of vertices, edges, triangles
-        EXPECT_TRUE(m.size_points() == 3);
-        EXPECT_TRUE(m.size_edges() == 3);
-        EXPECT_TRUE(m.size_triangles() == 1);
+    // Test number of vertices, edges, triangles
+    EXPECT_TRUE(m.size_points() == 3);
+    EXPECT_TRUE(m.size_edges() == 3);
+    EXPECT_TRUE(m.size_triangles() == 1);
 
-        EXPECT_TRUE(m.num_points() == 3);
-        EXPECT_TRUE(m.num_edges() == 3);
-        EXPECT_TRUE(m.num_triangles() == 1);
+    EXPECT_TRUE(m.num_points() == 3);
+    EXPECT_TRUE(m.num_edges() == 3);
+    EXPECT_TRUE(m.num_triangles() == 1);
 
-        EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
-        EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
+    EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
+    EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
-        EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
+    EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
+    EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
-        EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
-    }
+    EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
+    EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
 
-    { // Test validity, optimality
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    // Test validity, optimality
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
-    { // Test edge and node connections
-        const Edge e0 = m.edge(vmap[0]);
-        const Edge e1 = m.edge(vmap[1]);
-        const Edge e2 = m.edge(vmap[2]);
+    // Test edge and node connections
+    const Edge e0 = m.edge(vmap[0]);
+    const Edge e1 = m.edge(vmap[1]);
+    const Edge e2 = m.edge(vmap[2]);
 
-        EXPECT_TRUE(v0->x() == m.point(e0.node()).X);
-        EXPECT_TRUE(v0->y() == m.point(e0.node()).Y);
-        EXPECT_TRUE(e1.self() == e0.next());
-        EXPECT_TRUE(e2.self() == e0.prev());
+    EXPECT_TRUE(v0->x() == m.point(e0.node()).X);
+    EXPECT_TRUE(v0->y() == m.point(e0.node()).Y);
+    EXPECT_TRUE(e1.self() == e0.next());
+    EXPECT_TRUE(e2.self() == e0.prev());
 
-        EXPECT_TRUE(v1->x() == m.point(e1.node()).X);
-        EXPECT_TRUE(v1->y() == m.point(e1.node()).Y);
-        EXPECT_TRUE(e2.self() == e1.next());
-        EXPECT_TRUE(e0.self() == e1.prev());
+    EXPECT_TRUE(v1->x() == m.point(e1.node()).X);
+    EXPECT_TRUE(v1->y() == m.point(e1.node()).Y);
+    EXPECT_TRUE(e2.self() == e1.next());
+    EXPECT_TRUE(e0.self() == e1.prev());
 
-        EXPECT_TRUE(v2->x() == m.point(e2.node()).X);
-        EXPECT_TRUE(v2->y() == m.point(e2.node()).Y);
-        EXPECT_TRUE(e0.self() == e2.next());
-        EXPECT_TRUE(e1.self() == e2.prev());
-    }
+    EXPECT_TRUE(v2->x() == m.point(e2.node()).X);
+    EXPECT_TRUE(v2->y() == m.point(e2.node()).Y);
+    EXPECT_TRUE(e0.self() == e2.next());
+    EXPECT_TRUE(e1.self() == e2.prev());
 
-    { // Test triangles
-        const Edge e = m.triangle(0);
-        Point cc = m.circumcenter(e.self());
-        EXPECT_NEAR(0.0, cc.X, TOL);
-        EXPECT_NEAR(sqrt(3.0) / 3.0, cc.Y, TOL);
+    // Test triangles
+    const Edge e = m.triangle(0);
+    Point cc = m.circumcenter(e.self());
+    EXPECT_NEAR(0.0, cc.X, TOL);
+    EXPECT_NEAR(sqrt(3.0) / 3.0, cc.Y, TOL);
 
-        double cr = m.circumradius(e.self());
-        EXPECT_NEAR(2.0 * sqrt(3.0) / 3.0, cr, TOL);
-    }
+    double cr = m.circumradius(e.self());
+    EXPECT_NEAR(2.0 * sqrt(3.0) / 3.0, cr, TOL);
 
-    { // Forced Refinement
-        forced_refinement(m, "triangle_domain_refine_loop", 7);
-    }
+    // Forced Refinement
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
 
-    size_t i = m.num_points();
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_square_domain) {
+    std::string test_name = "square_domain";
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -96,77 +104,80 @@ TEST(Mesh, create_square_domain) {
     auto l2 = s.new_element<LineSegment>(v2, v3);
     auto l3 = s.new_element<LineSegment>(v3, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "square_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test number of verticies, edges, triangles
-    {
-        std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3}, m);
+    std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3}, m);
 
-        EXPECT_TRUE(m.size_points() == 4);
-        EXPECT_TRUE(m.size_edges() == 6);
-        EXPECT_TRUE(m.size_triangles() == 2);
+    EXPECT_TRUE(m.size_points() == 4);
+    EXPECT_TRUE(m.size_edges() == 6);
+    EXPECT_TRUE(m.size_triangles() == 2);
 
-        EXPECT_TRUE(m.num_points() == 4);
-        EXPECT_TRUE(m.num_edges() == 5);
-        EXPECT_TRUE(m.num_triangles() == 2);
+    EXPECT_TRUE(m.num_points() == 4);
+    EXPECT_TRUE(m.num_edges() == 5);
+    EXPECT_TRUE(m.num_triangles() == 2);
 
-        EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
-        EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
+    EXPECT_TRUE(v0->x() == m.point(vmap[0]).X);
+    EXPECT_TRUE(v0->y() == m.point(vmap[0]).Y);
 
-        EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
-        EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
+    EXPECT_TRUE(v1->x() == m.point(vmap[1]).X);
+    EXPECT_TRUE(v1->y() == m.point(vmap[1]).Y);
 
-        EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
-        EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
+    EXPECT_TRUE(v2->x() == m.point(vmap[2]).X);
+    EXPECT_TRUE(v2->y() == m.point(vmap[2]).Y);
 
-        EXPECT_TRUE(v3->x() == m.point(vmap[3]).X);
-        EXPECT_TRUE(v3->y() == m.point(vmap[3]).Y);
-    }
+    EXPECT_TRUE(v3->x() == m.point(vmap[3]).X);
+    EXPECT_TRUE(v3->y() == m.point(vmap[3]).Y);
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
     // Test edge and node connections
-    {
-        EXPECT_TRUE(m.point((size_t)0) == m.point(m.edge(0)));
-        EXPECT_TRUE(m.point((size_t)1) == m.point(m.edge(1)));
-        EXPECT_TRUE(m.point((size_t)2) == m.point(m.edge(2)));
-        EXPECT_TRUE(m.point((size_t)3) == m.point(m.edge(3)));
-        EXPECT_TRUE(m.point((size_t)1) == m.point(m.edge(4)));
-        EXPECT_TRUE(m.point((size_t)3) == m.point(m.edge(5)));
+    EXPECT_TRUE(m.point((size_t) 0) == m.point(m.edge(0)));
+    EXPECT_TRUE(m.point((size_t) 1) == m.point(m.edge(1)));
+    EXPECT_TRUE(m.point((size_t) 2) == m.point(m.edge(2)));
+    EXPECT_TRUE(m.point((size_t) 3) == m.point(m.edge(3)));
+    EXPECT_TRUE(m.point((size_t) 1) == m.point(m.edge(4)));
+    EXPECT_TRUE(m.point((size_t) 3) == m.point(m.edge(5)));
 
-        for (size_t i = 0; i < 5; i++) {
-            const Edge e = m.edge(i);
-            EXPECT_TRUE(e.self() == m.edge(e.next()).prev());
-            EXPECT_TRUE(e.self() == m.edge(e.prev()).next());
-        }
+    for (size_t i = 0; i < 5; i++) {
+        const Edge e = m.edge(i);
+        EXPECT_TRUE(e.self() == m.edge(e.next()).prev());
+        EXPECT_TRUE(e.self() == m.edge(e.prev()).next());
     }
 
     // Test triangles
-    {
-        for (size_t i = 0; i < m.size_triangles(); ++i) {
-            Point cc = m.circumcenter(m.triangle(0).self());
-            EXPECT_NEAR(0.5, cc.X, TOL);
-            EXPECT_NEAR(0.5, cc.Y, TOL);
-        }
+    for (size_t i = 0; i < m.size_triangles(); ++i) {
+        Point cc = m.circumcenter(m.triangle(0).self());
+        EXPECT_NEAR(0.5, cc.X, TOL);
+        EXPECT_NEAR(0.5, cc.Y, TOL);
     }
 
     // Forced Refinement
-    {
-        forced_refinement(m, "square_domain_refine_loop", 7);
-    }
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_narrow_diamond_domain) {
+    std::string test_name = "narrow_diamond_domain";
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(1.0, 0.0);
@@ -179,69 +190,71 @@ TEST(Mesh, create_narrow_diamond_domain) {
     auto l2 = s.new_element<LineSegment>(v2, v3);
     auto l3 = s.new_element<LineSegment>(v3, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "narrow_diamond_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test number of verticies, edges, triangles
-    {
-        EXPECT_TRUE(m.size_points() == 4);
-        EXPECT_TRUE(m.size_edges() == 6);
-        EXPECT_TRUE(m.size_triangles() == 2);
+    EXPECT_TRUE(m.size_points() == 4);
+    EXPECT_TRUE(m.size_edges() == 6);
+    EXPECT_TRUE(m.size_triangles() == 2);
 
-        EXPECT_TRUE(m.num_points() == 4);
-        EXPECT_TRUE(m.num_edges() == 5);
-        EXPECT_TRUE(m.num_triangles() == 2);
-    }
+    EXPECT_TRUE(m.num_points() == 4);
+    EXPECT_TRUE(m.num_edges() == 5);
+    EXPECT_TRUE(m.num_triangles() == 2);
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
     // Test for proper edge swaps
-    {
-        std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3}, m);
+    std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3}, m);
 
-        for (size_t i = 5; i < 6; i++) {
-            const Edge e = m.edge(5);
+    for (size_t i = 5; i < 6; i++) {
+        const Edge e = m.edge(5);
 
-            if (m.point(e.node()) == m.point(vmap[0])) {
-                EXPECT_TRUE(m.point(vmap[2]) == m.point(m.edge(e.next()).node()));
-                EXPECT_TRUE(m.point(vmap[2]) == m.point(m.edge(e.twin()).node()));
-            } else if (m.point(e.node()) == m.point(vmap[2])) {
-                EXPECT_TRUE(m.point(vmap[0]) == m.point(m.edge(e.next()).node()));
-                EXPECT_TRUE(m.point(vmap[0]) == m.point(m.edge(e.twin()).node()));
-            }
+        if (m.point(e.node()) == m.point(vmap[0])) {
+            EXPECT_TRUE(m.point(vmap[2]) == m.point(m.edge(e.next()).node()));
+            EXPECT_TRUE(m.point(vmap[2]) == m.point(m.edge(e.twin()).node()));
+        } else if (m.point(e.node()) == m.point(vmap[2])) {
+            EXPECT_TRUE(m.point(vmap[0]) == m.point(m.edge(e.next()).node()));
+            EXPECT_TRUE(m.point(vmap[0]) == m.point(m.edge(e.twin()).node()));
         }
     }
 
     // Test triangle circumcenters
-    {
-        Point cc0 = m.circumcenter(m.triangle(0).self());
-        Point cc1 = m.circumcenter(m.triangle(1).self());
+    Point cc0 = m.circumcenter(m.triangle(0).self());
+    Point cc1 = m.circumcenter(m.triangle(1).self());
 
-        EXPECT_NEAR(0.0, cc0.X, TOL);
-        EXPECT_NEAR(0.75, std::abs(cc0.Y), TOL);
+    EXPECT_NEAR(0.0, cc0.X, TOL);
+    EXPECT_NEAR(0.75, std::abs(cc0.Y), TOL);
 
-        EXPECT_NEAR(0.0, cc1.X, TOL);
-        EXPECT_NEAR(0.75, std::abs(cc1.Y), TOL);
+    EXPECT_NEAR(0.0, cc1.X, TOL);
+    EXPECT_NEAR(0.75, std::abs(cc1.Y), TOL);
 
-        EXPECT_NEAR(-cc0.Y, cc1.Y, TOL);
-    }
-
+    EXPECT_NEAR(-cc0.Y, cc1.Y, TOL);
     // Forced Refinement
-    {
-        forced_refinement(m, "narrow_diamond_domain_refine_loop", 7);
-    }
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_narrow_rectangle_domain) {
+    std::string test_name = "narrow_rectangle_domain";
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(5.0, 0.0);
@@ -256,57 +269,63 @@ TEST(Mesh, create_narrow_rectangle_domain) {
     auto l3 = s.new_element<LineSegment>(v3, v4);
     auto l4 = s.new_element<LineSegment>(v4, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "narrow_rectangle_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test number of verticies, edges, triangles
-    {
-        EXPECT_TRUE(m.size_points() == 6);
-        EXPECT_TRUE(m.size_edges() == 12);
-        EXPECT_TRUE(m.size_triangles() == 4);
+    EXPECT_TRUE(m.size_points() == 6);
+    EXPECT_TRUE(m.size_edges() == 12);
+    EXPECT_TRUE(m.size_triangles() == 4);
 
-        EXPECT_TRUE(m.num_points() == 6);
-        EXPECT_TRUE(m.num_edges() == 9);
-        EXPECT_TRUE(m.num_triangles() == 4);
-    }
+    EXPECT_TRUE(m.num_points() == 6);
+    EXPECT_TRUE(m.num_edges() == 9);
+    EXPECT_TRUE(m.num_triangles() == 4);
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
     // Test edge splits
-    {
-        std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3, v4}, m);
+    std::vector<size_t> vmap = map_verticies_to_points({v0, v1, v2, v3, v4}, m);
 
-        Point const &v5 = m.point(5);
-        EXPECT_NEAR(0.0, v5.X, DBL_EPSILON);
-        EXPECT_NEAR(0.0, v5.Y, DBL_EPSILON);
+    Point const &v5 = m.point(5);
+    EXPECT_NEAR(0.0, v5.X, DBL_EPSILON);
+    EXPECT_NEAR(0.0, v5.Y, DBL_EPSILON);
 
-        for (size_t i = 0; i < 12; ++i) {
-            Edge const e = m.edge(i);
+    for (size_t i = 0; i < 12; ++i) {
+        Edge const e = m.edge(i);
 
-            if (m.point(e.node()) == m.point(vmap[2])) {
-                if (e.twin() != e.self()) {
-                    EXPECT_TRUE(m.point(m.edge(e.twin()).node()) == v5);
-                }
+        if (m.point(e.node()) == m.point(vmap[2])) {
+            if (e.twin() != e.self()) {
+                EXPECT_TRUE(m.point(m.edge(e.twin()).node()) == v5);
             }
         }
     }
 
     // Forced Refinement
-    {
-        forced_refinement(m, "narrow_rectangle_domain_refine_loop", 7);
-    }
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_half_circle_domain) {
+    std::string test_name = "half_circle_domain";
+
     Sketch s;
 
     auto vc = s.new_element<Vertex>(0.0, 0.0);
@@ -316,38 +335,45 @@ TEST(Mesh, create_half_circle_domain) {
     auto arc = s.new_element<CircularArc>(v0, v1, vc, 1.0);
     auto line = s.new_element<LineSegment>(v1, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "half_circle_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test number of verticies, edges, triangles
-    {
-        EXPECT_TRUE(m.size_points() == 6);
-        EXPECT_TRUE(m.size_edges() == 12);
-        EXPECT_TRUE(m.size_triangles() == 4);
+    EXPECT_TRUE(m.size_points() == 6);
+    EXPECT_TRUE(m.size_edges() == 12);
+    EXPECT_TRUE(m.size_triangles() == 4);
 
-        EXPECT_TRUE(m.num_points() == 6);
-        EXPECT_TRUE(m.num_edges() == 9);
-        EXPECT_TRUE(m.num_triangles() == 4);
-    }
+    EXPECT_TRUE(m.num_points() == 6);
+    EXPECT_TRUE(m.num_edges() == 9);
+    EXPECT_TRUE(m.num_triangles() == 4);
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
     // Forced Refinement
-    {
-        forced_refinement(m, "half_circle_domain_refine_loop", 7);
-    }
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_horseshoe_domain) {
+    std::string test_name{"horseshoe_domain"};
+
     Sketch s;
 
     auto vc = s.new_element<Vertex>(0.0, 0.0);
@@ -361,13 +387,15 @@ TEST(Mesh, create_horseshoe_domain) {
     auto arc1 = s.new_element<CircularArc>(v3, v2, vc, 1.9);
     auto line1 = s.new_element<LineSegment>(v3, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "horseshoe_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     { // Test triangles, possibly redundant
         for (size_t i = 0; i < m.size_edges(); ++i) {
@@ -386,17 +414,26 @@ TEST(Mesh, create_horseshoe_domain) {
     }
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
-    {
-        forced_refinement(m, "horseshoe_domain_refine_loop", 7);
-    }
+    // Forced refinement
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_I_shaped_domain) {
+    std::string test_name{"i_domain"};
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -425,11 +462,13 @@ TEST(Mesh, create_I_shaped_domain) {
     auto l10 = s.new_element<LineSegment>(v10, v11);
     auto l11 = s.new_element<LineSegment>(v11, v0);
 
-    s.solve();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "i_shaped_domain");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, test_name);
 
-    s.build();
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     EXPECT_TRUE(s.size_contours() == 1);
 
@@ -437,21 +476,28 @@ TEST(Mesh, create_I_shaped_domain) {
 
     m.create();
 
-    m.save_as(SAVE_DIR, "i_shaped_domain_mesh");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test validity, optimality
-    {
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
     // Forced Refinement
-    {
-        forced_refinement(m, "i_shaped_domain_mesh_refine_loop", 7);
-    }
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_corner_square_domain) {
+    std::string test_name{"corner_square_domain"};
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -472,37 +518,47 @@ TEST(Mesh, create_corner_square_domain) {
     auto l6 = s.new_element<LineSegment>(v1, v2);
     auto l7 = s.new_element<LineSegment>(v2, v3);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     Mesh m{s};
     m.create();
 
-    m.save_as(SAVE_DIR, "corner_square_domain");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     // Test number of vertices, edges, triangles
-    {
-        EXPECT_TRUE(m.num_points() == 9);
-        EXPECT_TRUE(m.size_points() == 9);
+    EXPECT_TRUE(m.num_points() == 9);
+    EXPECT_TRUE(m.size_points() == 9);
 
-        EXPECT_TRUE(m.num_edges() == 16);
-        EXPECT_TRUE(m.size_edges() == 24);
+    EXPECT_TRUE(m.num_edges() == 16);
+    EXPECT_TRUE(m.size_edges() == 24);
 
-        EXPECT_TRUE(m.num_triangles() == 8);
-        EXPECT_TRUE(m.size_triangles() == 8);
-    }
+    EXPECT_TRUE(m.num_triangles() == 8);
+    EXPECT_TRUE(m.size_triangles() == 8);
 
-    { // Test validity, optimality
-        edges_are_valid(m);
-        edges_are_optimal(m);
-    }
+    // Test validity, optimality
+    edges_are_valid(m);
+    edges_are_optimal(m);
 
-    { // Forced refinement
-        forced_refinement(m, "corner_square_domain_refine_loop", 7);
-    }
+    // Forced refinement
+    forced_refinement(m, test_name + "_mesh_refine_loop", 7);
+
+    // Test refinement algorithm
+    m = Mesh(s);
+    m.create();
+    m.MaximumElementSize = 0.1;
+    m.MinimumElementSize = 0.01;
+    m.MinimumElementQuality = 0.1;
+    m.refine();
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 TEST(Mesh, create_square_in_square_domain) {
+    std::string test_name{"square_in_square"};
+
     Sketch s;
 
     auto v0 = s.new_element<Vertex>(0.0, 0.0);
@@ -525,26 +581,28 @@ TEST(Mesh, create_square_in_square_domain) {
     auto l6 = s.new_element<LineSegment>(v6, v7);
     auto l7 = s.new_element<LineSegment>(v7, v4);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
-    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, "square_in_square_domain");
+    s.save_as<SaveMethod::Rasterize>(SAVE_DIR, test_name);
 
     Mesh m{s};
     m.MaximumElementSize = 0.1;
     m.MinimumElementSize = 0.01;
-    m.MinimumElementQuality = M_SQRT1_2;
+    m.MinimumElementQuality = 0.1;
 
     m.create();
 
-    m.save_as(SAVE_DIR, "square_in_square_domain_mesh");
+    m.save_as(SAVE_DIR, test_name + "_mesh");
 
     edges_are_valid(m);
     edges_are_optimal(m);
 
     m.refine();
 
-    m.save_as(SAVE_DIR, "square_in_square_domain_mesh_refine");
+    m.save_as(SAVE_DIR, test_name + "_mesh_refine_algorithm");
 }
 
 /*
@@ -702,8 +760,10 @@ TEST(Mesh, locate_triangle__triangular_domain) {
     auto l1 = s.new_element<LineSegment>(v1, v2);
     auto l2 = s.new_element<LineSegment>(v2, v0);
 
-    s.solve();
-    EXPECT_TRUE(s.build());
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool result = s.build();
+    ASSERT_TRUE(result);
 
     /*
     std::vector<const Curve*> cc{ &l0,&l1,&l2 };
@@ -789,8 +849,10 @@ TEST(Mesh, locate_triange__square_domain) {
     auto l2 = s.new_element<LineSegment>(v2, v3);
     auto l3 = s.new_element<LineSegment>(v3, v0);
 
-    s.solve();
-    s.build();
+    double res_norm = s.solve();
+    EXPECT_LE(res_norm, FLT_EPSILON);
+    bool build_result = s.build();
+    ASSERT_TRUE(build_result);
 
     Mesh mesh{s};
     mesh.create();
@@ -825,22 +887,22 @@ TEST(Mesh, locate_triange__square_domain) {
         size_t loc = i;
 
         vp = ve0;
-        EXPECT_TRUE(mesh.locate_triangle(vp,loc) == LocateTriangleResult::Exterior);
+        EXPECT_TRUE(mesh.locate_triangle(vp, loc) == LocateTriangleResult::Exterior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[0])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[1])));
 
         vp = ve1;
-        EXPECT_TRUE(mesh.locate_triangle(vp,loc) == LocateTriangleResult::Exterior);
+        EXPECT_TRUE(mesh.locate_triangle(vp, loc) == LocateTriangleResult::Exterior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[1])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[2])));
 
         vp = ve2;
-        EXPECT_TRUE(mesh.locate_triangle(vp,loc) == LocateTriangleResult::Exterior);
+        EXPECT_TRUE(mesh.locate_triangle(vp, loc) == LocateTriangleResult::Exterior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[2])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[3])));
 
         vp = ve3;
-        EXPECT_TRUE(mesh.locate_triangle(vp,loc) == LocateTriangleResult::Exterior);
+        EXPECT_TRUE(mesh.locate_triangle(vp, loc) == LocateTriangleResult::Exterior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[3])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[0])));
     }
@@ -857,25 +919,25 @@ TEST(Mesh, locate_triange__square_domain) {
         size_t loc = i;
 
         vp = ve0;
-        result = mesh.locate_triangle(vp,loc);
+        result = mesh.locate_triangle(vp, loc);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[0])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[1])));
 
         vp = ve1;
-        result = mesh.locate_triangle(vp,loc);
+        result = mesh.locate_triangle(vp, loc);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[1])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[2])));
 
         vp = ve2;
-        result = mesh.locate_triangle(vp,loc);
+        result = mesh.locate_triangle(vp, loc);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[2])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[3])));
 
         vp = ve3;
-        result = mesh.locate_triangle(vp,loc);
+        result = mesh.locate_triangle(vp, loc);
         EXPECT_TRUE(result == LocateTriangleResult::Interior);
         e = mesh.edge(loc);
         EXPECT_TRUE((mesh.point(e.node()) == mesh.point(vmap[3])) && (mesh.point(mesh.edge(e.next()).node()) == mesh.point(vmap[0])));

@@ -45,9 +45,9 @@ TEST(Rotor, Suite0) {
     s.save_as<SaveMethod::Rasterize>(SDIR, "rotor_0");
 
     Mesh m{s};
-    m.MaximumElementSize = 2.5;
-    m.MinimumElementSize = 0.25;
-    m.MinimumElementQuality = M_SQRT1_2;
+    m.MaximumElementSize = 2.0;
+    m.MinimumElementSize = 0.20;
+    m.MinimumElementQuality = 0.1;
 
     m.create();
 
@@ -141,7 +141,7 @@ TEST(Rotor, Circular_Barrier_Syncrel) {
     Mesh m{s};
     m.MaximumElementSize = 1.0;
     m.MinimumElementSize = 0.1;
-    m.MinimumElementQuality = M_SQRT1_2;
+    m.MinimumElementQuality = 0.1;
 
     m.create();
 

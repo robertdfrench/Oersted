@@ -204,10 +204,17 @@ bool Mesh::refine() {
     std::vector<size_t> index;
 
     // TODO: Loop until quality is satisfied
-    // TODO: Iteratively decrease the minimum element size until quality is satisfied
+    // TODO: Iteratively decrease the min and max element size until quality is satisfied
+    // TODO: plan() bounds on maximum element quality
+    // TODO: First: refine until maximum element size criteria is satisfied
+    // TODO:        plan() out iterative maximum element size refinement
+    // TODO: Then: refine until element quality cirteria is satisfied
+    // TODO:        ?somehow iterate?
+    // TODO: SMOOTHING!
 
     element_quality(radii, quality);
-    sort_permutation_ascending(quality, index);
+    //sort_permutation_ascending(quality, index);
+    sort_permutation_descending(radii, index);
     size_t N = Triangles.size();
 
     refine_once(index, radii, quality);
@@ -216,12 +223,13 @@ bool Mesh::refine() {
     while (M > N) {
         N = M;
         element_quality(radii, quality);
-        sort_permutation_ascending(quality, index);
+        //sort_permutation_ascending(quality, index);
+        sort_permutation_descending(radii, index);
         refine_once(index, radii, quality);
         M = Triangles.size();
     }
 
-    return edges_are_valid();
+    return edges_are_valid(); // TODO: Instrument in tests
 }
 
 bool Mesh::refine_once() {
@@ -230,11 +238,11 @@ bool Mesh::refine_once() {
     std::vector<size_t> index;
 
     element_quality(radii, quality);
-    sort_permutation_ascending(quality, index);
-    //sort_permutation_descending(radii, index);
+    //sort_permutation_ascending(quality, index);
+    sort_permutation_descending(radii, index);
     refine_once(index, radii, quality);
 
-    return edges_are_valid();
+    return edges_are_valid(); // TODO: Instrument in tests
 }
 
 bool Mesh::in_triangle(Point const p, size_t ei) const {
@@ -587,12 +595,12 @@ void Mesh::element_quality(std::vector<double> &radii, std::vector<double> &qual
 
     radii.reserve(Triangles.size());
     quality.reserve(Triangles.size());
-    for (size_t i = 0; i < Triangles.size(); ++i) {
+    for (size_t i = 0; i != Triangles.size(); ++i) {
         double r = circumradius(Triangles[i]);
         double l = shortest_edge_length(Triangles[i]);
 
         radii.push_back(r);
-        quality.push_back(l / r);
+        quality.push_back(l / r / sqrt(3.0)); // sqrt(3.0) = (shortest edges length) / radius of equilateral triangle
     }
 }
 
@@ -1281,8 +1289,8 @@ InsertPointResult Mesh::insert_point(Point const vc, size_t ei) {
         Edge &e0 = Edges[--itr];
 
         Edge &tri = Edges[ei];
-        Edge &nxt = Edges[tri.Next];//next(tri);
-        Edge &prv = Edges[tri.Prev];//prev(tri);
+        Edge &nxt = Edges[tri.Next];
+        Edge &prv = Edges[tri.Prev];
 
         size_t vt = node(tri);
         size_t vn = node(nxt);

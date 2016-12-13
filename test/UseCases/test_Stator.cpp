@@ -73,9 +73,9 @@ TEST(Stator, 0) {
 
     Mesh mesh{sketch};
 
-    mesh.MinimumElementQuality = M_SQRT1_2;
-    mesh.MaximumElementSize = 2.5;
-    mesh.MinimumElementSize = 0.25;
+    mesh.MinimumElementQuality = 0.1;
+    mesh.MaximumElementSize = 4.0;
+    mesh.MinimumElementSize = 0.40;
 
     mesh.create();
 
@@ -228,9 +228,9 @@ TEST(Stator, 1) {
     // Create Mesh
     Mesh mesh{sketch};
 
-    mesh.MinimumElementQuality = M_SQRT1_2;
-    mesh.MaximumElementSize = 2.0e-3;
-    mesh.MinimumElementSize = 0.20e-3;
+    mesh.MinimumElementQuality = 0.1;
+    mesh.MaximumElementSize = M_PI * radius_1_5_0->dim() / Nt / 3.0;
+    mesh.MinimumElementSize = mesh.MaximumElementSize / 10.0;
 
     mesh.create();
 
