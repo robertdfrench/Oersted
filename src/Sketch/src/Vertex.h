@@ -1,53 +1,49 @@
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef OERSTED_VERTEX_H
+#define OERSTED_VERTEX_H
 
-#include "Sketch.h"
+#include "SketchElement.h"
+#include "Variable.h"
+#include "doublen.h"
 
 class Vertex : public SketchElement {
 public:
-    Variable *X, *Y;
+    Vertex() : X(std::make_shared<Variable const>()), Y(std::make_shared<Variable const>()) {};
 
-    // Double Constructors
-    Vertex() : X(new Variable(0.0)), Y(new Variable(0.0)) {};
+    Vertex(double x, double y) : X(std::make_shared<Variable const>(x)), Y(std::make_shared<Variable const>(y)) {};
 
-    Vertex(double x, double y) : X(new Variable(x)), Y(new Variable(y)) {};
+    Vertex(std::shared_ptr<Variable const> x, std::shared_ptr<Variable const> y) : X(x), Y(y) {};
 
-    Vertex(std::pair<double, double> &xy) : Vertex(xy.first, xy.second) {};
+    Vertex(std::shared_ptr<Vertex const> const &v) : X(v->X), Y(v->Y) {};
 
-    // Variable Constructors
-    Vertex(Variable *xin, Variable *yin) : X(xin), Y(yin) {};
-
-    Vertex(const Vertex &v) {
-        X = v.X;
-        Y = v.Y;
-    };
-
-    Vertex(Variable &x, Variable &y) : X(&x), Y(&y) {};
-
-    //Member Functions
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 0;
     };
 
-    void register_parameters(Sketch *s) override {
-        s->add_parameter(X);
-        s->add_parameter(Y);
-    };
+    size_t x_index() const { return X->get_index();};
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
+    size_t y_index() const { return Y->get_index();};
 
-    inline bool operator==(const Vertex &v) { return (v.X == X) && (v.Y == Y); };
-
-    const double x() const { return X->value(); };
-
-    const double y() const { return Y->value(); };
-
-    double hypot() const { return std::hypot(x(), y()); };
+    bool operator==(Vertex const &v) { return (v.X == X) && (v.Y == Y); };
 
     double atan() const { return std::atan2(y(), x()); };
 
-    std::pair<double, double> rotate(const Vertex *origin, const double angle) const;
+    double hypot() const { return std::hypot(x(), y()); };
+
+    double x() const { return X->value(); };
+
+    double y() const { return Y->value(); };
+
+    void register_parameters(Sketch *s) const override;
+
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override {};
+
+    double2 rotate(std::shared_ptr<Vertex const> const &origin, double angle) const;
+
+protected:
+    std::shared_ptr<Variable const> X;
+
+    std::shared_ptr<Variable const> Y;
 };
 
-#endif
+#endif //OERSTED_VERTEX_H

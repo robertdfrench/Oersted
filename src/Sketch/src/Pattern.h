@@ -1,40 +1,35 @@
-#ifndef PATTERN_H
-#define PATTERN_H
+#ifndef OERSTED_PATTERN_H
+#define OERSTED_PATTERN_H
 
-#include "Sketch.h"
+#include "SketchElement.h"
+
+class Curve;
+class Constraint;
+class Vertex;
 
 class Pattern : public SketchElement {
 public:
-	void register_elements(Sketch *s);
-	
-	void register_parameters(Sketch *s) override {};
-	size_t set_equation_index(size_t i) override { EquationIndex = i; return 0; };
-	void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override {};
+    size_t set_equation_index(size_t i) override {
+        EquationIndex = i;
+        return 0;
+    };
+
+    void register_elements(Sketch *s) const;
+
+    void register_parameters(Sketch *s) const override {};
+
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override {};
 
 protected:
-	std::vector<const Curve*> Input;
+    std::vector<std::shared_ptr<Curve const>> Input;
 
-	std::vector<Vertex*> Verticies;
-	std::vector<Curve*> Curves;
-	std::vector<Constraint*> Constraints;
+    std::vector<std::shared_ptr<Constraint>> Constraints;
+
+    std::vector<std::shared_ptr<Curve>> Curves;
+
+    std::vector<std::shared_ptr<Vertex>> Verticies;
+
+    bool RemoveInternalBoundaries;
 };
 
-class MirrorCopy : public Pattern {
-public:
-	MirrorCopy(std::vector<const Curve*> &input, LineSegment *l);
-
-private:
-	LineSegment *SymmetryLine;
-};
-
-class RotateCopy : public Pattern {
-public:
-	RotateCopy(std::vector<const Curve*> &input, Vertex* center, double angle, size_t copies);
-
-private:
-	Vertex* Center;
-	double Angle;
-	size_t Copies;
-};
-
-#endif
+#endif //OERSTED_PATTERN_H

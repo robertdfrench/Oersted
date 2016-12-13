@@ -1,69 +1,38 @@
-#ifndef CONSTELLATION_H
-#define CONSTELLATION_H
+#ifndef OERSTED_CONSTELLATION_H
+#define OERSTED_CONSTELLATION_H
 
-#include "Sketch.h"
+#include <list>
+#include <vector>
+#include <memory>
 
-struct Branch {
-	const Curve* Path;
-	bool Orientation;
-	double Angle;
-};
-
-class Star {
-public:
-	// Constructors
-	Star() {};
-	Star(const Vertex *v, const Sketch *s);
-
-	const Vertex* vertex() const { return StarVertex; };
-
-	const size_t size() const { return Branches.size(); };
-
-	// Iterators
-	std::list<Branch>::iterator begin() { return Branches.begin(); };
-	std::list<Branch>::iterator end() { return Branches.end(); };
-
-	std::list<Branch>::const_iterator begin() const { return Branches.begin(); };
-	std::list<Branch>::const_iterator end() const { return Branches.end(); };
-
-	std::list<Branch>::iterator next(std::list<Branch>::iterator iter) { return (iter == (--end()) ? begin() : ++iter); };
-	std::list<Branch>::iterator prev(std::list<Branch>::iterator iter) { return (iter == begin() ? (--end()) : --iter); };
-
-	std::list<Branch>::const_iterator next(std::list<Branch>::const_iterator iter) const { return (iter == (--end()) ? begin() : ++iter); };
-	std::list<Branch>::const_iterator prev(std::list<Branch>::const_iterator iter) const { return (iter == begin() ? (--end()) : --iter); };
-
-	// Curve pointer methods
-	const Curve* next(const Curve* c) const;
-	const Curve* prev(const Curve* c) const;
-
-	void pop(const Curve* c);
-
-private:
-	const Vertex *StarVertex;
-	std::list<Branch> Branches;
-};
+class Branch;
+class Contour;
+class Curve;
+class Star;
+class Sketch;
 
 class Constellation {
 public:
-	// Constructors
-	Constellation() {};
-	Constellation(const Sketch *s);
+    Constellation() {};
 
-	size_t size() { return Stars.size(); };
-	
-	bool contours(std::vector<Contour*> &contours);
-	bool boundary(Contour* c);
+    Constellation(Sketch const *s);
+
+    size_t size() { return Stars.size(); };
+
+    std::vector<std::shared_ptr<Contour>> contours();
+
+    std::shared_ptr<Contour> boundary();
 
 private:
-	std::list<Star> Stars;
+    std::list<Star> Stars;
 
-	void pop(const Curve* c = nullptr);
+    bool find_closed_contour(std::vector<std::shared_ptr<Curve const>> &curves, std::vector<bool> &orientation);
 
-	bool twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
+    bool twin(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 
-	void supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
+    void pop(std::shared_ptr<Curve const> c = std::shared_ptr<Curve const>());
 
-	bool find_closed_contour(std::vector<const Curve*> &curves, std::vector<bool> &orientation);
+    void supremum(std::list<Star>::iterator &s_out, std::list<Branch>::iterator &b_out);
 };
 
-#endif
+#endif //OERSTED_CONSTELLATION_H

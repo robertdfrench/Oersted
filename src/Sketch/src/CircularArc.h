@@ -1,98 +1,101 @@
-#ifndef CIRCULARARC_H
-#define CIRCULARARC_H
+#ifndef OERSTED_CIRCULARARC_H
+#define OERSTED_CIRCULARARC_H
 
 #include "Curve.h"
+#include "Sketch.h"
 
 class CircularArc final : public Curve {
 public:
-    friend class Coincident<CircularArc>;
+    using Curve::on_manifold;
+    using Curve::on_segment;
 
-    friend class Distance<CircularArc>;
+public:
+    CircularArc() : Curve(), Radius(std::make_shared<Variable const>(0.0)) {};
 
-    friend class Radius;
+    CircularArc(CircularArc const *c) : Curve(c->Start, c->End, c->ForConstruction), Center(c->Center), Radius(c->Radius) {};
 
-    friend class Tangency;
+    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, bool fc = false) : Curve(v0, v1, fc), Center(c) {
+        double xc = c->x();
+        double yc = c->y();
+        double x0 = v0->x();
+        double y0 = v0->y();
+        double x1 = v1->x();
+        double y1 = v1->y();
 
-    // Constructors
-    CircularArc() : Curve(), Radius(new Variable(0.0)) {};
+        double r0 = sqrt((xc - x0) * (xc - x0) + (yc - y0) * (yc - y0));
+        double r1 = sqrt((xc - x1) * (xc - x1) + (yc - y1) * (yc - y1));
 
-    CircularArc(const CircularArc *c) : Curve(c->Start, c->End), Center(c->Center), Radius(c->Radius) {};
-
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c) : Curve(v0, v1), Center(&c) {};
-
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, double r) : Curve(v0, v1), Center(&c), Radius(new Variable{r}) {};
-
-    CircularArc(Vertex &v0, Vertex &v1, Vertex &c, Variable &r, Sketch &s) : Curve(v0, v1), Center(&c), Radius(&r) {};
-
-    // Accessors
-    const Vertex *center() const { return Center; };
-
-    double radius() const { return Radius->value(); };
-
-    // Virtual Function Implementation
-    void get_verticies(std::list<Vertex *> &v) const override {
-        v.push_back(Start);
-        v.push_back(End);
-        v.push_back(Center);
+        Radius = std::make_shared<Variable>((r0 + r1) / 2.0);
     };
+
+    CircularArc(std::shared_ptr<Vertex const> v0, std::shared_ptr<Vertex const> v1, std::shared_ptr<Vertex const> c, double r, bool fc = false) : Curve(v0, v1, fc), Center(c), Radius(std::make_shared<Variable const>(r)) {};
 
     size_t set_equation_index(size_t i) override {
         EquationIndex = i;
         return 2;
     };
 
-    void register_parameters(Sketch *s) override { s->add_parameter(Radius); };
+    size_t radius_index() const { return Radius->get_index(); };
 
-    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) override;
-
-    // Calculation
-    Vertex point(double s) const override;
-
-    Vertex tangent(double s, bool orientation) const override;
-
-    double length() const override { throw; };
-
-    double area() const override;
+    bool is_coincident(std::shared_ptr<Curve const> const &c) const override;
 
     double a(double s, bool orientation) const override;
 
+    double area() const override;
+
     double da(double s, bool orientation) const override;
 
-    double supremum() const override;
+    double length() const override { return radius() * arc_angle(); };
 
-    // Curve-Vertex Comparison
-    using Curve::on_manifold;
+    double radius() const { return Radius->value(); };
 
-    using Curve::on_segment;
+    void get_verticies(std::list<std::shared_ptr<Vertex const>> &v, MatchOrientation dir = MatchOrientation::Forward) const override {
+        if (dir == MatchOrientation::Forward) {
+            v.push_back(Start);
+            v.push_back(End);
+            v.push_back(Center);
+        } else if (dir == MatchOrientation::Reverse) {
+            v.push_back(End);
+            v.push_back(Start);
+            v.push_back(Center);
+        }
+    };
 
-    // Curve-Curve Comparison
-    bool is_identical(const Curve *c) const override;
+    void register_parameters(Sketch *s) const override { s->add_parameter(std::const_pointer_cast<Variable>(Radius)); };
 
-    bool is_identical(const Curve *c, const Vertex *origin, const double angle) const override;
+    void replace_verticies(std::vector<std::shared_ptr<Vertex const>> const &oldv, std::vector<std::shared_ptr<Vertex const>> const &newv) override;
 
-    bool is_coincident(const Curve *c) const override;
+    void update(Eigen::MatrixXd &J, Eigen::VectorXd &r) const override;
 
-    // Modification
-    Curve *clone() const override { return new CircularArc(this); };
+    std::shared_ptr<Curve> clone() const override { return std::make_shared<CircularArc>(this); };
 
-    void replace_verticies(std::vector<Vertex *> oldv, std::vector<Vertex *> newv) override;
+    std::shared_ptr<Vertex const> center() const { return Center; };
+
+    MatchOrientation is_identical(std::shared_ptr<Curve const> const &c) const override;
+
+    MatchOrientation is_identical(std::shared_ptr<Curve const> const &c, std::shared_ptr<Vertex const> const &origin, double angle) const override;
+
+    double2 point(double s) const override;
+
+    double2 supremum() const override;
+
+    double2 tangent(double s, bool orientation) const override;
 
 protected:
-    Vertex *Center;
-    Variable *Radius;
+    std::shared_ptr<Vertex const> Center;
+    std::shared_ptr<Variable const> Radius;
 
-    bool on_manifold(const double x, const double y) const override;
+    bool on_manifold(double x, double y) const override;
 
-    bool on_segment(const double x, const double y) const override;
+    bool on_segment(double x, double y) const override;
 
-    bool is_identical(const double r, const double xc, const double yc, const double xs, const double ys, const double xe, const double ye) const;
-
-private:
     double s_to_a(double s) const;
 
     double a_to_s(double a) const;
 
     double arc_angle() const;
+
+    MatchOrientation is_identical(double r, double xc, double yc, double xs, double ys, double xe, double ye) const;
 };
 
-#endif //CIRCULARARC_H
+#endif //OERSTED_CIRCULARARC_H
