@@ -1,0 +1,9 @@
+stages:
+- build
+
+build:eos:
+  script:
+  - ./build-eos.sh
+  tags:
+  - eos
+  stage: build
